@@ -1,5 +1,6 @@
 package com.jaba.awr_3.inits;
 
+import com.jaba.awr_3.inits.ffmpeg.FfmpegInitializer;
 import com.jaba.awr_3.inits.fonts.FontsInstaller;
 import com.jaba.awr_3.inits.postgres.DataService;
 import com.jaba.awr_3.inits.postgres.PostgresInit;
@@ -16,6 +17,7 @@ public class MainInit {
         DataService.initDataSettings();
         OwnerService.initOwnerSettings();
         PostgresInit.init();
+        FfmpegInitializer.init();
         FontsInstaller.init();
     }
 }
