@@ -1,0 +1,42 @@
+#archive-action {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    background-color: #1a1a2eef;
+    padding: 20px;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+}
+
+#archive-btn-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#archive-indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 50px;
+    background-color: aliceblue;
+}
+
+
+.archiv_name {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}

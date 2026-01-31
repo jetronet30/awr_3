@@ -1,0 +1,75 @@
+#backuprecovery-action {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    background-color: #1a1a2eef;
+    padding: 20px;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#backuprecovery-btn-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.backuprecovery-btn {
+    background-color: #0078ff;
+    color: white;
+    border: none;
+    border-radius: 1px;
+    padding: 5px ;
+    cursor: pointer;
+}
+
+.backuprecovery-btn:hover {
+    background: linear-gradient(45deg, #00b7eb, #007bff);
+    box-shadow: 0 0 15px rgba(0, 183, 255, 0.6);
+}
+
+#backuprecovery-indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    background-color: transparent;
+}
+
+#backuprecovery-div {
+    padding: 20px;
+    display: flex;
+    gap: 50px;
+    align-items: center;
+    justify-content:last baseline;
+    flex-direction: column;
+}
+
+.backuprecovery-input {
+    text-align: center;
+    padding: 5px;
+    color: #ffffff;
+    border-radius: 1px;
+    background: linear-gradient(45deg, #00b7eb, #007bff);
+}
+
+#backuprecovery-progressBar {
+    height: 30px;
+    border: none;
+    background: none;
+}
+
+.backuprecovery-a {
+    text-decoration: none;
+    font-size: 30px;
+    color: #000;
+    background-color: aqua;
+    padding: 20px;
+}
+
+.backuprecovery-a:hover {
+    background-color: rgb(2, 119, 119);
+}

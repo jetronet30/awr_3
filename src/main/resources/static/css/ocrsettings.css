@@ -1,0 +1,83 @@
+#ocr-settings-action {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    background-color: #1a1a2eef;
+    padding: 20px;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#ocr-settings-reboot-btn {
+    background-color: #0078ff;
+    color: white;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+}
+
+#ocr-settings-reboot-btn:hover {
+    background: linear-gradient(45deg, #00b7eb, #007bff);
+    box-shadow: 0 0 15px rgba(0, 183, 255, 0.6);
+}
+
+#ocr-settings-indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    background-color: transparent;
+}
+
+#ocr-settings-forms-container {
+    display: flex;
+    justify-content: center;
+    border-radius: 12px;
+    padding: 10px;
+    text-align: center;
+}
+
+.ocr-settings-main-lable{
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.ocr-settings-from {
+    display: flex;
+    flex-direction: column;
+    border-radius: 6px;
+    padding: 20px;
+    max-width: 600px;
+    width: 100%;
+}
+
+.ocr-settings-from:hover{
+    background-color: #0011ff27;
+}
+
+
+
+.ocr-settings-selector {
+    width: 100%;
+    padding: 5px;
+    text-align: center;
+}
+
+.ocr-settings-btn {
+    margin-top: 10px;
+    align-self: flex-start;
+    background-color: #0078ff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ocr-settings-btn:hover {
+    background-color: #0550a0;
+}

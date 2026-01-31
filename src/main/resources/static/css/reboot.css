@@ -1,0 +1,39 @@
+.reboot-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  font-family: sans-serif;
+}
+
+/* მბრუნავი წრე */
+.loader {
+  width: 300px;
+  height: 300px;
+  border: 5px solid #eeeeee;
+  border-top-color: #4caf50;
+  animation: spin 2s linear infinite;
+  border-radius: 50%;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.text {
+  font-size: 60px;
+  color: #000000;
+  text-align: center;
+  animation: blink 1.5s infinite;
+}
+
+/* ტექსტის მბჟუტავი ეფექტი */
+@keyframes blink {
+  50% {
+    opacity: 0.4;
+  }
+}

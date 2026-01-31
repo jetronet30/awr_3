@@ -1,0 +1,34 @@
+<div id="ocr-settings-container">
+    <div id="ocr-settings-action">
+        <form action="/ocr-setting-reboot" method="post">
+            <input type="button" th:value="#{save.and.reboot}" id="ocr-settings-reboot-btn">
+        </form>
+        <div id="ocr-settings-indicator"></div>
+    </div>
+
+    <div th:each="ocr: ${ocrs}" id="ocr-settings-forms-container">
+        <form method="post" action="/updateOcrsettings" class="ocr-settings-from">
+
+            <label th:for='ocrName+${ocr.ocrName}' class="ocr-settings-main-lable" th:text="${ocr.ocrName}"></label>
+            <input type="text" name="ocrName" th:value="${ocr.ocrName}" readonly="readonly"
+                th:id="ocrName+${ocr.ocrName}" hidden>
+
+            <label th:for='scaleName+${ocr.ocrName}' >Scale Name</label>
+            <input type="text" name="ocrscaleName" class="ocr-settings-selector" th:value="${ocr.ocrName}" th:id='scaleName+${ocr.ocrName}' >    
+
+         
+            <label for="ipAddress" th:text="#{sever.address}"></label>
+            <select class="ocr-settings-selector" name="ipAddress" id="ipAddress">
+                <option value="0.0.0.0" th:selected="${ocr.ipAddress == '0.0.0.0'}">0.0.0.0</option>
+                <option th:each="ip : ${ips}" th:value="${ip}" th:text="${ip}" th:selected="${ip == ocr.ipAddress}">
+                </option>
+            </select>
+            <label th:for='port+${ocr.ocrName}' th:text="#{ocr.port}"></label>
+            <input type="number" name="ocrPort" class="ocr-settings-selector"
+                th:id='port+${ocr.ocrName}' th:value="${ocr.port}">
+
+
+            <input type="button" th:value="#{tcp.set.settings}" class="tcp-settings-btn">
+        </form>
+    </div>
+</div>

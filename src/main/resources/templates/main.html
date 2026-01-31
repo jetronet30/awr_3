@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AWR 3</title>
+  <link rel="stylesheet" th:href="@{/css/reboot.css}">
+  <link rel="stylesheet" th:href="@{/css/main.css}">
+  <link rel="stylesheet" th:href="@{/css/network.css}">
+  <link rel="stylesheet" th:href="@{/css/basic.css}">
+  <link rel="stylesheet" th:href="@{/css/data.css}">
+  <link rel="stylesheet" th:href="@{/css/owner.css}">
+  <link rel="stylesheet" th:href="@{/css/backuprecovery.css}">
+  <link rel="stylesheet" th:href="@{/css/comport.css}">
+  <link rel="stylesheet" th:href="@{/css/tcp.css}">
+  <link rel="stylesheet" th:href="@{/css/units.css}">
+  <link rel="stylesheet" th:href="@{/css/wagontares.css}">
+  <link rel="stylesheet" th:href="@{/css/archive.css}">
+  <link rel="stylesheet" th:href="@{/css/scale1.css}">
+  <link rel="stylesheet" th:href="@{/css/scale2.css}">
+  <link rel="stylesheet" th:href="@{/css/scale3.css}">
+  <link rel="stylesheet" th:href="@{/css/scale4.css}">
+  <link rel="stylesheet" th:href="@{/css/scale5.css}">
+  <link rel="stylesheet" th:href="@{/css/scale6.css}">
+  <link rel="stylesheet" th:href="@{/css/camsettings.css}">
+  <link rel="stylesheet" th:href="@{/css/ocrsettings.css}">
+  <script th:src="@{/scripts/hls.js}"></script>
+</head>
+
+<body>
+  <aside class="sidebar">
+    <div class="logo">
+      <h1>AWR 3</h1>
+      <p class="subtitle">Integrated Weighing System</p>
+    </div>
+
+    <nav class="menu">
+      <button class="btn" id="scale1" type="button" th:if="${scale1Enabled}"  formaction="/scale1" th:text="${ScaleName1}">Scale 1</button>
+      <button class="btn" id="scale2" type="button" th:if="${scale2Enabled}"  formaction="/scale2" th:text="${ScaleName2}">Scale 2</button>
+      <button class="btn" id="scale3" type="button" th:if="${scale3Enabled}"  formaction="/scale3" th:text="${ScaleName3}">Scale 3</button>
+      <button class="btn" id="scale4" type="button" th:if="${scale4Enabled}"  formaction="/scale4" th:text="${ScaleName4}">Scale 4</button>
+      <button class="btn" id="scale5" type="button" th:if="${scale5Enabled}"  formaction="/scale5" th:text="${ScaleName5}">Scale 5</button>
+      <button class="btn" id="scale6" type="button" th:if="${scale6Enabled}"  formaction="/scale6" th:text="${ScaleName6}">Scale 6</button>
+      <button class="btn" id="archive" type="button"  formaction="/archive" th:text="#{archive}">Archive</button>
+      <div class="dropdown">
+        <button class="dropdown-toggle" id="settings" th:text="#{settings}" >Settings <span class="arrow">▼</span></button>
+        <div class="dropdown-menu">
+          <button class="drop-btn" id="basic" type="button" formaction="/basic">Basic</button>
+          <button class="drop-btn" id="network" type="button" formaction="/network">Network</button>
+          <button class="drop-btn" id="data" type="button" formaction="/data">Data</button>
+          <button class="drop-btn" id="owner" type="button" formaction="/owner">Owner</button>
+          <button class="drop-btn" id="backuprecovery" type="button" formaction="/backuprecovery">Backup And
+            Recovery</button>
+          <button class="drop-btn" id="administrator" type="button" formaction="/administrator">Administrator</button>
+          <button class="drop-btn" id="superadmin" type="button" formaction="/superadmin">Super Admin</button>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <button class="dropdown-toggle" id="scalesettings" th:text="#{scales.settings}" >Scales Settings<span class="arrow">▼</span></button>
+        <div class="dropdown-menu">
+          <button class="drop-btn" id="wagontares" type="button" formaction="/wagontares">Wagon Tare</button>
+          <button class="drop-btn" id="units" type="button" formaction="/units">Units</button>
+          <button class="drop-btn" id="comport" type="button" formaction="/comport">Com Scales</button>
+          <button class="drop-btn" id="tcp" type="button" formaction="/tcp">Tcp Scales </button>
+          <button class="drop-btn" id="udp" type="button" formaction="/udp">Udp Scales</button>
+        </div>
+      </div>
+      <div class="dropdown">
+        <button class="dropdown-toggle" id="other">Number Identificator <span class="arrow">▼</span></button>
+        <div class="dropdown-menu">
+          <button class="drop-btn" id="camsettings" type="button" formaction="/camsettings">Cam Settings</button>
+          <button class="drop-btn" id="ocrsettings" type="button" formaction="/ocrsettings">OCR</button>
+          <button class="drop-btn" id="rfid" type="button" formaction="/rfid">RFID</button>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <main class="content">
+  </main>
+  <script th:src="@{/scripts/main.js}"></script>
+</body>
+
+</html>

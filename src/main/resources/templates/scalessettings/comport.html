@@ -1,0 +1,70 @@
+<div id="comPort-container">
+    <div id="comPort-action">
+        <div id="comPort-indicator"></div>
+    </div>
+
+    <div th:each="com : ${coms}" id="comPort-set-container">
+        <form method="post" action="/setcomsettings" class="comPort-set-from">
+
+            <label th:for='baudRate+${com.comName}' class="com-set-main-lable"  th:text="${com.comNick}"></label>
+            <input type="text" name="comPortName" th:value="${com.comName}" hidden>
+
+            <label th:for='scaleName+${com.comName}' >Scale Name</label>
+            <input type="text" name="scaleName" class="comPort-set-selector" th:value="${com.scaleName}" th:id='scaleName+${com.comName}' >
+
+            <label th:for='activ+${com.comName}' >active</label>
+            <select name="activ"  class="comPort-set-selector"  th:id='activ+${com.comName}'>
+                <option value="true" th:selected="${com.isActive}">Enable</option>
+                <option value="false" th:selected="${!com.isActive}">Disable</option>
+            </select>
+
+            <label th:for='automatic+${com.comName}' >automatic mode</label>
+            <select name="automatic"  class="comPort-set-selector"  th:id='automatic+${com.comName}'>
+                <option value="true" th:selected="${com.automatic}">Enable</option>
+                <option value="false" th:selected="${!com.automatic}">Disable</option>
+            </select>
+            <label th:for='right+${com.comName}'>Right To Update Tare</label>
+            <select name="rightToUpdate"  class="comPort-set-selector"  th:id='right+${com.comName}'>
+                <option value="true" th:selected="${com.rightToUpdateTare}">ON</option>
+                <option value="false" th:selected="${!com.rightToUpdateTare}">OFF</option>
+            </select>
+
+            <label th:for='instrument+${com.comName}'>Instrument</label>
+            <select name="instrument"  class="comPort-set-selector" th:id='instrument+${com.comName}'>
+                <option value="TSR4000" th:selected="${com.instrument} == 'TSR4000'">TSR4000</option>
+                <option value="TUNAYLAR" th:selected="${com.instrument} == 'TUNAYLAR'"> TUNAYLAR</option>
+            </select>
+
+            <label th:for='baudRate+${com.comName}'>Baud Rate</label>
+            <select name="baudRate" class="comPort-set-selector" th:id='baudRate+${com.comName}'>
+                <option value="4800"  th:selected="${4800 == com.baudRate}">4800</option>
+                <option value="9600" th:selected="${9600 == com.baudRate}">9600</option>
+                <option value="14400" th:selected="${14400 == com.baudRate}">14400</option>
+                <option value="19200" th:selected="${19200 == com.baudRate}">19200</option>
+                <option value="115200" th:selected="${115200 == com.baudRate}">115200</option>
+            </select>
+            <label th:for='parity+${com.comName}'>Parity</label>
+            <select name="parity" class="comPort-set-selector" th:id='parity+${com.comName}'>
+                <option value="0" th:selected="${0 == com.parity}">NO</option>
+                <option value="1" th:selected="${1 == com.parity}">EVEN</option>
+                <option value="2" th:selected="${2 == com.parity}">ODD</option>
+                <option value="3" th:selected="${3 == com.parity}">MARK</option>
+                <option value="4" th:selected="${4 == com.parity}">SPACE</option>
+            </select>
+            <label th:for='dataBits+${com.comName}'>Data Bits</label>
+            <select name="dataBits" class="comPort-set-selector" th:id='dataBits+${com.comName}'>
+                <option value="5" th:selected="${5 == com.dataBits}">5</option>
+                <option value="6" th:selected="${6 == com.dataBits}">6</option>
+                <option value="7" th:selected="${7 == com.dataBits}">7</option>
+                <option value="8" th:selected="${8 == com.dataBits}">8</option>
+            </select>
+            <label th:for='stopBit+${com.comName}'>Stop Bits</label>
+            <select name="stopBit" class="comPort-set-selector" th:id='stopBit+${com.comName}'>
+                <option value="1" th:selected="${1 == com.stopBit}">1</option>
+                <option value="3" th:selected="${3 == com.stopBit}">1.5</option>
+                <option value="2" th:selected="${2 == com.stopBit}">2</option>
+            </select>
+            <input type="button" th:value="#{comport.set.settings}" class="comPort-set-btn">
+        </form>
+    </div>
+</div>

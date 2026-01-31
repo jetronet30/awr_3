@@ -1,0 +1,60 @@
+<div id="network-container">
+    <div id="net-action">
+        <div>
+            <form action="/netw-save-and-write" method="post">
+                <input type="button" th:value="#{save}" id="netw-set-and-write-btn">
+            </form>
+            <form action="/netw-save-and-reboot" method="post">
+                <input type="button" th:value="#{save.and.reboot}" id="netw-set-and-reboot-btn">
+            </form>
+            <form action="/testNetwork" method="post">
+                <select name="test" id="test-select" hidden>
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                </select>
+                <input type="button" value="setNetwork" id="network-test-btn" hidden>
+            </form>
+        </div>
+        <div id="net-indicator"></div>
+    </div>
+
+    <div th:each="net : ${nets}" id="net-lan-container">
+        <form method="post" action="/setLanSettings" class="net-set-from">
+            <div class="net-indic-container">
+                <div class="net-indic-lan" th:classappend="${net.isLink} ? 'net-active' : 'net-inactive'"></div>
+                <div class="net-indic-internet" th:classappend="${net.isInternet} ? 'net-active' : 'net-inactive'"></div>
+            </div>
+
+            <div>
+                <label for="inName-${net.id}">LAN NAME</label>
+                <input type="text" class="net-input" name="inName" th:value="${net.inName}" id="inName-${net.id}" readonly>
+            </div>
+            <div>
+                <label for="ip-${net.id}">IP Address</label>
+                <input type="text" class="net-input" name="ip" th:value="${net.ip}" id="ip-${net.id}">
+            </div>
+            <div>
+                <label for="gateway-${net.id}">Gateway</label>
+                <input type="text" class="net-input" name="gateway" th:value="${net.gateWay}" id="gateway-${net.id}">
+            </div>
+            <div>
+                <label for="subnet-${net.id}">Subnet</label>
+                <input type="text" class="net-input" name="subnet" th:value="${net.subnet}" id="subnet-${net.id}">
+            </div>
+            <div>
+                <label for="dns1-${net.id}">DNS1</label>
+                <input type="text" class="net-input" name="dns1" th:value="${net.dns1}" id="dns1-${net.id}">
+            </div>
+            <div>
+                <label for="dns2-${net.id}">DNS2</label>
+                <input type="text" class="net-input" name="dns2" th:value="${net.dns2}" id="dns2-${net.id}">
+            </div>
+            <div>
+                <label for="metric-${net.id}">Metric</label>
+                <input type="text" class="net-input" name="metric" th:value="${net.metric}" id="metric-${net.id}">
+            </div>
+
+            <input type="submit" th:value="#{set.lan.settings}" class="net-set-btn">
+        </form>
+    </div>
+</div>

@@ -1,0 +1,46 @@
+<div id="units-container">
+    <div id="units-action">
+        <div id="units-btn-container">
+            <button type="units" class="units-act-btn" id="units-set-btn-clone" th:text="#{save}">
+            </button>
+            <form action="/units-save-and-reboot" method="post">
+                <input type="button" th:value="#{save.and.reboot}" id="units-set-and-reboot-btn">
+            </form>
+        </div>
+
+        <div id="units-indicator"></div>
+    </div>
+
+    <div id="units-settings-div">
+        <form method="post" action="/setunits" id="units-set-from">
+
+            <!-- სიჩქარე -->
+            <label for="speed" th:text="#{unit.speed}"></label>
+            <select class="units-selector" name="speedUnit" id="speed">
+                <option value="km/h" th:selected="${units.speedUnit} == 'km/h'">km/h (International Standard)</option>
+                <option value="mph" th:selected="${units.speedUnit} == 'mph'">mph (US/Canada)</option>
+            </select>
+
+            <!-- წონა -->
+            <label for="weight" th:text="#{unit.weight}"></label>
+            <select class="units-selector" name="weightUnit" id="weight">
+                <option value="tonne" th:selected="${units.weightUnit} == 'tonne'">tonne (Metric – International)</option>
+                <option value="short_ton" th:selected="${units.weightUnit} == 'short_ton'">short ton (US – 2000 lb)</option>
+                <option value="long_ton" th:selected="${units.weightUnit} == 'long_ton'">long ton (Canadian/UK – 2240 lb)</option>
+            </select>
+
+            <!-- ვაგონის სიგრძე/ნომერი -->
+            <label for="wagonLenUnit" th:text="#{unit.wagonumber}"></label>
+            <select class="units-selector" name="wagonLenUnit" id="wagonLenUnit">
+                <option value="8" th:selected="${units.wagonNumLenUnit} == '8'">8</option>
+                <option value="10" th:selected="${units.wagonNumLenUnit} == '10'">10</option>
+                <option value="12" th:selected="${units.wagonNumLenUnit} == '12'">12</option>
+            </select>
+
+            <label for="TareLimit" th:text="#{unit.tarlimit}"></label>
+            <input type="number" class="units-selector" name="tareLimit" id="TareLimit" th:value="${units.tarLimit}" >
+
+            <input type="submit" th:value="#{unit.set.button}" id="units-set-btn">
+        </form>
+    </div>
+</div>

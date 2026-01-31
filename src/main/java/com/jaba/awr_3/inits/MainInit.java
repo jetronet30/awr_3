@@ -1,5 +1,21 @@
 package com.jaba.awr_3.inits;
 
-public class MainInit {
+import com.jaba.awr_3.inits.fonts.FontsInstaller;
+import com.jaba.awr_3.inits.postgres.DataService;
+import com.jaba.awr_3.inits.postgres.PostgresInit;
+import com.jaba.awr_3.inits.repo.RepoInit;
+import com.jaba.awr_3.seversettings.basic.BasicService;
+import com.jaba.awr_3.seversettings.network.DefaultNetwork;
+import com.jaba.awr_3.seversettings.owner.OwnerService;
 
+public class MainInit {
+    public static void initAll() {
+        RepoInit.initRepos();
+        BasicService.initBasicSettings();
+        DefaultNetwork.createDefaultNetPlan();
+        DataService.initDataSettings();
+        OwnerService.initOwnerSettings();
+        PostgresInit.init();
+        FontsInstaller.init();
+    }
 }

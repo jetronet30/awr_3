@@ -1,0 +1,55 @@
+<div id="tcp-settings-container">
+    <div id="tcp-settings-action">
+        <form action="/tcp-setting-reboot" method="post">
+            <input type="button" th:value="#{save.and.reboot}" id="tcp-settings-reboot-btn">
+        </form>
+        <div id="tcp-settings-indicator"></div>
+    </div>
+
+    <div th:each="tcp: ${tcps}" id="tcp-settings-forms-container">
+        <form method="post" action="/updateTcpsettings" class="tcp-settings-from">
+
+            <label th:for='tcpName+${tcp.tcpName}' class="tcp-settings-main-lable" th:text="${tcp.tcpName}"></label>
+            <input type="text" name="tcpName" th:value="${tcp.tcpName}" readonly="readonly"
+                th:id="tcpName+${tcp.tcpName}" hidden>
+
+            <label th:for='scaleName+${tcp.tcpName}' >Scale Name</label>
+            <input type="text" name="tcpscaleName" class="tcp-settings-selector" th:value="${tcp.scaleName}" th:id='scaleName+${tcp.tcpName}' >    
+
+            <label th:for='activ+${tcp.tcpName}'>active</label>
+            <select name="isActive" class="tcp-settings-selector" th:id='activ+${tcp.tcpName}'>
+                <option value="true" th:selected="${tcp.isActive}">ON</option>
+                <option value="false" th:selected="${!tcp.isActive}">OFF</option>
+            </select>
+
+            <label th:for='automatic+${tcp.tcpName}' >automatic mode</label>
+            <select name="automatic"  class="tcp-settings-selector"  th:id='automatic+${tcp.tcpName}'>
+                <option value="true" th:selected="${tcp.automatic}">Enable</option>
+                <option value="false" th:selected="${!tcp.automatic}">Disable</option>
+            </select>
+            <label th:for='right+${tcp.tcpName}'>Right To Update Tare</label>
+            <select name="rightToUpdate"  class="tcp-settings-selector"  th:id='right+${tcp.tcpName}'>
+                <option value="true" th:selected="${tcp.rightToUpdateTare}">ON</option>
+                <option value="false" th:selected="${!tcp.rightToUpdateTare}">OFF</option>
+            </select>
+
+            <label for="ipAddress" th:text="#{sever.address}"></label>
+            <select class="tcp-settings-selector" name="ipAddress" id="ipAddress">
+                <option value="0.0.0.0" th:selected="${tcp.ipAddress == '0.0.0.0'}">0.0.0.0</option>
+                <option th:each="ip : ${ips}" th:value="${ip}" th:text="${ip}" th:selected="${ip == tcp.ipAddress}">
+                </option>
+            </select>
+            <label th:for='port+${tcp.tcpName}' th:text="#{tcp.port}"></label>
+            <input type="number" name="tcpPort" class="tcp-settings-selector"
+                th:id='port+${tcp.tcpName}' th:value="${tcp.port}">
+
+            <label th:for='instrument+${tcp.tcpName}'>Instrument</label>
+            <select name="instrument" class="tcp-settings-selector" th:id='instrument+${tcp.tcpName}'>
+                <option value="TSR4000" th:selected="${tcp.instrument} == 'TSR4000'">TSR4000</option>
+                <option value="TUNAYLAR" th:selected="${tcp.instrument} == 'TUNAYLAR'"> TUNAYLAR</option>
+            </select>
+
+            <input type="button" th:value="#{tcp.set.settings}" class="tcp-settings-btn">
+        </form>
+    </div>
+</div>

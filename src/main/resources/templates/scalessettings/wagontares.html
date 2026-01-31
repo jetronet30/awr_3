@@ -1,0 +1,26 @@
+<div id="wagontares-container">
+    <div id="wagontares-action">
+        <div id="wagontares-btn-container">
+            <form action="/addwagonTare" method="post">
+                <input type="text"  id="wagontares-tare-input" name="tare"  th:placeholder="#{wagontare.tare}" required>
+                <input type="text" id="wagontares-number-input"  name="wagonNumber"  th:placeholder="#{wagontare.number}" required>
+                <input type="button" th:value="#{wagontare.add}" id="wagontares-add-tare-btn">
+            </form>
+            <form id="wagontares_upload" enctype="multipart/form-data" action="/uploaTareBaseMDB" method="post">
+                <input  type="file" class="wagontares-input" name="tareBase" value="backup" accept=".tar.gz,application/gzip,application/x-gzip">
+                <input type="button" class="wagontares-btn" th:value="#{wagontare.upload}">
+            </form>
+            <progress id="wagontares-progressBar" value="0" max="100"></progress>
+        </div>
+        <div id="wagontares-indicator"></div>
+    </div>
+
+    <div th:each=" wtare : ${wTares}" id="wagontares-edit-container" > 
+        <form action="" method="post">
+            <input type="text" class="wagontares-edit-input" th:value="${wtare.wagonNumber}">
+            <input type="text" class="wagontares-tare-weight" th:value="${wtare.tareWeight}">
+            <input type="text" class="wagontares-edit-input" th:value="${wtare.upDate}">
+        </form>
+    </div>
+
+</div>

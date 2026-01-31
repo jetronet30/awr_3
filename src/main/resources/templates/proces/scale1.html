@@ -1,0 +1,36 @@
+<div id="scale1-container">
+    <input type="number" id="magonNumLeght_1" th:value="${magonNumLeght_1}" readonly hidden>
+    <div id="scale1-action">
+        <div id="scale1-btn-container">
+            <input type="text" id="w-indic-1" readonly >
+            <form action="/startWeighing_1" method="post">
+                <input type="button" th:value="#{weighing.start}" id="scale1-start-weighing-btn">
+            </form>
+            <form action="/abortWeighing_1" method="post">
+                <input type="button" th:value="#{weighing.abort}" id="scale1-abort-weighing-btn">
+            </form>
+            <form action="/addwagonWeighing_1" method="post">
+                <input type="number" id="scale1-count-input" name="count" placeholder="count">
+                <input type="text" id="scale1-product-input" name="product" th:placeholder="#{weighing.product}">
+                <input type="number" id="scale1-number-input" name="wagonNumber" th:placeholder="#{weighing.number}">
+                <input type="button" th:value="#{weighing.addwagon}" id="scale1-add-wagon-btn">
+            </form>
+        </div>
+        <form action="/updateAllWeighing_1" method="post">
+            <input type="button" th:value="#{weighing.update}" id="scale1-update-weighing-btn">
+        </form>
+        <div id="scale1-indicator"></div>
+    </div>
+
+    <div class="scale1-info">
+        <div class="scale1-info-container">
+            <video  th:if="${cam1Enabled}" id="player-1" class="scale1-camera"  muted data-hls-src="/cam1/index.m3u8"></video>
+            <div class="scale1-done-info">
+                <a target="_blank" href="/pdflast_1/report1.pdf">Print Report</a>
+            </div>
+        </div>
+        <div id="operation-data1-container"></div>
+    </div>
+
+
+</div>

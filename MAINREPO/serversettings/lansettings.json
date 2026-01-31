@@ -1,0 +1,21 @@
+[ {
+  "inName" : "eno1",
+  "ip" : "192.168.1.30",
+  "gateWay" : "192.168.1.1",
+  "subnet" : "24",
+  "dns1" : "8.8.8.8",
+  "dns2" : "8.8.4.4",
+  "metric" : "0",
+  "link" : false,
+  "internet" : false
+}, {
+  "inName" : "eno2",
+  "ip" : "192.168.1.31",
+  "gateWay" : "192.168.1.1",
+  "subnet" : "24",
+  "dns1" : "8.8.8.8",
+  "dns2" : "8.8.4.4",
+  "metric" : "600",
+  "link" : false,
+  "internet" : false
+} ]

@@ -1,0 +1,20 @@
+<div id="backuprecovery-container">
+    <div id="backuprecovery-action">
+        <div id="backuprecovery-btn-container">
+            <form action="/createbeckup" method="post">
+                <input type="button" th:value="#{backuprecovery.create}" class="backuprecovery-btn" id="backuprecovery-create-btn">
+            </form>
+            <form id="backuprecovery_upload" enctype="multipart/form-data" action="/uploadbackup" method="post">
+                <input  type="file" class="backuprecovery-input" name="backup" value="backup" accept=".tar.gz,application/gzip,application/x-gzip">
+                <input type="button" class="backuprecovery-btn" th:value="#{backuprecovery.upload}">
+            </form>
+            <progress id="backuprecovery-progressBar" value="0" max="100"></progress>
+        </div>
+        <div id="backuprecovery-indicator"></div>
+    </div>
+
+    <div id="backuprecovery-div">
+        <div><a class="backuprecovery-a" th:href="@{'/backup/'+${backupName}}" download th:text="${backupName}"></a></div>
+        <div><a class="backuprecovery-a" th:href="@{'/backup/'+${backupDataName}}" download th:text="${backupDataName}"></a></div>
+    </div>
+</div>

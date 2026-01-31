@@ -11,6 +11,9 @@ public class RepoInit {
 
     public static final File MAIN_REPO = new File("./MAINREPO");
     public static final File SERVER_SETTINGS_REPO = new File(MAIN_REPO, "serversettings");
+    public static final File BACKUP_REPO_TEMP = new File(MAIN_REPO, "backuptemp");
+    public static final File BACKUP_REPO_MVC = new File(MAIN_REPO, "backupmvc");
+    public static final File BACKUP_UPLOAD_REPO = new File(MAIN_REPO, "backupupload");
     public static final File UTYL_REPO = new File(MAIN_REPO, "utils");
     public static final File USR_SRC = new File("/usr/local/src");
 
@@ -19,6 +22,9 @@ public class RepoInit {
         createDirectory(SERVER_SETTINGS_REPO);
         createDirectory(UTYL_REPO);
         createDirectory(USR_SRC);
+        createDirectory(BACKUP_REPO_TEMP);
+        createDirectory(BACKUP_REPO_MVC);
+        createDirectory(BACKUP_UPLOAD_REPO);
     }
 
     private static void createDirectory(File dir) {

@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.2</version>
+		<version>3.5.10</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.jaba</groupId>
 	<artifactId>awr_3</artifactId>
-	<version>1</version>   <!-- ვერსია  დაამატე -->
+	<version>1</version>   
 	<name>awr_3</name>   
 	<description>AWR_3</description>
 	<url/>
@@ -64,6 +64,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
             <groupId>org.yaml</groupId>
@@ -122,6 +127,14 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.5.4</version>  <!-- შენი ვერსია -->
+            <configuration>
+                <trimStackTrace>false</trimStackTrace>
+            </configuration>
+        </plugin>
 		</plugins>
 	</build>
 

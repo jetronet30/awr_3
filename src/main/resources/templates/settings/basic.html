@@ -1,0 +1,159 @@
+<div id="basic-container">
+    <div id="basic-action">
+        <div id="basic-btn-container">
+            <button type="submit" class="basic-act-btn" id="basic-set-btn-clone" th:text="#{save}">
+            </button>
+            <form action="/basic-save-and-reboot" method="post">
+                <input type="button" th:value="#{save.and.reboot}" id="basic-set-and-reboot-btn">
+            </form>
+        </div>
+
+        <div id="basic-indicator"></div>
+    </div>
+
+    <div id="basic-settings-div">
+        <form method="post" action="/setBasicSettings" id="basic-set-from">
+
+            <label for="port" th:text="#{server.port}"></label>
+            <input type="number" class="basic-input" name="port" id="port" required th:value="${basic.listingPort}">
+
+            <label for="ipAddress" th:text="#{sever.address}"></label>
+            <select class="basic-selector" name="ipAddress" id="ipAddress">
+                <option value="0.0.0.0" th:selected="${basic.listingAddress == '0.0.0.0'}">0.0.0.0</option>
+                <option th:each="ip : ${ips}" th:value="${ip}" th:text="${ip}" th:selected="${ip == basic.listingAddress}">
+                </option>
+            </select>
+
+            <label for="language" th:text="#{language}"></label>
+            <select class="basic-selector" name="language" id="language">
+                <option value="en" th:selected="${basic.language} == 'en'">english</option>
+                <option value="ka" th:selected="${basic.language} == 'ka'">ქართული</option>
+                <option value="az" th:selected="${basic.language} == 'az'">Azerbaijani</option>
+                <option value="arm" th:selected="${basic.language} == 'arm'">Armenian</option>
+                <option value="tuk" th:selected="${basic.language} == 'tuk'">Turkmen</option>
+                <option value="ru" th:selected="${basic.language} == 'ru'">русский</option>
+            </select>
+
+
+            <label for="timeZone" th:text="#{timezone}"></label>
+            <select class="basic-selector" name="timeZone" id="timeZone">
+                <option value="Pacific/Midway" th:selected="${basic.timeZone} == 'Pacific/Midway'">(UTC-11:00) Midway
+                    Island, American Samoa</option>
+                <option value="Pacific/Niue" th:selected="${basic.timeZone} == 'Pacific/Niue'">(UTC-11:00) Niue</option>
+                <option value="Pacific/Pago_Pago" th:selected="${basic.timeZone} == 'Pacific/Pago_Pago'">(UTC-11:00)
+                    Pago Pago</option>
+                <option value="Pacific/Honolulu" th:selected="${basic.timeZone} == 'Pacific/Honolulu'">(UTC-10:00)
+                    Hawaii</option>
+                <option value="Pacific/Tahiti" th:selected="${basic.timeZone} == 'Pacific/Tahiti'">(UTC-10:00) Tahiti
+                </option>
+                <option value="Pacific/Marquesas" th:selected="${basic.timeZone} == 'Pacific/Marquesas'">(UTC-09:30)
+                    Marquesas Islands</option>
+                <option value="America/Anchorage" th:selected="${basic.timeZone} == 'America/Anchorage'">(UTC-09:00)
+                    Alaska</option>
+                <option value="America/Los_Angeles" th:selected="${basic.timeZone} == 'America/Los_Angeles'">(UTC-08:00)
+                    Pacific Time (US & Canada)</option>
+                <option value="America/Tijuana" th:selected="${basic.timeZone} == 'America/Tijuana'">(UTC-08:00) Tijuana
+                </option>
+                <option value="America/Denver" th:selected="${basic.timeZone} == 'America/Denver'">(UTC-07:00) Mountain
+                    Time (US & Canada)</option>
+                <option value="America/Phoenix" th:selected="${basic.timeZone} == 'America/Phoenix'">(UTC-07:00) Arizona
+                </option>
+                <option value="America/Chicago" th:selected="${basic.timeZone} == 'America/Chicago'">(UTC-06:00) Central
+                    Time (US & Canada)</option>
+                <option value="America/Mexico_City" th:selected="${basic.timeZone} == 'America/Mexico_City'">(UTC-06:00)
+                    Mexico City</option>
+                <option value="America/Guatemala" th:selected="${basic.timeZone} == 'America/Guatemala'">(UTC-06:00)
+                    Central America</option>
+                <option value="America/New_York" th:selected="${basic.timeZone} == 'America/New_York'">(UTC-05:00)
+                    Eastern Time (US & Canada)</option>
+                <option value="America/Toronto" th:selected="${basic.timeZone} == 'America/Toronto'">(UTC-05:00) Toronto
+                </option>
+                <option value="America/Havana" th:selected="${basic.timeZone} == 'America/Havana'">(UTC-05:00) Havana
+                </option>
+                <option value="America/Bogota" th:selected="${basic.timeZone} == 'America/Bogota'">(UTC-05:00) Bogota
+                </option>
+                <option value="America/Caracas" th:selected="${basic.timeZone} == 'America/Caracas'">(UTC-04:00) Caracas
+                </option>
+                <option value="America/Santiago" th:selected="${basic.timeZone} == 'America/Santiago'">(UTC-04:00)
+                    Santiago</option>
+                <option value="America/La_Paz" th:selected="${basic.timeZone} == 'America/La_Paz'">(UTC-04:00) La Paz
+                </option>
+                <option value="America/Argentina/Buenos_Aires"
+                    th:selected="${basic.timeZone} == 'America/Argentina/Buenos_Aires'">(UTC-03:00) Buenos Aires
+                </option>
+                <option value="America/Montevideo" th:selected="${basic.timeZone} == 'America/Montevideo'">(UTC-03:00)
+                    Montevideo</option>
+                <option value="America/Sao_Paulo" th:selected="${basic.timeZone} == 'America/Sao_Paulo'">(UTC-03:00) São
+                    Paulo</option>
+                <option value="Atlantic/South_Georgia" th:selected="${basic.timeZone} == 'Atlantic/South_Georgia'">
+                    (UTC-02:00) South Georgia</option>
+                <option value="Atlantic/Azores" th:selected="${basic.timeZone} == 'Atlantic/Azores'">(UTC-01:00) Azores
+                </option>
+                <option value="Atlantic/Cape_Verde" th:selected="${basic.timeZone} == 'Atlantic/Cape_Verde'">(UTC-01:00)
+                    Cape Verde</option>
+                <option value="UTC" th:selected="${basic.timeZone} == 'UTC'">(UTC+00:00) Coordinated Universal Time
+                </option>
+                <option value="Europe/London" th:selected="${basic.timeZone} == 'Europe/London'">(UTC+00:00) London
+                </option>
+                <option value="Africa/Abidjan" th:selected="${basic.timeZone} == 'Africa/Abidjan'">(UTC+00:00) Abidjan
+                </option>
+                <option value="Europe/Berlin" th:selected="${basic.timeZone} == 'Europe/Berlin'">(UTC+01:00) Berlin
+                </option>
+                <option value="Europe/Paris" th:selected="${basic.timeZone} == 'Europe/Paris'">(UTC+01:00) Paris
+                </option>
+                <option value="Africa/Lagos" th:selected="${basic.timeZone} == 'Africa/Lagos'">(UTC+01:00) Lagos
+                </option>
+                <option value="Europe/Athens" th:selected="${basic.timeZone} == 'Europe/Athens'">(UTC+02:00) Athens
+                </option>
+                <option value="Europe/Helsinki" th:selected="${basic.timeZone} == 'Europe/Helsinki'">(UTC+02:00)
+                    Helsinki</option>
+                <option value="Africa/Cairo" th:selected="${basic.timeZone} == 'Africa/Cairo'">(UTC+02:00) Cairo
+                </option>
+                <option value="Europe/Moscow" th:selected="${basic.timeZone} == 'Europe/Moscow'">(UTC+03:00) Moscow
+                </option>
+                <option value="Europe/Istanbul" th:selected="${basic.timeZone} == 'Europe/Istanbul'">(UTC+03:00)
+                    Istanbul</option>
+                <option value="Asia/Riyadh" th:selected="${basic.timeZone} == 'Asia/Riyadh'">(UTC+03:00) Riyadh</option>
+                <option value="Asia/Tehran" th:selected="${basic.timeZone} == 'Asia/Tehran'">(UTC+03:30) Tehran</option>
+                <option value="Asia/Tbilisi" th:selected="${basic.timeZone} == 'Asia/Tbilisi'">(UTC+04:00) Tbilisi
+                </option>
+                <option value="Asia/Dubai" th:selected="${basic.timeZone} == 'Asia/Dubai'">(UTC+04:00) Dubai</option>
+                <option value="Asia/Kabul" th:selected="${basic.timeZone} == 'Asia/Kabul'">(UTC+04:30) Kabul</option>
+                <option value="Asia/Karachi" th:selected="${basic.timeZone} == 'Asia/Karachi'">(UTC+05:00) Karachi
+                </option>
+                <option value="Asia/Tashkent" th:selected="${basic.timeZone} == 'Asia/Tashkent'">(UTC+05:00) Tashkent
+                </option>
+                <option value="Asia/Kolkata" th:selected="${basic.timeZone} == 'Asia/Kolkata'">(UTC+05:30) Kolkata
+                </option>
+                <option value="Asia/Kathmandu" th:selected="${basic.timeZone} == 'Asia/Kathmandu'">(UTC+05:45) Kathmandu
+                </option>
+                <option value="Asia/Dhaka" th:selected="${basic.timeZone} == 'Asia/Dhaka'">(UTC+06:00) Dhaka</option>
+                <option value="Asia/Almaty" th:selected="${basic.timeZone} == 'Asia/Almaty'">(UTC+06:00) Almaty</option>
+                <option value="Asia/Rangoon" th:selected="${basic.timeZone} == 'Asia/Rangoon'">(UTC+06:30) Yangon
+                </option>
+                <option value="Asia/Bangkok" th:selected="${basic.timeZone} == 'Asia/Bangkok'">(UTC+07:00) Bangkok
+                </option>
+                <option value="Asia/Ho_Chi_Minh" th:selected="${basic.timeZone} == 'Asia/Ho_Chi_Minh'">(UTC+07:00) Ho
+                    Chi Minh City</option>
+                <option value="Asia/Hong_Kong" th:selected="${basic.timeZone} == 'Asia/Hong_Kong'">(UTC+08:00) Hong Kong
+                </option>
+                <option value="Asia/Singapore" th:selected="${basic.timeZone} == 'Asia/Singapore'">(UTC+08:00) Singapore
+                </option>
+                <option value="Asia/Tokyo" th:selected="${basic.timeZone} == 'Asia/Tokyo'">(UTC+09:00) Tokyo</option>
+                <option value="Asia/Seoul" th:selected="${basic.timeZone} == 'Asia/Seoul'">(UTC+09:00) Seoul</option>
+                <option value="Australia/Sydney" th:selected="${basic.timeZone} == 'Australia/Sydney'">(UTC+10:00)
+                    Sydney</option>
+                <option value="Pacific/Guam" th:selected="${basic.timeZone} == 'Pacific/Guam'">(UTC+10:00) Guam</option>
+                <option value="Pacific/Noumea" th:selected="${basic.timeZone} == 'Pacific/Noumea'">(UTC+11:00) New
+                    Caledonia</option>
+                <option value="Pacific/Fiji" th:selected="${basic.timeZone} == 'Pacific/Fiji'">(UTC+12:00) Fiji</option>
+                <option value="Pacific/Auckland" th:selected="${basic.timeZone} == 'Pacific/Auckland'">(UTC+12:00)
+                    Auckland</option>
+                <option value="Pacific/Tongatapu" th:selected="${basic.timeZone} == 'Pacific/Tongatapu'">(UTC+13:00)
+                    Nuku'alofa</option>
+            </select>
+
+            <input type="submit" value="Set" id="basic-set-btn">
+        </form>
+    </div>
+</div>

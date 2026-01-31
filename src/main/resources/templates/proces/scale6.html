@@ -1,0 +1,35 @@
+<div id="scale6-container">
+    <input type="number" id="magonNumLeght_6" th:value="${magonNumLeght_6}" readonly hidden>
+    <div id="scale6-action">
+        <div id="scale6-btn-container">
+            <input type="text" id="w-indic-6" readonly >
+            <form action="/startWeighing_6" method="post">
+                <input type="button" th:value="#{weighing.start}" id="scale6-start-weighing-btn">
+            </form>
+            <form action="/abortWeighing_6" method="post">
+                <input type="button" th:value="#{weighing.abort}" id="scale6-abort-weighing-btn">
+            </form>
+
+            <form action="/addwagonWeighing_6" method="post">
+                <input type="number" id="scale6-count-input" name="count" placeholder="count">
+                <input type="text" id="scale6-product-input" name="product" th:placeholder="#{weighing.product}">
+                <input type="number" id="scale6-number-input" name="wagonNumber" th:placeholder="#{weighing.number}">
+                <input type="button" th:value="#{weighing.addwagon}" id="scale4-add-wagon-btn">
+            </form>
+        </div>
+        <form action="/updateAllWeighing_6" method="post">
+            <input type="button" th:value="#{weighing.update}" id="scale6-update-weighing-btn">
+        </form>
+        <div id="scale6-indicator"></div>
+    </div>
+
+    <div class="scale6-info">
+        <div class="scale6-info-container">
+            <video  th:if="${cam6Enabled}" id="player-6" class="scale6-camera"  muted data-hls-src="/cam6/index.m3u8"></video>
+            <div class="scale6-done-info">
+                <a target="_blank" href="/pdflast_6/report6.pdf">Print Report</a>
+            </div>
+        </div>
+        <div id="operation-data6-container"></div>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+<div id="data-container">
+    <div id="data-action">
+        <div id="data-btn-container">
+            <button type="submit" class="data-act-btn" id="data-set-btn-clone" th:text="#{save}">
+            </button>
+            <form action="/data-save-and-reboot" method="post">
+                <input type="button" th:value="#{save.and.reboot}" id="data-set-and-reboot-btn">
+            </form>
+        </div>
+
+        <div id="data-indicator"></div>
+    </div>
+
+    <div id="data-settings-div">
+        <form method="post" action="/setDataSettings" id="data-set-from">
+
+            <label for="dataUser" th:text="#{data.user}"></label>
+            <input type="text" class="data-input" name="dataUser" id="dataUser" required th:value="${data.dataUser}">
+
+            <label for="dataName" th:text="#{data.name}"></label>
+            <input type="text" class="data-input" name="dataName" id="dataName" required th:value="${data.dataName}">
+
+            <label for="dataPassword" th:text="#{data.password}"></label>
+            <input type="password" class="data-input" name="dataPassword" id="dataPassword" required th:value="${data.dataPassword}">
+
+            <label for="dataPasswordre" th:text="#{data.password}"></label>
+            <input type="password" class="data-input" name="dataPasswordre" id="dataPasswordre" required th:value="${data.dataPassword}">
+
+            <label for="dataPort" th:text="#{data.port}"></label>
+            <input type="number" class="data-input" name="dataPort" id="dataPort" required th:value="${data.dataPort}">
+
+            <label for="dataHost" th:text="#{data.host}"></label>
+            <input type="text" class="data-input" name="dataHost" id="dataHost" required th:value="${data.dataHost}">
+
+
+            <input type="submit" value="Set Data Settings" id="data-set-btn">
+        </form>
+    </div>
+</div>

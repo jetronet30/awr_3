@@ -23,18 +23,18 @@ public class DataService {
             try {
                 DATA_SETTINGS_JSON.createNewFile();
                 DataMod dMod = new DataMod();
-                dMod.setDataName("m_db");
+                dMod.setDataName("awr_3_db");
                 dMod.setDataPassword("bostana30");
                 dMod.setDataUser("jetronet");
                 dMod.setDataPort(5432);
                 dMod.setDataHost("localhost");
-                dMod.setDataUrl("jdbc:postgresql://" + "localhost" + ":" + 5432 + "/" + "m_db");
-                dMod.setResDataName("rm_db");
+                dMod.setDataUrl("jdbc:postgresql://" + "localhost" + ":" + 5432 + "/" + "awr_3_db");
+                dMod.setResDataName("awr_3_db");
                 dMod.setResDataPassword("bostana30");
                 dMod.setResDataUser("jetronet");
                 dMod.setResDataPort(5432);
                 dMod.setResDataHost("localhost");
-                dMod.setResDataUrl("jdbc:postgresql://" + "localhost" + ":" + 5432 + "/" + "rm_db");
+                dMod.setResDataUrl("jdbc:postgresql://" + "localhost" + ":" + 5432 + "/" + "awr_3_db");
                 MAPPER.writeValue(DATA_SETTINGS_JSON, dMod);
                 LOGGER.info("Default DATA settings created at {}", DATA_SETTINGS_JSON.getAbsolutePath());
             } catch (Exception e) {

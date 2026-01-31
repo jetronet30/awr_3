@@ -1,0 +1,220 @@
+/* ==================== SCALE 3 — სრულიად ადაპტური ვერსია (2025) ==================== */
+
+#scale3-action {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    background-color: #1a1a2eef;
+    padding: 20px;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+}
+
+#w-indic-3 {
+    width: 200px;
+    height: 50px;
+    background-color: black;
+    color: #0dec05;
+    text-align: center;
+    font-size: 30px;
+    border: none;
+}
+
+#scale3-btn-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#scale3-start-weighing-btn,
+#scale3-abort-weighing-btn,
+#scale3-add-wagon-btn,
+#scale3-update-weighing-btn {
+    background-color: #0078ff;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+#scale3-start-weighing-btn:hover,
+#scale3-abort-weighing-btn:hover,
+#scale3-add-wagon-btn:hover,
+#scale3-update-weighing-btn:hover {
+    background: linear-gradient(45deg, #00b7eb, #007bff);
+    box-shadow: 0 0 15px rgba(0, 183, 255, 0.6);
+}
+
+#scale3-number-input,
+#scale3-product-input,
+#scale3-count-input {
+    padding: 10px;
+    border: none;
+    text-align: center;
+    font-size: medium;
+    border-radius: 4px;
+}
+
+#scale3-number-input { width: 20ch; }
+#scale3-product-input { width: 20ch; }
+#scale3-count-input { width: 10ch; }
+
+#scale3-indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 50px;
+    background-color: aliceblue;
+}
+
+/* === მარცხენა სია === */
+#operation-data3-container {
+    max-width: 450px;
+    min-width: 400px;
+    margin-left: 5px;
+    overflow-y: auto;
+    max-height: calc(100vh - 140px);
+    padding: 5px;
+}
+
+/* === ვაგონების ფორმები === */
+.oprdata3-set-from { margin: 1px; padding: 4px; border-radius: 4px; transition: background-color 0.3s ease; }
+
+.scale3-operdata-row-input,
+.scale3-operdata-weight-input,
+.scale3-operdata-wagonNum-input,
+.scale3-operdata-product-input {
+    padding: 2px; text-align: center; font-size: small; font-weight: 600;
+    border: 1px solid #ccc; border-radius: 3px;
+}
+
+.scale3-operdata-row-input     { width: 5ch; }
+.scale3-operdata-weight-input  { width: 7ch; }
+.scale3-operdata-wagonNum-input{ width: 14ch; }
+.scale3-operdata-product-input { width: 12ch; }
+
+.oprdata3-set-btn {
+    background-color: #2b853a; color: white; border: none; padding: 2px 6px;
+    cursor: pointer; font-weight: 800; border-radius: 3px; transition: all 0.2s ease;
+}
+
+.oprdata3-set-btn:hover { background-color: #3aac4d; padding: 4px 8px; }
+
+/* === მთავარი განლაგება === */
+.scale3-info {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 0 20px 30px;
+    position: relative;
+}
+
+/* === მარჯვენა კამერა — ბაზური ზომა (≤1600px) === */
+.scale3-info-container {
+    position: fixed !important;
+    top: 100px;
+    right: 10px;
+    width: 42vw;
+    max-width: 1400px;
+    min-width: 380px;
+    height: auto !important;
+    min-height: 300px;
+    padding: 10px;
+    background: rgba(26, 26, 46, 0.95);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    box-sizing: border-box;
+}
+
+.scale3-camera {
+    width: 100%;
+    flex: 1;
+    min-height: 200px;
+    object-fit: cover;
+    background: #000;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* === Print Report — ყოველთვის ჩანს === */
+.scale3-done-info {
+    width: 100%;
+    text-align: center;
+    padding: 15px 0 10px;
+    flex-shrink: 0;
+}
+
+.scale3-done-info a {
+    display: inline-block;
+    padding: 15px 30px;
+    background-color: #28a745;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.scale3-done-info a:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* === RESPONSIVE: მობილური და პლანშეტი === */
+@media (max-width: 1024px) {
+    .scale3-info-container {
+        position: static !important;
+        width: 100% !important;
+        max-width: none;
+        min-width: auto;
+        margin: 20px auto;
+        border-radius: 16px;
+    }
+    .scale3-info { flex-direction: column; padding: 0 10px; }
+    #operation-data3-container { margin-left: 0; max-width: none; min-width: auto; }
+}
+
+@media (max-width: 640px) {
+    #scale3-action { flex-direction: column; text-align: center; }
+    #scale3-btn-container { flex-direction: column; width: 100%; }
+    #w-indic-3 { width: 90%; }
+}
+
+/* === დიდი ეკრანები — ვიდეო იზრდება 1600px-დან ზევით (იდენტურად scale1/scale2) === */
+@media (min-width: 1600px) {
+    .scale3-info-container { width: 48vw; max-width: 1600px; min-height: 500px; }
+}
+
+@media (min-width: 1920px) {
+    .scale3-info-container { width: 50vw; max-width: 1800px; min-height: 600px; }
+}
+
+@media (min-width: 2560px) {
+    .scale3-info-container { width: 52vw; max-width: 2000px; min-height: 750px; }
+}
+
+@media (min-width: 3440px) {
+    .scale3-info-container { width: 55vw; max-width: 2400px; min-height: 900px; }
+}
+
+@media (min-width: 3840px) {
+    .scale3-info-container { width: 58vw; max-width: 2800px; min-height: 1000px; padding: 15px; }
+    .scale3-done-info a { padding: 20px 50px; font-size: 1.4rem; }
+}
+
+@media (min-width: 5120px) {
+    .scale3-info-container { width: 60vw; max-width: 3400px; min-height: 1200px; }
+}
