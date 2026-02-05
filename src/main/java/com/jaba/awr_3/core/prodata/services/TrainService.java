@@ -10,6 +10,7 @@ import com.jaba.awr_3.core.prodata.jparepo.TrainJpa;
 import com.jaba.awr_3.core.prodata.jparepo.WagonJpa;
 import com.jaba.awr_3.core.prodata.mod.TrainMod;
 import com.jaba.awr_3.core.prodata.mod.WagonMod;
+import com.jaba.awr_3.core.units.UnitService;
 import com.jaba.awr_3.servermanager.ServerManger;
 
 import jakarta.transaction.Transactional;
@@ -36,20 +37,21 @@ public class TrainService {
     }
 
     @Transactional
-    public void addWagonToTrain(String conId, String scaleName, int rowNum, String weighString) {
+    public void addWagonToTrain(String conId, String scaleName, int rowNum, String weighString, boolean valid) {
         TrainMod train = trainJpa.findByOpenTrueAndConId(conId).orElse(null);
         if (train != null) {
             for (WagonMod w : train.getWagons()) {
                 if (w.getRowNum() != rowNum) {
                     WagonMod wagon = new WagonMod();
                     wagon.setSacleName(scaleName);
-                    train.getWagons().add(wagon);
+                    wagon.setValid(valid);
                     wagon.setTrain(train);
                     wagon.setRowNum(rowNum);
-                    wagon.setWeight(getBigDecimal(weighString));
+                    addWeightOrUpdateTare(wagon, weighString);
                     wagonJpa.save(wagon);
-                }else{
-                    w.setWeight(getBigDecimal(weighString));
+                } else {
+                    w.setValid(valid);
+                    addWeightOrUpdateTare(w, weighString);
                     wagonJpa.save(w);
                 }
             }
@@ -59,6 +61,19 @@ public class TrainService {
 
     }
 
+    private void addWeightOrUpdateTare(WagonMod wagon, String weighString) {
+        BigDecimal weight = getBigDecimal(weighString);
+        if (weight == null || weight.signum() <= 0) {
+            wagon.setTare(BigDecimal.ZERO);
+            return;
+        }
+        if (weight.compareTo(UnitService.TARE_LIMIT) > 0) {
+            wagon.setWeight(weight);
+        } else {
+            wagon.setWeight(weight);
+            wagon.setTare(weight);
+        }
+    }
 
     private BigDecimal getBigDecimal(String value) {
         try {

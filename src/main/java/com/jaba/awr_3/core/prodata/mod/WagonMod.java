@@ -33,6 +33,7 @@ public class WagonMod {
     private BigDecimal weight;
     private BigDecimal tare;
     private BigDecimal neto;
+    private boolean valid;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "train_id")

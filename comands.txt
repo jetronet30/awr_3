@@ -3,7 +3,27 @@ ffmpeg   -rtsp_transport tcp   -fflags +genpts+igndts+discardcorrupt   -i "rtsp:
 mvn clean package -DskipTests
 journalctl -u awr.service -f
 
+
+///////////////////////////////////////////////
 sudo apt remove --purge postgresql postgresql-* -y
+
+psql -U jetronet -d awr_3_db -h localhost -p 5432
+
+პაროლი: bostana30
+
+-- 1. ნახე ყველა ცხრილი public სქემაში
+\dt
+
+-- 2. უფრო დეტალურად (მაგიდის სახელები + ტიპები)
+\dt+
+
+
+-- 4. ყველა სქემა
+\dn
+
+-- 5. ყველა ცხრილი ყველა სქემაში
+\dt *.*
+/////////////////////////////////////
 
 sudo apt install openjdk-25-jdk
 
