@@ -1,5 +1,6 @@
 package com.jaba.awr_3.inits;
 
+import com.jaba.awr_3.core.sysutils.SysIdService;
 import com.jaba.awr_3.inits.ffmpeg.FfmpegInitializer;
 import com.jaba.awr_3.inits.fonts.FontsInstaller;
 import com.jaba.awr_3.inits.postgres.DataService;
@@ -19,5 +20,6 @@ public class MainInit {
         PostgresInit.init();
         FfmpegInitializer.init();
         FontsInstaller.init();
+        SysIdService.init();
     }
 }

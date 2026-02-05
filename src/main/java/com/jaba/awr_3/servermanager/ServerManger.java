@@ -16,7 +16,8 @@ public class ServerManger {
     private static final int PROCESS_TIMEOUT_SECONDS = 30; // ბრძანების შესრულების დროის ლიმიტი (წამებში)
 
     /**
-     * ასრულებს სისტემურ ბრძანებას განსაზღვრული დროის ლიმიტით, აღრიცხავს stdout-სა და stderr-ს.
+     * ასრულებს სისტემურ ბრძანებას განსაზღვრული დროის ლიმიტით, აღრიცხავს stdout-სა
+     * და stderr-ს.
      *
      * @param cmd ბრძანება და მისი არგუმენტები.
      * @return true თუ exit code == 0, წინააღმდეგ შემთხვევაში false.
@@ -47,7 +48,8 @@ public class ServerManger {
             boolean finished = process.waitFor(PROCESS_TIMEOUT_SECONDS, TimeUnit.SECONDS);
             if (!finished) {
                 process.destroyForcibly();
-                log.error("ბრძანებამ გადააჭარბა დროის ლიმიტს (>{} წამი): {}", PROCESS_TIMEOUT_SECONDS, String.join(" ", cmd));
+                log.error("ბრძანებამ გადააჭარბა დროის ლიმიტს (>{} წამი): {}", PROCESS_TIMEOUT_SECONDS,
+                        String.join(" ", cmd));
                 return false;
             }
 
@@ -100,7 +102,8 @@ public class ServerManger {
     }
 
     /**
-     * ფოლდერის რეკურსიულად წაშლა - გამოიყენება სისტემის საწყის მდგომარეობაში დასაბრუნებლად.
+     * ფოლდერის რეკურსიულად წაშლა - გამოიყენება სისტემის საწყის მდგომარეობაში
+     * დასაბრუნებლად.
      *
      * @param folderPath ფოლდერის აბსოლუტური ან ფარდობითი გზა.
      * @return true თუ ფოლდერი წარმატებით წაიშალა, წინააღმდეგ შემთხვევაში false.
@@ -137,8 +140,18 @@ public class ServerManger {
      *
      * @return ფორმატირებული დრო "yyyy-MM-dd HH:mm:ss".
      */
-    public static String getSystemTime() {
+    public static String getSystemDateTime() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
+
+    /**
+     * აბრუნებს სისტემის მიმდინარე თარიღს ფორმატირებულ სტრიქონად.
+     *
+     * @return ფორმატირებული თარიღი "yyyy-MM-dd".
+     */
+
+    public static String getSystemDate() {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
     /**
@@ -168,5 +181,4 @@ public class ServerManger {
         return executeCommand("timedatectl", "set-ntp", "true");
     }
 
-   
 }

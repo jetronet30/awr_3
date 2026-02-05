@@ -1,0 +1,12 @@
+ffmpeg   -rtsp_transport tcp   -fflags +genpts+igndts+discardcorrupt   -i "rtsp://admin:admin@192.168.1.11:554"   -c:v libx264   -preset ultrafast   -tune zerolatency   -g 30   -keyint_min 30   -sc_threshold 0   -r 25   -an   -f hls   -hls_time 6   -hls_list_size 5   -hls_flags delete_segments+independent_segments   -hls_segment_filename "/usr/src/awr_2/masterepo/streams/cam1/segment_%06d.ts"   -hls_fmp4_init_filename "init-cam1.mp4"   -method PUT   "/usr/src/awr_2/./masterepo/streams/cam1/index.m3u8"
+
+mvn clean package -DskipTests
+journalctl -u awr.service -f
+
+sudo apt remove --purge postgresql postgresql-* -y
+
+sudo apt install openjdk-25-jdk
+
+sudo apt install maven
+
+sudo dd if=/dev/sda of=/dev/sdb bs=64K conv=noerror,sync status=progress   უბუნტუ  კოპირება  !!!!
