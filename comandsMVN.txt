@@ -10,4 +10,6 @@ mvn test
 
 mvn deploy
 
+mvn clean package -DskipTests
+
 mvn -DskipTests package
