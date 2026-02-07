@@ -8,4 +8,5 @@ import com.jaba.awr_3.core.prodata.mod.TrainMod;
 
 public interface TrainJpa  extends JpaRepository<TrainMod, Long>{
     Optional<TrainMod> findByOpenTrueAndConId(String conId);
+    boolean existsByOpenTrueAndConId(String conId);
 }

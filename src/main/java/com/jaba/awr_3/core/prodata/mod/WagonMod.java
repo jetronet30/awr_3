@@ -23,7 +23,7 @@ public class WagonMod {
     private Long id;
     private Long sysId;
     private String processId;
-    private String sacleName;
+    private String scaleName;
     private String connId;
     private String wagonNumber;
     private String product;

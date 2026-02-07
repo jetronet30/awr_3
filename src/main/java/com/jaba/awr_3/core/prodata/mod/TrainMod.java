@@ -37,8 +37,8 @@ public class TrainMod {
     private BigDecimal tare;
     private BigDecimal neto;
     private boolean open;
-    private boolean corrected;
-    private int wagoCount;
+    private boolean done;
+    private int count;
     private String videoPatch;
 
     @OneToMany(mappedBy = "train", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

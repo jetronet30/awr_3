@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.jaba.awr_3.servermanager.ServerManger;
+import com.jaba.awr_3.servermanager.ServerManager;
 import com.jaba.awr_3.seversettings.basic.BasicService;
 import com.jaba.awr_3.seversettings.network.NetService;
 
@@ -39,7 +39,7 @@ public class BasicCon {
 
     @PostMapping("/basic-save-and-reboot")
     public String setNetworkAndReboot(Model m) {
-        ServerManger.reboot();
+        ServerManager.reboot();
         return "settings/reboot";
     }
 

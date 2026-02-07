@@ -1,0 +1,13 @@
+
+
+
+
+mvn clean
+mvn package
+mvn compile
+mvn install
+mvn test
+
+mvn deploy
+
+mvn -DskipTests package

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.jaba.awr_3.servermanager.ServerManger;
+import com.jaba.awr_3.servermanager.ServerManager;
 import com.jaba.awr_3.seversettings.owner.OwnerService;
 
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ public class OwnerCon {
 
     @PostMapping("/owner-save-and-reboot")
     public String setDataAndReboot(Model m) {
-        ServerManger.reboot();
+        ServerManager.reboot();
         return "settings/reboot";
     }
 

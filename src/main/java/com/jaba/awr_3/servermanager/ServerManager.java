@@ -10,9 +10,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.concurrent.*;
 
-public class ServerManger {
+public class ServerManager {
 
-    private static final Logger log = LoggerFactory.getLogger(ServerManger.class);
+    private static final Logger log = LoggerFactory.getLogger(ServerManager.class);
     private static final int PROCESS_TIMEOUT_SECONDS = 30; // ბრძანების შესრულების დროის ლიმიტი (წამებში)
 
     /**
