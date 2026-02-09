@@ -2,6 +2,7 @@ package com.jaba.awr_3.inits;
 
 
 
+import com.jaba.awr_3.core.connectors.ComService;
 import com.jaba.awr_3.core.sysutils.SysIdService;
 import com.jaba.awr_3.core.units.UnitService;
 import com.jaba.awr_3.inits.ffmpeg.FfmpegInitializer;
@@ -25,5 +26,6 @@ public class MainInit {
         FfmpegInitializer.init();
         FontsInstaller.init();
         SysIdService.init();
+        ComService.initComPorts();
     }
 }

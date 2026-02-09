@@ -29,16 +29,15 @@ public class TrainService {
     private final WagonJpa wagonJpa;
     private final WtareService wtareService;
 
-    @Transactional
-    public void addTrain(String conId, String instrument, String scaleName) {
+    
+    private void addTrain(String conId, String scaleName) {
         TrainMod train = new TrainMod();
         train.setConId(conId);
         train.setWeighingStartDateTime(ServerManager.getSystemDateTime());
-        train.setInstrument(instrument);
-        train.setScaleName(scaleName);
         train.setOpen(true);
         train.setDone(false);
         train.setCount(0);
+        train.setScaleName(scaleName);
         trainJpa.save(train);
         LOGGER.info("New train created with conId: {}", conId);
     }
@@ -85,7 +84,8 @@ public class TrainService {
     @Transactional
     public void addWagonToTrain(String conId, String wagonNumber, String product, int count) {
         int wcount = Math.min(Math.max(count, 1), 300);
-        if (wcount > 1) wagonNumber = "";
+        if (wcount > 1)
+            wagonNumber = "";
 
         TrainMod train = trainJpa.findByOpenTrueAndConId(conId).orElse(null);
         if (train == null) {
@@ -95,8 +95,8 @@ public class TrainService {
 
         int currentSize = train.getWagons().size();
         if (currentSize + wcount > 300) {
-            LOGGER.warn("Cannot add {} wagons — limit would be exceeded (current: {}, max: 300)", 
-                        wcount, currentSize);
+            LOGGER.warn("Cannot add {} wagons — limit would be exceeded (current: {}, max: 300)",
+                    wcount, currentSize);
             return;
         }
 
@@ -153,26 +153,20 @@ public class TrainService {
     }
 
     @Transactional
-    public void closeTrain(String conId) {
+    public void closeTrainAndOpenNewTrain(String conId, String scaleName) {
         TrainMod train = trainJpa.findByOpenTrueAndConId(conId).orElse(null);
         if (train == null) {
             LOGGER.warn("No open train found for conId: {}", conId);
+            addTrain(conId, scaleName);
             return;
         }
-
-        // წავშალოთ ბაზიდან ყველა არავალიდური ვაგონი
-        wagonJpa.deleteByTrainIdAndValidFalse(train.getId());
-
-        // კოლექციის განახლება (რადგან ბაზაში უკვე წაიშალა)
-        train.getWagons().removeIf(w -> !w.isValid());
-
-        // გამოვთვალოთ და შევინახოთ ტოტალები
-        recalculateTrainTotals(train);
-
-        train.setWeighingStopDateTime(ServerManager.getSystemDateTime());
-        train.setOpen(false);
-        trainJpa.save(train);
-
+        if (train.isDone()) {
+            train.setOpen(false);
+            trainJpa.save(train);
+        } else {
+            trainJpa.delete(train);
+        }
+        addTrain(conId, scaleName);
         LOGGER.info("Train conId {} closed successfully", conId);
     }
 
@@ -255,7 +249,8 @@ public class TrainService {
         boolean allValidHaveTare = !train.getWagons().isEmpty();
 
         for (WagonMod w : train.getWagons()) {
-            if (!w.isValid()) continue;
+            if (!w.isValid())
+                continue;
 
             BigDecimal weight = w.getWeight() != null ? w.getWeight() : BigDecimal.ZERO;
             gross = gross.add(weight);
