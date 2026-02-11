@@ -29,7 +29,6 @@ public class TrainService {
     private final WagonJpa wagonJpa;
     private final WtareService wtareService;
 
-    
     private void addTrain(String conId, String scaleName) {
         TrainMod train = new TrainMod();
         train.setConId(conId);
@@ -43,7 +42,8 @@ public class TrainService {
     }
 
     @Transactional
-    public void addWagonToTrain(String conId, String processId, int rowNum, String weighString) {
+    public void addWagonToTrain(String conId, String processId, int rowNum, String weighString, String weighingDateTime,
+            String speed, int axle, boolean updateTare) {
         BigDecimal weight = getBigDecimal(weighString);
         TrainMod train = trainJpa.findByOpenTrueAndConId(conId).orElse(null);
 
@@ -70,11 +70,13 @@ public class TrainService {
         if (wagonToSave.getId() != null) {
             LOGGER.info("Updating existing wagon rowNum {} in train conId {}", rowNum, conId);
         }
-
+        wagonToSave.setWeighingDateTime(weighingDateTime);
+        wagonToSave.setSpeed(speed);
+        wagonToSave.setAxle(axle);
         wagonToSave.setProcessId(processId);
         wagonToSave.setValid(true);
 
-        applyWeightAndTare(wagonToSave, weight);
+        applyWeightAndTare(wagonToSave, weight, updateTare);
 
         wagonJpa.save(wagonToSave);
 
@@ -116,7 +118,8 @@ public class TrainService {
     }
 
     @Transactional
-    public Map<String, Object> updateWagonToTrain(Long id, String conId, String wagonNumber, String product) {
+    public Map<String, Object> updateWagonToTrain(Long id, String conId, String wagonNumber, String product,
+            boolean updateTare) {
         Map<String, Object> response = new HashMap<>();
 
         WagonMod wagon = wagonJpa.findById(id).orElse(null);
@@ -134,7 +137,7 @@ public class TrainService {
         if (weight != null && weight.signum() > 0 && weight.compareTo(UnitService.TARE_LIMIT) < 0) {
             wagon.setTare(weight);
             String num = wagon.getWagonNumber();
-            if (num != null && !num.isEmpty()) {
+            if (num != null && !num.isEmpty() && updateTare) {
                 wtareService.addOrUpdateWtare(weight.toString(), num);
             }
         } else {
@@ -171,7 +174,9 @@ public class TrainService {
     }
 
     @Transactional
-    private void updateTrain(String conId, String processId, String maxSpeed, String minSpeed) {
+    public void updateTrain(String conId, String processId, String weighString, String sysDateTime, String maxSpeed,
+            String minSpeed,
+            int count) {
         TrainMod train = trainJpa.findByOpenTrueAndConId(conId).orElse(null);
         if (train == null) {
             LOGGER.warn("No open train found for conId: {}", conId);
@@ -184,6 +189,9 @@ public class TrainService {
         train.setProcessId(processId);
         train.setMaxSpeed(maxSpeed);
         train.setMinSpeed(minSpeed);
+        train.setSysGross(getBigDecimal(weighString));
+        train.setSysDateTime(sysDateTime);
+        train.setCount(count);
         trainJpa.save(train);
 
         LOGGER.info("Train conId {} updated (processId, speeds)", conId);
@@ -222,7 +230,7 @@ public class TrainService {
     // დამხმარე მეთოდები
     // ────────────────────────────────────────────────
 
-    private void applyWeightAndTare(WagonMod wagon, BigDecimal weight) {
+    private void applyWeightAndTare(WagonMod wagon, BigDecimal weight, boolean updateTare) {
         if (weight == null) {
             wagon.setWeight(null);
             wagon.setTare(null);

@@ -17,10 +17,6 @@ public class Tsr4000Parser {
     private final EmitterServic emitterServic;
     private static final Logger LOGGER = LoggerFactory.getLogger(Tsr4000Parser.class);
 
-    
-
-    
-
     public void parseSectors(String text, String scaleName, String conId, boolean automatic,
             boolean rightToUpdateTare) {
         if (text == null || text.length() < 1) {
@@ -42,10 +38,11 @@ public class Tsr4000Parser {
                 String minSpeed = text.substring(36, 42);
                 String countsector7 = text.substring(42, 45);
                 // String lastsector8 = text.substring(45);
-                
-                
+                trainService.updateTrain(conId, processId, getWeight(fuulWeight), getDate(weghtingDate),
+                        getSpeed(maxSpeed), getSpeed(minSpeed), getRowNum(countsector7));
+
                 emitterServic.sendToScale(conId, "update-data-container");
-                
+
             } else if (first3.contains("V")) {
                 if (text.length() < 45) {
                     LOGGER.warn("V-type data incomplete: {}", text);
@@ -56,13 +53,20 @@ public class Tsr4000Parser {
                 String rowNum = text.substring(8, 11);
                 String weight = text.substring(11, 17);
                 String wDate = text.substring(17, 31);
-                System.out.println(getWeight(weight));
+                String[] speedAxle = text.split("\\s+");
+                String speedAndAxle = speedAxle[speedAxle.length - 2];
+                System.out.println( getSpeed(speedAndAxle.substring(0, 6)) + "" +"Axle: " + getAxle(speedAndAxle.substring(6)) );
+                /* 
+                System.out.println(getWeight(weight));`
                 System.out.println(getDate(wDate));
                 System.out.println(prosesId);
                 System.out.println(text.length());
                 System.out.println("row NUMBER:" + getRowNum(rowNum));
                 System.out.println(automatic);
-                
+                    */
+                trainService.addWagonToTrain(conId, prosesId, getRowNum(rowNum), getWeight(weight), getDate(wDate),
+                        getSpeed(speedAndAxle.substring(0, 6)), getAxle(speedAndAxle.substring(6)), rightToUpdateTare);
+
                 emitterServic.sendToScale(conId, getWeight(weight));
                 if (automatic) {
                     emitterServic.sendToScale(conId, "update-data-container");
@@ -71,17 +75,17 @@ public class Tsr4000Parser {
                 trainService.closeTrainAndOpenNewTrain(conId, scaleName);
                 emitterServic.sendToScale(conId, "update-data-container");
                 emitterServic.sendToScale(conId, "update-data-works-start");
-                
+
             } else if (text.contains("Trn_Dir:")) {
                 String upper = text.toUpperCase();
                 if (upper.contains(" IN ") || upper.contains(":IN ") || upper.contains("(IN")) {
-                    
+                    trainService.updateTrainAndWagons(conId, "IN");
                     emitterServic.sendToScale(conId, "update-data-works-stop");
                     if (automatic) {
                         emitterServic.sendToScale(conId, "update-data-container");
                     }
                 } else if (upper.contains(" OUT ") || upper.contains(":OUT ") || upper.contains("(OUT")) {
-                    
+                    trainService.updateTrainAndWagons(conId, "OUT");
                     emitterServic.sendToScale(conId, "update-data-works-stop");
                     if (automatic) {
                         emitterServic.sendToScale(conId, "update-data-container");
@@ -131,11 +135,11 @@ public class Tsr4000Parser {
 
     private String getSpeed(String speed) {
         if (speed == null || speed.isEmpty()) {
-            return "0,0km/h";
+            return "0,0" + UnitService.SPEED_UNIT;
         }
         speed = speed.replaceFirst("^0+", "");
         if (speed.isEmpty()) {
-            return "0,0km/h";
+            return "0,0" + UnitService.SPEED_UNIT;
         }
         double result = 0;
         try {
@@ -157,7 +161,15 @@ public class Tsr4000Parser {
         return Integer.parseInt(row);
     }
 
-   
-   
+    private int getAxle(String axle) {
+        if (axle == null || axle.isEmpty()) {
+            return 0;
+        }
+        axle = axle.replaceFirst("^0+", "");
+        if (axle.isEmpty()) {
+            return 0;
+        }
+        return Integer.parseInt(axle);
+    }
 
 }

@@ -30,12 +30,14 @@ public class TrainMod {
     private String conId;
     private String weighingStartDateTime;
     private String weighingStopDateTime;
+    private String sysDateTime;
     private String direction;
     private String maxSpeed;
     private String minSpeed;
     private BigDecimal gross;
     private BigDecimal tare;
     private BigDecimal neto;
+    private BigDecimal sysGross;
     private boolean open;
     private boolean done;
     private int count;

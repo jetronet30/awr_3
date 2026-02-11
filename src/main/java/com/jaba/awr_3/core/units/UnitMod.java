@@ -14,5 +14,7 @@ public class UnitMod {
     private String speedUnit;
     private int wagonNumLenUnit;
     private BigDecimal tarLimit;
+    private BigDecimal weightLimit;
+    private BigDecimal speedLimit;
 
 }

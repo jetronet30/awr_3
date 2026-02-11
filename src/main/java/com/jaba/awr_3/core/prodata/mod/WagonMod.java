@@ -27,6 +27,7 @@ public class WagonMod {
     private String connId;
     private String wagonNumber;
     private String product;
+    private String weighingDateTime;
     private int axle;
     private String speed;
     private int rowNum;

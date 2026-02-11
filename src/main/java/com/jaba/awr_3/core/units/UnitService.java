@@ -23,6 +23,8 @@ public class UnitService {
     public static String WEIGHT_UNIT;
     public static int W_NUM_LEN;
     public static BigDecimal TARE_LIMIT;
+    public static BigDecimal WEIGHT_LIMIT;
+    public static BigDecimal SPEED_LIMIT;
 
     public static void initUnitS() {
         if (!UNITS_JSON.exists()) {
@@ -37,6 +39,10 @@ public class UnitService {
                 W_NUM_LEN = 8;
                 uMod.setTarLimit(new BigDecimal("29.0"));
                 TARE_LIMIT = new BigDecimal("29.0");
+                uMod.setWeightLimit(new BigDecimal("120.0"));
+                WEIGHT_LIMIT = new BigDecimal("120.0");
+                uMod.setSpeedLimit(new BigDecimal("5.0"));
+                SPEED_LIMIT = new BigDecimal("5.0");
                 MAPPER.writeValue(UNITS_JSON, uMod);
                 LOGGER.info(" write UNITS to JSON COMPLECTE ");
             } catch (Exception e) {
