@@ -52,6 +52,7 @@ public class ComService {
             for (int i = 0; i < comPorts.length; i++) {
                 SerialPort port = comPorts[i];
                 ComMod cMod = new ComMod();
+                cMod.setIndex(i);
                 cMod.setComName(port.getSystemPortName());
                 cMod.setComNick("COM" + (i + 1));
                 cMod.setScaleName("Scale " + (i + 1));
@@ -60,7 +61,7 @@ public class ComService {
                 cMod.setDataBits(8);
                 cMod.setStopBit(1);
                 cMod.setParity(0);
-                cMod.setInUse(false);
+                cMod.setInProcess(false);
                 cMod.setActive(false);
                 cMod.setAutomatic(false);
                 cMod.setRightToUpdateTare(true);
@@ -211,38 +212,7 @@ public class ComService {
         return response;
     }
 
-    // === inUse management (thread-safe) ===
-    public void setComPortInUse(String name) {
-        try {
-            List<ComMod> ports = readComPorts();
-            for (ComMod cm : ports) {
-                if (cm.getComName().equals(name)) {
-                    cm.setInUse(true);
-                    LOGGER.info("Port marked as in use: {}", name);
-                    break;
-                }
-            }
-            writeComPorts(ports);
-        } catch (Exception e) {
-            LOGGER.error("Failed to mark port as in use: {}", name, e);
-        }
-    }
-
-    public void setComPortDeUse(String name) {
-        try {
-            List<ComMod> ports = readComPorts();
-            for (ComMod cm : ports) {
-                if (cm.getComName().equals(name)) {
-                    cm.setInUse(false);
-                    LOGGER.info("Port marked as available: {}", name);
-                    break;
-                }
-            }
-            writeComPorts(ports);
-        } catch (Exception e) {
-            LOGGER.error("Failed to mark port as available: {}", name, e);
-        }
-    }
+   
 
     public ComMod getPortByName(String name) {
         if (name == null || name.trim().isEmpty()) {
@@ -284,6 +254,23 @@ public class ComService {
             return null;
         } catch (IOException e) {
             LOGGER.error("შეცდომა პორტის მოძებნისას სახელით: {}", nickName, e);
+            return null;
+        }
+    }
+
+    public ComMod getPortByIndex(int index) {
+        try {
+            List<ComMod> ports = readComPorts();
+            for (ComMod cm : ports) {
+                if (cm.getIndex() == index) {
+                    LOGGER.debug("პორტი ნაპოვნია getPortByIndex-ით: {}", index);
+                    return cm;
+                }
+            }
+            LOGGER.debug("პორტი ვერ მოიძებნა getPortByIndex-ით: {}", index);
+            return null;
+        } catch (IOException e) {
+            LOGGER.error("შეცდომა პორტის მოძებნისას ინდექსით: {}", index, e);
             return null;
         }
     }

@@ -1,0 +1,38 @@
+<div id="scale0-container">
+    <input type="number" id="magonNumLeght_0" th:value="${magonNumLeght_0}" readonly hidden>
+    <input type="text" id="conId_0" th:value="${conId_0}" readonly hidden>
+    <div id="scale0-action">
+        <div id="scale0-btn-container">
+            <input type="text" id="w-indic-0" readonly>
+            <form action="/startWeighing_0" method="post">
+                <input type="button" th:value="#{weighing.start}" id="scale0-start-weighing-btn">
+            </form>
+            <form action="/abortWeighing_0" method="post">
+                <input type="button" th:value="#{weighing.abort}" id="scale0-abort-weighing-btn">
+            </form>
+            <form action="/addwagonWeighing_0" method="post">
+                <input type="number" id="scale0-count-input" name="count" placeholder="count">
+                <input type="text" id="scale0-product-input" name="product" th:placeholder="#{weighing.product}">
+                <input type="number" id="scale0-number-input" name="wagonNumber" th:placeholder="#{weighing.number}">
+                <input type="button" th:value="#{weighing.addwagon}" id="scale0-add-wagon-btn">
+            </form>
+        </div>
+        <form action="/updateAllWeighing_0" method="post">
+            <input type="button" th:value="#{weighing.update}" id="scale0-update-weighing-btn">
+        </form>
+        <div id="scale0-indicator"></div>
+    </div>
+
+    <div class="scale0-info">
+        <div class="scale0-info-container">
+            <video th:if="${cam0Enabled}" id="player-0" class="scale0-camera" muted
+                data-hls-src="/cam0/index.m3u8"></video>
+            <div class="scale0-done-info">
+                <a target="_blank" href="/pdflast_0/report0.pdf">Print Report</a>
+            </div>
+        </div>
+        <div id="operation-data0-container"></div>
+    </div>
+
+
+</div>

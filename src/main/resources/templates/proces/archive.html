@@ -15,7 +15,7 @@
     </div>
     <div th:each=" train : ${trains}" id="archive-vi-container">
         <a th:href="@{'/archipdf/' + ${train.id}+'.pdf'}" class="archiv_name" target="_blank" rel="noopener noreferrer"
-            th:text="${train.processId} + ' ' + ${train.scaleName} +' '+ ${train.dateCreat} + '----- ' + ${train.wagonCount}">
+            th:text="${train.processId} + ' ' + ${train.scaleName} +' '+ ${train.weighingStartDateTime} + '----- ' + ${train.count}">
 
         </a>
     </div>

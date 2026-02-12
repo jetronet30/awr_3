@@ -1,5 +1,4 @@
 package com.jaba.awr_3.core.connectors;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,19 +6,15 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ComMod {
-    private int index;
+public class TcpMod {
     private String scaleName;
-    private String comName;
-    private String comNick;
+    private String tcpName;
+    private String tcpNik;
     private String instrument;
-    private int parity;
-    private int baudRate;
-    private int dataBits;
-    private int stopBit;
-    private boolean inProcess;
-    private boolean exists;
+    private String ipAddress;
+    private int port;
     private boolean isActive;
     private boolean automatic;
     private boolean rightToUpdateTare;
+
 }

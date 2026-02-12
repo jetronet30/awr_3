@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.jaba.awr_3.core.connectors.ComService;
-import com.jaba.awr_3.core.process.ProcesCom1;
+import com.jaba.awr_3.core.process.ProcesCom0;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ComCon {
     private final ComService comService;
-    private final ProcesCom1 procesCom1;
+    private final ProcesCom0 procesCom1;
 
     @PostMapping("/comport")
     public String postComPort(Model m) {

@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
-public class ProcesCom1 {
+public class ProcesCom0 {
     private final Tsr4000Parser tsr4000Parser;
 
     // === ComService ინფორმაცია (final, ინექცია) ===
@@ -36,9 +36,9 @@ public class ProcesCom1 {
     private int stopBits;
     private int parity;
 
-    private static final Logger log = LoggerFactory.getLogger(ProcesCom1.class);
+    private static final Logger log = LoggerFactory.getLogger(ProcesCom0.class);
     private static final int BUFFER_SIZE = 1024;
-    private static final String DEFAULT_PORT = "ttyUSB0";
+    
 
     // === სერიული პორტი (volatile — reconnection-ისთვის) ===
     private volatile SerialPort serialPort;
@@ -56,13 +56,13 @@ public class ProcesCom1 {
     // ========================================================================
     @PostConstruct
     public void init() {
-        this.portName = DEFAULT_PORT;
-        var portConfig = comService.getPortByName(portName);
+         // პირველი პორტის სახელის მიღება ინდექსით
+        var portConfig = comService.getPortByIndex(0);
         if (portConfig == null) {
-            log.error("Port configuration not found for: {}", portName);
+            log.error("Port configuration not found for index: 0");
             return;
         }
-
+        this.portName = portConfig.getComName();
         this.scaleName = portConfig.getScaleName();
         this.instrument = portConfig.getInstrument();
         this.active = portConfig.isActive();
@@ -264,7 +264,7 @@ public class ProcesCom1 {
                     String text = new String(packet, StandardCharsets.UTF_8).trim();
 
                     // პარსინგი და დაბეჭდვა ყოველთვის
-                    tsr4000Parser.parseSectors(text, scaleName, DEFAULT_PORT, automatic, rightToUpdateTare);
+                    tsr4000Parser.parseSectors(text, scaleName, portName, automatic, rightToUpdateTare);
                     printPacket(packet, instrument);
 
                     // ექო მხოლოდ STX პაკეტებზე
