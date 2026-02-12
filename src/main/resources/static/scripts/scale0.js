@@ -41,6 +41,7 @@ function getAllowedWagonLength(netContainer) {
 
 // =============================================================================
 // Helper: conId_0-ის მიღება
+
 function getConId(netContainer) {
     const input = netContainer.querySelector("#conId_0");
     return input?.value?.trim() || " unknown";

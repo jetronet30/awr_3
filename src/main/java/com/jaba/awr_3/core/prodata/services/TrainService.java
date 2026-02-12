@@ -112,6 +112,7 @@ public class TrainService {
             wagon.setRowNum(currentSize + i + 1);
             wagon.setValid(false);
             wagon.setTrain(train);
+            train.getWagons().add(wagon);
             wagonJpa.save(wagon);
         }
 
@@ -230,6 +231,16 @@ public class TrainService {
     @Transactional(readOnly = true)
     public List<TrainMod> getAllTrainsSortedByDateCreation() {
         return trainJpa.findAllByOrderByWeighingStartDateTimeDesc();
+    }
+
+    @Transactional(readOnly = true)
+    public List<WagonMod> getWagonsOpenAndByConIdAndSortedRow(String conId) {
+        return trainJpa.findByOpenTrueAndConId(conId)
+                .map(TrainMod::getWagons)
+                .orElse(List.of())
+                .stream()
+                .sorted((w1, w2) -> Integer.compare(w1.getRowNum(), w2.getRowNum()))
+                .toList();
     }
 
     // ────────────────────────────────────────────────
