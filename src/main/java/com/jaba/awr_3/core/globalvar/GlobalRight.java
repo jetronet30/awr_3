@@ -4,20 +4,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class GlobalRight {
 
-    private static boolean RightAddOpWagon_1;
-    private static boolean RightAddOpWagon_2;
-    private static boolean RightAddOpWagon_3;
-    private static boolean RightAddOpWagon_4;
-    private static boolean RightAddOpWagon_5;
-    private static boolean RightAddOpWagon_6;
-
-    private static boolean itWorks_1 = false;
-    private static boolean itWorks_2 = false;
-    private static boolean itWorks_3 = false;
-    private static boolean itWorks_4 = false;
-    private static boolean itWorks_5 = false;
-    private static boolean itWorks_6 = false;
-
     // თითოეული პორტისთვის ცალ-ცალკე sequenceId და suffix (ჰექსადეციმალური
     // კოუნტერები)
     private static final AtomicInteger sequenceId_0 = new AtomicInteger(0x02);
@@ -147,51 +133,5 @@ public class GlobalRight {
         return String.format("%02X", next);
     }
 
-    // ==================== Existing methods (unchanged) ====================
-
-    public static void setRightAddOpWagon(String conId, boolean right) {
-        switch (conId) {
-            case "ttyUSB0" -> RightAddOpWagon_1 = right;
-            case "ttyUSB1" -> RightAddOpWagon_2 = right;
-            case "TCP_1" -> RightAddOpWagon_3 = right;
-            case "TCP_2" -> RightAddOpWagon_4 = right;
-            case "TCP_3" -> RightAddOpWagon_5 = right;
-            case "TCP_4" -> RightAddOpWagon_6 = right;
-        }
-    }
-
-    public static boolean getRightAddOpWagon(String conId) {
-        return switch (conId) {
-            case "ttyUSB0" -> RightAddOpWagon_1;
-            case "ttyUSB1" -> RightAddOpWagon_2;
-            case "TCP_1" -> RightAddOpWagon_3;
-            case "TCP_2" -> RightAddOpWagon_4;
-            case "TCP_3" -> RightAddOpWagon_5;
-            case "TCP_4" -> RightAddOpWagon_6;
-            default -> false;
-        };
-    }
-
-    public static void setWorks(String conId, boolean right) {
-        switch (conId) {
-            case "ttyUSB0" -> itWorks_1 = right;
-            case "ttyUSB1" -> itWorks_2 = right;
-            case "TCP_1" -> itWorks_3 = right;
-            case "TCP_2" -> itWorks_4 = right;
-            case "TCP_3" -> itWorks_5 = right;
-            case "TCP_4" -> itWorks_6 = right;
-        }
-    }
-
-    public static boolean getWorks(String conId) {
-        return switch (conId) {
-            case "ttyUSB0" -> itWorks_1;
-            case "ttyUSB1" -> itWorks_2;
-            case "TCP_1" -> itWorks_3;
-            case "TCP_2" -> itWorks_4;
-            case "TCP_3" -> itWorks_5;
-            case "TCP_4" -> itWorks_6;
-            default -> false;
-        };
-    }
+   
 }

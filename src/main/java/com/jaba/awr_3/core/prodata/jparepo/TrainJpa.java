@@ -9,6 +9,7 @@ import com.jaba.awr_3.core.prodata.mod.TrainMod;
 
 public interface TrainJpa  extends JpaRepository<TrainMod, Long>{
     Optional<TrainMod> findByOpenTrueAndConId(String conId);
+    Optional<TrainMod> findByOpenTrueAndDoneTrueAndConId(String conId);
     boolean existsByOpenTrueAndConId(String conId);
-    List<TrainMod> findAllByOrderByWeighingStartDateTimeDesc();
+    List<TrainMod> findAllByDoneTrueAndOpenFalseOrderByWeighingStartDateTimeDesc();
 }

@@ -40,12 +40,14 @@ public class TcpService {
 
             List<TcpMod> tcpMods = new ArrayList<>();
 
-            TcpMod tcp1 = createTcp("Scale 3", "TCP_1", "TCP_1", "TSR4000", "0.0.0.0", 5501, false, false, true);
-            TcpMod tcp2 = createTcp("Scale 4", "TCP_2", "TCP_2", "TSR4000", "0.0.0.0", 5502, false, false, true);
-            TcpMod tcp3 = createTcp("Scale 5", "TCP_3", "TCP_3", "TSR4000", "0.0.0.0", 5503, false, false, true);
-            TcpMod tcp4 = createTcp("Scale 6", "TCP_4", "TCP_4", "TSR4000", "0.0.0.0", 5504, false, false, true);
+            TcpMod tcp1 = createTcp("Scale 5", "TCP_1", "TCP_1", "TSR4000", "0.0.0.0", 5501, false, false, true);
+            TcpMod tcp2 = createTcp("Scale 6", "TCP_2", "TCP_2", "TSR4000", "0.0.0.0", 5502, false, false, true);
+            TcpMod tcp3 = createTcp("Scale 7", "TCP_3", "TCP_3", "TSR4000", "0.0.0.0", 5503, false, false, true);
+            TcpMod tcp4 = createTcp("Scale 8", "TCP_4", "TCP_4", "TSR4000", "0.0.0.0", 5504, false, false, true);
+            TcpMod tcp5 = createTcp("Scale 9", "TCP_5", "TCP_5", "TSR4000", "0.0.0.0", 5505, false, false, true);
 
-            tcpMods.addAll(Arrays.asList(tcp1, tcp2, tcp3, tcp4));
+
+            tcpMods.addAll(Arrays.asList(tcp1, tcp2, tcp3, tcp4, tcp5));
 
             MAPPER.writeValue(TCP_SETTINGS, tcpMods);
             LOGGER.info("tcpsettings.json created successfully: {} entries, path: {}", tcpMods.size(),

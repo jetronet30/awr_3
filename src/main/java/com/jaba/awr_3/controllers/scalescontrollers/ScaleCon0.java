@@ -13,6 +13,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.jaba.awr_3.controllers.emitter.EmitterServic;
 import com.jaba.awr_3.core.connectors.ComService;
+import com.jaba.awr_3.core.globalvar.GlobalRight;
 import com.jaba.awr_3.core.process.ProcesCom0;
 import com.jaba.awr_3.core.prodata.services.TrainService;
 import com.jaba.awr_3.core.units.UnitService;
@@ -40,7 +41,9 @@ public class ScaleCon0 {
         m.addAttribute("cam0Enabled", false);
         m.addAttribute("magonNumLeght_0", UnitService.W_NUM_LEN);
         m.addAttribute("conId_0", comService.getPortByIndex(0).getComName());
-        procesCom0.sendDataTSR4000("start");
+        if(!trainService.isWorkInProgress(comService.getPortByIndex(0).getComName())) {
+            procesCom0.sendDataTSR4000(GlobalRight.getSequenceIdHex_0() + "CSTART7C34" + GlobalRight.getSuffixHex_0());
+        }
         return "proces/scale0";
     }
 
@@ -49,8 +52,7 @@ public class ScaleCon0 {
         m.addAttribute("cam0Enabled", true);
         m.addAttribute("magonNumLeght_0", UnitService.W_NUM_LEN);
         m.addAttribute("conId_0", comService.getPortByIndex(0).getComName());
-        procesCom0.sendDataTSR4000("abort");
-
+        procesCom0.sendDataTSR4000(GlobalRight.getSequenceIdHex_1() + "CABORT933C" + GlobalRight.getSuffixHex_1());
         return "proces/scale0";
     }
 
@@ -74,7 +76,6 @@ public class ScaleCon0 {
             @RequestParam("product") String product,
             @RequestParam(value = "count", required = false, defaultValue = "0") int count) {
         trainService.addWagonToTrain(comService.getPortByIndex(0).getComName(), wagonNumber, product, count);
-        
         m.addAttribute("wagons",
                 trainService.getWagonsOpenAndByConIdAndSortedRow(comService.getPortByIndex(0).getComName()));
         return "proces/beans/opdata0";

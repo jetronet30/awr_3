@@ -87,12 +87,17 @@ public class TrainService {
     @Transactional
     public void addWagonToTrain(String conId, String wagonNumber, String product, int count) {
         int wcount = Math.min(Math.max(count, 1), 300);
-        if (wcount > 1)
-            wagonNumber = "";
+
+        // თუ ერთზე მეტი ვაგონი → ნომერი ცარიელი უნდა იყოს
+        String numberToUse = (wcount > 1) ? "" : wagonNumber;
 
         TrainMod train = trainJpa.findByOpenTrueAndConId(conId).orElse(null);
         if (train == null) {
             LOGGER.warn("No open train found for conId: {}", conId);
+            return;
+        }
+        if (train.isDone()) {
+            LOGGER.warn("Cannot add wagon to a done train with conId: {}", conId);
             return;
         }
 
@@ -103,11 +108,21 @@ public class TrainService {
             return;
         }
 
+        // დუბლიკატის შემოწმება (მხოლოდ თუ numberToUse არ არის ცარიელი)
+        if (numberToUse != null && !numberToUse.isEmpty()) {
+            boolean duplicateExists = train.getWagons().stream()
+                    .anyMatch(w -> numberToUse.equals(w.getWagonNumber()));
+            if (duplicateExists) {
+                LOGGER.warn("Cannot add wagon — duplicate wagon number {} in train conId {}", numberToUse, conId);
+                return;
+            }
+        }
+
         for (int i = 0; i < wcount; i++) {
             WagonMod wagon = new WagonMod();
             wagon.setConnId(conId);
             wagon.setScaleName(train.getScaleName());
-            wagon.setWagonNumber(wagonNumber);
+            wagon.setWagonNumber(numberToUse); // ← აქ numberToUse
             wagon.setProduct(product);
             wagon.setRowNum(currentSize + i + 1);
             wagon.setValid(false);
@@ -116,7 +131,7 @@ public class TrainService {
             wagonJpa.save(wagon);
         }
 
-        LOGGER.info("Added {} wagon(s) with number {} to train conId {}", wcount, wagonNumber, conId);
+        LOGGER.info("Added {} wagon(s) with number {} to train conId {}", wcount, numberToUse, conId);
     }
 
     @Transactional
@@ -130,6 +145,19 @@ public class TrainService {
             response.put("message", "Wagon not found with id: " + id);
             LOGGER.warn("Wagon not found with id: {}", id);
             return response;
+        }
+
+        // Check for duplicate wagon number if new number is provided and non-empty
+        if (wagonNumber != null && !wagonNumber.isEmpty()) {
+            boolean duplicateExists = wagon.getTrain().getWagons().stream()
+                    .filter(w -> !w.getId().equals(id))
+                    .anyMatch(w -> wagonNumber.equals(w.getWagonNumber()));
+            if (duplicateExists) {
+                response.put("success", false);
+                response.put("message", "Cannot update wagon — duplicate wagon number: " + wagonNumber);
+                LOGGER.warn("Duplicate wagon number {} for wagon id {} in train conId {}", wagonNumber, id, conId);
+                return response;
+            }
         }
 
         wagon.setWagonNumber(wagonNumber);
@@ -230,7 +258,7 @@ public class TrainService {
 
     @Transactional(readOnly = true)
     public List<TrainMod> getAllTrainsSortedByDateCreation() {
-        return trainJpa.findAllByOrderByWeighingStartDateTimeDesc();
+        return trainJpa.findAllByDoneTrueAndOpenFalseOrderByWeighingStartDateTimeDesc();
     }
 
     @Transactional(readOnly = true)
@@ -241,6 +269,11 @@ public class TrainService {
                 .stream()
                 .sorted((w1, w2) -> Integer.compare(w1.getRowNum(), w2.getRowNum()))
                 .toList();
+    }
+
+    public boolean isWorkInProgress(String conId) {
+        TrainMod train = trainJpa.findByOpenTrueAndConId(conId).orElse(null);
+        return train != null && !train.isDone();
     }
 
     // ────────────────────────────────────────────────
