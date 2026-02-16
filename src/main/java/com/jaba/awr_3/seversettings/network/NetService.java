@@ -81,6 +81,14 @@ public class NetService {
         }
     }
 
+    public List<String> getLanNames() {
+        List<String> names = new ArrayList<>();
+        for (NetMod nm : getNet()) {
+            names.add(nm.getInName());
+        }
+        return names;
+    }
+
     private boolean iaActive(String inName) {
         File carrierFile = new File("/sys/class/net/" + inName + "/carrier");
         try {
