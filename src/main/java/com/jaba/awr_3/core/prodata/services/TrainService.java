@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jaba.awr_3.core.pdf.PdfCreator;
 import com.jaba.awr_3.core.prodata.jparepo.TrainJpa;
 import com.jaba.awr_3.core.prodata.jparepo.WagonJpa;
 import com.jaba.awr_3.core.prodata.mod.TrainMod;
@@ -29,8 +30,9 @@ public class TrainService {
     private final TrainJpa trainJpa;
     private final WagonJpa wagonJpa;
     private final WtareService wtareService;
+    private final PdfCreator pdfCreator;
 
-    private void addTrain(String conId, String scaleName) {
+    private void addTrain(String conId, String scaleName, int scaleIndex) {
         TrainMod train = new TrainMod();
         train.setConId(conId);
         train.setWeighingStartDateTime(ServerManager.getSystemDateTime());
@@ -38,8 +40,9 @@ public class TrainService {
         train.setDone(false);
         train.setCount(0);
         train.setScaleName(scaleName);
+        train.setScaleIndex(scaleIndex);
         trainJpa.save(train);
-        LOGGER.info("New train created with conId: {}", conId);
+        LOGGER.info("New train created with conId: {}, scaleIndex: {}", conId, scaleIndex);
     }
 
     @Transactional
@@ -176,7 +179,9 @@ public class TrainService {
         }
 
         wagonJpa.save(wagon);
-        updateTrain(wagon.getTrain());
+        recalculateTrainTotals(wagon.getTrain());
+        trainJpa.save(wagon.getTrain());
+        pdfCreator.createPdf(wagon.getTrain());
 
         response.put("success", true);
         response.put("message", "Wagon updated successfully");
@@ -186,11 +191,11 @@ public class TrainService {
     }
 
     @Transactional
-    public void closeTrainAndOpenNewTrain(String conId, String scaleName) {
+    public void closeTrainAndOpenNewTrain(String conId, String scaleName, int scaleIndex) {
         TrainMod train = trainJpa.findByOpenTrueAndConId(conId).orElse(null);
         if (train == null) {
             LOGGER.warn("No open train found for conId: {}", conId);
-            addTrain(conId, scaleName);
+            addTrain(conId, scaleName, scaleIndex);
             return;
         }
         if (train.isDone()) {
@@ -199,7 +204,7 @@ public class TrainService {
         } else {
             trainJpa.delete(train);
         }
-        addTrain(conId, scaleName);
+        addTrain(conId, scaleName, scaleIndex);
         LOGGER.info("Train conId {} closed successfully", conId);
     }
 
@@ -242,6 +247,7 @@ public class TrainService {
 
         train.setDone(true);
         trainJpa.save(train);
+        pdfCreator.createPdf(train);
 
         LOGGER.info("Train conId {} updated with direction {}, done=true", conId, direction);
     }
@@ -275,6 +281,7 @@ public class TrainService {
         TrainMod train = trainJpa.findByOpenTrueAndConId(conId).orElse(null);
         return train != null && !train.isDone();
     }
+
 
     // ────────────────────────────────────────────────
     // დამხმარე მეთოდები
@@ -319,6 +326,7 @@ public class TrainService {
             } else {
                 tareSum = tareSum.add(wagonTare);
             }
+            
         }
 
         train.setGross(gross);
@@ -329,6 +337,18 @@ public class TrainService {
         } else {
             train.setTare(null);
             train.setNeto(null);
+        }
+        for (WagonMod w : train.getWagons()) {
+            if (!w.isValid())
+                continue;
+
+            BigDecimal weight = w.getWeight() != null ? w.getWeight() : BigDecimal.ZERO;
+            BigDecimal wagonTare = w.getTare();
+            if (wagonTare != null && wagonTare.compareTo(BigDecimal.ZERO) > 0) {
+                w.setNeto(weight.subtract(wagonTare));
+            } else {
+                w.setNeto(null);
+            }
         }
     }
 

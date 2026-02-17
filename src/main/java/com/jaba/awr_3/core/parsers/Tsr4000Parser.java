@@ -17,7 +17,7 @@ public class Tsr4000Parser {
     private final EmitterServic emitterServic;
     private static final Logger LOGGER = LoggerFactory.getLogger(Tsr4000Parser.class);
 
-    public void parseSectors(String text, String scaleName, String conId, boolean automatic,
+    public void parseSectors(String text, String scaleName, String conId, int scaleIndex, boolean automatic,
             boolean rightToUpdateTare) {
         if (text == null || text.length() < 1) {
             LOGGER.warn("Data too short: {}", text);
@@ -72,7 +72,7 @@ public class Tsr4000Parser {
                     emitterServic.sendToScale(conId, "update-data-container");
                 }
             } else if (text.toLowerCase().contains("cstart")) {
-                trainService.closeTrainAndOpenNewTrain(conId, scaleName);
+                trainService.closeTrainAndOpenNewTrain(conId, scaleName, scaleIndex);
                 
                 emitterServic.sendToScale(conId, "update-data-container");
                 emitterServic.sendToScale(conId, "update-data-works-start");

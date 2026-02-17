@@ -1,4 +1,4 @@
-package com.jaba.awr_3.pdf;
+package com.jaba.awr_3.core.pdf;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
@@ -20,7 +20,14 @@ public class FontManager {
     private void loadFonts() {
         Map<String, String> fontPaths = Map.of(
             "latin",    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-            "georgian", "/usr/share/fonts/truetype/noto/NotoSansGeorgian-Regular.ttf"
+            "georgian", "/usr/share/fonts/truetype/noto/NotoSansGeorgian-Regular.ttf",
+            "cyrillic", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            "azeri",    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            "armenian", "/usr/share/fonts/truetype/noto/NotoSansArmenian-Regular.ttf",
+            "kazakh",   "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            "turkish",  "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            "tukmen",   "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+
         );
 
         fontPaths.forEach((name, path) -> {

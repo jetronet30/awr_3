@@ -63,9 +63,17 @@
     border-radius: 4px;
 }
 
-#scale5-number-input { width: 20ch; }
-#scale5-product-input { width: 20ch; }
-#scale5-count-input { width: 10ch; }
+#scale5-number-input {
+    width: 20ch;
+}
+
+#scale5-product-input {
+    width: 20ch;
+}
+
+#scale5-count-input {
+    width: 10ch;
+}
 
 #scale5-indicator {
     width: 20px;
@@ -85,27 +93,56 @@
 }
 
 /* === ვაგონების ფორმები === */
-.oprdata5-set-from { margin: 1px; padding: 4px; border-radius: 4px; transition: background-color 0.3s ease; }
+.oprdata5-set-from {
+    margin: 1px;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
 
 .scale5-operdata-row-input,
 .scale5-operdata-weight-input,
 .scale5-operdata-wagonNum-input,
 .scale5-operdata-product-input {
-    padding: 2px; text-align: center; font-size: small; font-weight: 600;
-    border: 1px solid #ccc; border-radius: 3px;
+    padding: 2px;
+    text-align: center;
+    font-size: small;
+    font-weight: 600;
+    border: 1px solid #ccc;
+    border-radius: 3px;
 }
 
-.scale5-operdata-row-input     { width: 5ch; }
-.scale5-operdata-weight-input  { width: 7ch; }
-.scale5-operdata-wagonNum-input{ width: 14ch; }
-.scale5-operdata-product-input { width: 12ch; }
+.scale5-operdata-row-input {
+    width: 5ch;
+}
+
+.scale5-operdata-weight-input {
+    width: 7ch;
+}
+
+.scale5-operdata-wagonNum-input {
+    width: 14ch;
+}
+
+.scale5-operdata-product-input {
+    width: 12ch;
+}
 
 .oprdata5-set-btn {
-    background-color: #2b853a; color: white; border: none; padding: 2px 6px;
-    cursor: pointer; font-weight: 800; border-radius: 3px; transition: all 0.2s ease;
+    background-color: #2b853a;
+    color: white;
+    border: none;
+    padding: 2px 6px;
+    cursor: pointer;
+    font-weight: 800;
+    border-radius: 3px;
+    transition: all 0.2s ease;
 }
 
-.oprdata5-set-btn:hover { background-color: #3aac4d; padding: 4px 8px; }
+.oprdata5-set-btn:hover {
+    background-color: #3aac4d;
+    padding: 4px 8px;
+}
 
 /* === მთავარი განლაგება === */
 .scale5-info {
@@ -183,38 +220,86 @@
         margin: 20px auto;
         border-radius: 16px;
     }
-    .scale5-info { flex-direction: column; padding: 0 10px; }
-    #operation-data5-container { margin-left: 0; max-width: none; min-width: auto; }
+
+    .scale5-info {
+        flex-direction: column;
+        padding: 0 10px;
+    }
+
+    #operation-data5-container {
+        margin-left: 0;
+        max-width: none;
+        min-width: auto;
+    }
 }
 
 @media (max-width: 640px) {
-    #scale5-action { flex-direction: column; text-align: center; }
-    #scale5-btn-container { flex-direction: column; width: 100%; }
-    #w-indic-5 { width: 90%; }
+    #scale5-action {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    #scale5-btn-container {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    #w-indic-5 {
+        width: 90%;
+    }
 }
 
 /* === დიდი ეკრანები — ვიდეო იზრდება 1600px-დან ზევით === */
 @media (min-width: 1600px) {
-    .scale5-info-container { width: 48vw; max-width: 1600px; min-height: 500px; }
+    .scale5-info-container {
+        width: 48vw;
+        max-width: 1600px;
+        min-height: 500px;
+    }
 }
 
 @media (min-width: 1920px) {
-    .scale5-info-container { width: 50vw; max-width: 1800px; min-height: 600px; }
+    .scale5-info-container {
+        width: 50vw;
+        max-width: 1800px;
+        min-height: 600px;
+    }
 }
 
 @media (min-width: 2560px) {
-    .scale5-info-container { width: 52vw; max-width: 2000px; min-height: 750px; }
+    .scale5-info-container {
+        width: 52vw;
+        max-width: 2000px;
+        min-height: 750px;
+    }
 }
 
 @media (min-width: 3440px) {
-    .scale5-info-container { width: 55vw; max-width: 2400px; min-height: 900px; }
+    .scale5-info-container {
+        width: 55vw;
+        max-width: 2400px;
+        min-height: 900px;
+    }
 }
 
 @media (min-width: 3840px) {
-    .scale5-info-container { width: 58vw; max-width: 2800px; min-height: 1000px; padding: 15px; }
-    .scale5-done-info a { padding: 20px 50px; font-size: 1.4rem; }
+    .scale5-info-container {
+        width: 58vw;
+        max-width: 2800px;
+        min-height: 1000px;
+        padding: 15px;
+    }
+
+    .scale5-done-info a {
+        padding: 20px 50px;
+        font-size: 1.4rem;
+    }
 }
 
 @media (min-width: 5120px) {
-    .scale5-info-container { width: 60vw; max-width: 3400px; min-height: 1200px; }
+    .scale5-info-container {
+        width: 60vw;
+        max-width: 3400px;
+        min-height: 1200px;
+    }
 }

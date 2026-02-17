@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
-public class ProcesCom0 {
+public class ProcesCom1 {
     private final Tsr4000Parser tsr4000Parser;
 
     // === ComService ინფორმაცია (final, ინექცია) ===
@@ -35,7 +35,7 @@ public class ProcesCom0 {
     private int dataBits;
     private int stopBits;
     private int parity;
-    private final int scaleIndex = 0; // ComService-ში პირველი პორტის ინდექსი (მუდმივი 0-ით)
+    private final int scaleIndex = 1; // ComService-ში პირველი პორტის ინდექსი (მუდმივი 1-ით)
 
     private static final Logger log = LoggerFactory.getLogger(ProcesCom0.class);
     private static final int BUFFER_SIZE = 1024;

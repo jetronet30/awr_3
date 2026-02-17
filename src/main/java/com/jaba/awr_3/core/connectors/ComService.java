@@ -28,6 +28,7 @@ public class ComService {
     private static final ObjectMapper MAPPER = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     private static final Logger LOGGER = LoggerFactory.getLogger(ComService.class);
 
+
     // Thread-safe file access
     private static final ReentrantReadWriteLock LOCK = new ReentrantReadWriteLock();
 

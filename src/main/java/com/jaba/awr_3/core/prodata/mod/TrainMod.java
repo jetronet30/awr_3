@@ -26,6 +26,7 @@ public class TrainMod {
     private Long sysId;
     private String processId;
     private String scaleName;
+    private int scaleIndex;
     private String instrument;
     private String conId;
     private String weighingStartDateTime;

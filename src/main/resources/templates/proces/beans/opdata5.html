@@ -1,0 +1,12 @@
+<div th:each=" wagon : ${wagons}">
+    <form method="post" action="/editWgon5" class="oprdata5-set-from">
+        <input type="text" name="connId" th:value="${wagon.connId}" hidden>
+        <input type="text" name="id" th:value="${wagon.id}" hidden>
+        <input type="text" name="rowNumber" class="scale5-operdata-row-input"  th:value="${wagon.rowNum}" readonly>
+        <input type="text" class="scale5-operdata-tare-input"  th:value="${wagon.tare}" readonly>
+        <input type="text" class="scale5-operdata-weight-input"  th:value="${wagon.weight}" readonly>
+        <input type="text" name="product" class="scale5-operdata-product-input"  th:value="${wagon.product}" th:placeholder="#{weighing.product}">
+        <input type="text" name="wagonNumber" class="scale5-operdata-wagonNum-input"  th:value="${wagon.wagonNumber}" th:placeholder="#{weighing.number}" >
+        <input type="button" value="EDIT" class="oprdata5-set-btn">
+    </form>
+</div>

@@ -18,7 +18,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.jaba.awr_3.inits.repo.RepoInit;
 
-
 @Service
 public class TcpService {
 
@@ -40,12 +39,11 @@ public class TcpService {
 
             List<TcpMod> tcpMods = new ArrayList<>();
 
-            TcpMod tcp1 = createTcp("Scale 5", "TCP_1", "TCP_1", "TSR4000", "0.0.0.0", 5501, false, false, true);
-            TcpMod tcp2 = createTcp("Scale 6", "TCP_2", "TCP_2", "TSR4000", "0.0.0.0", 5502, false, false, true);
-            TcpMod tcp3 = createTcp("Scale 7", "TCP_3", "TCP_3", "TSR4000", "0.0.0.0", 5503, false, false, true);
-            TcpMod tcp4 = createTcp("Scale 8", "TCP_4", "TCP_4", "TSR4000", "0.0.0.0", 5504, false, false, true);
-            TcpMod tcp5 = createTcp("Scale 9", "TCP_5", "TCP_5", "TSR4000", "0.0.0.0", 5505, false, false, true);
-
+            TcpMod tcp1 = createTcp(5, "Scale 5", "TCP_0", "TCP_0", "TSR4000", "0.0.0.0", 5501, false, false, true);
+            TcpMod tcp2 = createTcp(6, "Scale 6", "TCP_1", "TCP_1", "TSR4000", "0.0.0.0", 5502, false, false, true);
+            TcpMod tcp3 = createTcp(7, "Scale 7", "TCP_2", "TCP_2", "TSR4000", "0.0.0.0", 5503, false, false, true);
+            TcpMod tcp4 = createTcp(8, "Scale 8", "TCP_3", "TCP_3", "TSR4000", "0.0.0.0", 5504, false, false, true);
+            TcpMod tcp5 = createTcp(9, "Scale 9", "TCP_4", "TCP_4", "TSR4000", "0.0.0.0", 5505, false, false, true);
 
             tcpMods.addAll(Arrays.asList(tcp1, tcp2, tcp3, tcp4, tcp5));
 
@@ -62,9 +60,10 @@ public class TcpService {
         }
     }
 
-    private static TcpMod createTcp(String scaleName, String tcpName, String tcpNik, String instrument,
+    private static TcpMod createTcp(int index, String scaleName, String tcpName, String tcpNik, String instrument,
             String ipAddress, int port, boolean isActive, boolean automatic, boolean rightToUpdateTare) {
         TcpMod tcp = new TcpMod();
+        tcp.setIndex(index);
         tcp.setScaleName(scaleName);
         tcp.setTcpName(tcpName);
         tcp.setTcpNik(tcpNik);
@@ -112,6 +111,17 @@ public class TcpService {
             LOGGER.error("Failed to read TCP list", e);
             return new ArrayList<>();
         }
+    }
+
+    public TcpMod getTcpModByIndex(int index) {
+        for (TcpMod cm : listTcps()) {
+            if (cm.getIndex() == index) {
+                LOGGER.debug("პორტი ნაპოვნია getPortByIndex-ით: {}", index);
+                return cm;
+            }
+        }
+        LOGGER.debug("პორტი ვერ მოიძებნა getPortByIndex-ით: {}", index);
+        return null;
     }
 
     // === Validation methods ===

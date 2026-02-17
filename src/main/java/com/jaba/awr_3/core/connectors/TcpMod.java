@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TcpMod {
+    private int index;
     private String scaleName;
     private String tcpName;
     private String tcpNik;

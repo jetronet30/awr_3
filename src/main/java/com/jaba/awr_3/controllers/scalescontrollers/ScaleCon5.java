@@ -1,0 +1,90 @@
+package com.jaba.awr_3.controllers.scalescontrollers;
+
+import java.util.Map;
+
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import com.jaba.awr_3.controllers.emitter.EmitterServic;
+import com.jaba.awr_3.core.connectors.TcpService;
+
+import com.jaba.awr_3.core.prodata.services.TrainService;
+import com.jaba.awr_3.core.units.UnitService;
+
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequiredArgsConstructor
+public class ScaleCon5 {
+    private final TrainService trainService;
+    private final TcpService tcpService;
+    private final EmitterServic emitter;
+
+    @PostMapping("/scale5")
+    public String postSacale4(Model m) {
+        m.addAttribute("cam5Enabled", false);
+        m.addAttribute("magonNumLeght_5", UnitService.W_NUM_LEN);
+        m.addAttribute("conId_5", tcpService.getTcpModByIndex(5).getTcpName());
+        return "proces/scale5";
+    }
+
+    @PostMapping("/startWeighing_5")
+    public String startWeighing4(Model m) {
+        m.addAttribute("cam5Enabled", false);
+        m.addAttribute("magonNumLeght_5", UnitService.W_NUM_LEN);
+        m.addAttribute("conId_5", tcpService.getTcpModByIndex(5).getTcpName());
+        return "proces/scale5";
+    }
+
+    @PostMapping("/abortWeighing_5")
+    public String abortWeighing5(Model m) {
+        m.addAttribute("cam5Enabled", false);
+        m.addAttribute("magonNumLeght_5", UnitService.W_NUM_LEN);
+        m.addAttribute("conId_5", tcpService.getTcpModByIndex(5).getTcpName());
+        return "proces/scale5";
+    }
+
+    @PostMapping("/showweighingWagons5")
+    public String showWagon5(Model m) {
+        
+        return "proces/beans/opdata5";
+    }
+
+    @PostMapping("/updateAllWeighing_5")
+    public String updateWagon5(Model m) {
+        
+        return "proces/beans/opdata5";
+    }
+
+    @PostMapping("/addwagonWeighing_5")
+    public String addWagon5(Model m,
+            @RequestParam("wagonNumber") String wagonNumber,
+            @RequestParam("product") String product,
+            @RequestParam(value = "count", required = false, defaultValue = "0") int count) {
+ 
+        return "proces/beans/opdata5";
+    }
+
+    @PostMapping("/editWgon5")
+    @ResponseBody
+    public Map<String, Object> editWagon5(
+            @RequestParam("connId") String connId,
+            @RequestParam("id") Long id,
+            @RequestParam("product") String product,
+            @RequestParam("wagonNumber") String wagonNum){
+            
+        return trainService.updateWagonToTrain(id, connId, wagonNum, product, true);
+    }
+
+    @GetMapping(value = "/sendscale5", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter getSendScale5() {
+        return emitter.addEmitter();
+    }
+
+}
