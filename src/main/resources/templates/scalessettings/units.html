@@ -40,6 +40,12 @@
             <label for="TareLimit" th:text="#{unit.tarlimit}"></label>
             <input type="number" class="units-selector" name="tareLimit" id="TareLimit" th:value="${units.tarLimit}" >
 
+            <label for="WeightLimit" th:text="#{unit.weightlimit}"></label>
+            <input type="number" class="units-selector" name="weightLimit" id="WeightLimit" th:value="${units.weightLimit}" >
+
+            <label for="SpeedLimit" th:text="#{unit.speedlimit}"></label>
+            <input type="number" class="units-selector" name="speedLimit" id="SpeedLimit" th:value="${units.speedLimit}" >
+
             <input type="submit" th:value="#{unit.set.button}" id="units-set-btn">
         </form>
     </div>

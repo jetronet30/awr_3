@@ -71,7 +71,7 @@ public class UnitService {
         return uMod;
     }
 
-    public Map<String, Object> updateUnits(String speedUnit, String weightUnit, int wagonLen, String tareLimit) {
+    public Map<String, Object> updateUnits(String speedUnit, String weightUnit, int wagonLen, String tareLimit, String weightLimit, String speedLimit) {
         Map<String, Object> respons = new HashMap<>();
         try {
             UnitMod uMod = new UnitMod();
@@ -83,6 +83,10 @@ public class UnitService {
             W_NUM_LEN = wagonLen;
             uMod.setTarLimit(new BigDecimal(tareLimit));
             TARE_LIMIT = new BigDecimal(tareLimit);
+            uMod.setWeightLimit(new BigDecimal(weightLimit));
+            WEIGHT_LIMIT = new BigDecimal(weightLimit);
+            uMod.setSpeedLimit(new BigDecimal(speedLimit));
+            SPEED_LIMIT = new BigDecimal(speedLimit);
             MAPPER.writeValue(UNITS_JSON, uMod);
             respons.put("success", true);
         } catch (Exception e) {

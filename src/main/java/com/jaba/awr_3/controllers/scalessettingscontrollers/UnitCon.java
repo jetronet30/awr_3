@@ -28,8 +28,10 @@ public class UnitCon {
     public Map<String, Object> setBasicSettings(@RequestParam("speedUnit") String speedUnit,
                                                  @RequestParam("weightUnit") String weightUnit,
                                                  @RequestParam("wagonLenUnit") int len,
-                                                 @RequestParam("tareLimit")String tareLimit) {
-        return unitService.updateUnits(speedUnit, weightUnit, len,tareLimit);
+                                                 @RequestParam("tareLimit")String tareLimit,
+                                                    @RequestParam("weightLimit")String weightLimit,
+                                                 @RequestParam("speedLimit")String speedLimit) {
+        return unitService.updateUnits(speedUnit, weightUnit, len,tareLimit,weightLimit,speedLimit);
     }
 
 }
