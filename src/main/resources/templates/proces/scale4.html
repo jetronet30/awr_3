@@ -1,15 +1,18 @@
 <div id="scale4-container">
     <input type="number" id="magonNumLeght_4" th:value="${magonNumLeght_4}" readonly hidden>
+    <input type="text" id="conId_4" th:value="${conId_4}" readonly hidden>
     <div id="scale4-action">
         <div id="scale4-btn-container">
-            <input type="text" id="w-indic-4" readonly >
+            <input type="text" id="w-indic-4" readonly>
             <form action="/startWeighing_4" method="post">
                 <input type="button" th:value="#{weighing.start}" id="scale4-start-weighing-btn">
+            </form>
+            <form action="/doneWeighing_4" method="post">
+                <input type="button" th:value="#{weighing.done}" id="scale4-done-weighing-btn">
             </form>
             <form action="/abortWeighing_4" method="post">
                 <input type="button" th:value="#{weighing.abort}" id="scale4-abort-weighing-btn">
             </form>
-
             <form action="/addwagonWeighing_4" method="post">
                 <input type="number" id="scale4-count-input" name="count" placeholder="count">
                 <input type="text" id="scale4-product-input" name="product" th:placeholder="#{weighing.product}">
@@ -20,12 +23,15 @@
         <form action="/updateAllWeighing_4" method="post">
             <input type="button" th:value="#{weighing.update}" id="scale4-update-weighing-btn">
         </form>
+        <div id="con4-indicator" hidden></div>
         <div id="scale4-indicator"></div>
+        
     </div>
 
     <div class="scale4-info">
         <div class="scale4-info-container">
-            <video  th:if="${cam4Enabled}" id="player-4" class="scale4-camera"  muted data-hls-src="/cam4/index.m3u8"></video>
+            <video th:if="${cam4Enabled}" id="player-4" class="scale4-camera" muted
+                data-hls-src="/cam4/index.m3u8"></video>
             <div class="scale4-done-info">
                 <a target="_blank" href="/pdflast_4/report4.pdf">Print Report</a>
             </div>

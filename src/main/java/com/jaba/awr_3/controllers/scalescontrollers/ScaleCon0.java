@@ -41,18 +41,28 @@ public class ScaleCon0 {
         m.addAttribute("cam0Enabled", false);
         m.addAttribute("magonNumLeght_0", UnitService.W_NUM_LEN);
         m.addAttribute("conId_0", comService.getPortByIndex(0).getComName());
-        if(!trainService.isWorkInProgress(comService.getPortByIndex(0).getComName())) {
+        if (!trainService.isWorkInProgress(comService.getPortByIndex(0).getComName())) {
             procesCom0.sendDataTSR4000(GlobalRight.getSequenceIdHex_0() + "CSTART7C34" + GlobalRight.getSuffixHex_0());
         }
         return "proces/scale0";
     }
 
-    @PostMapping("/abortWeighing_0")
-    public String abortWeighing0(Model m) {
-        m.addAttribute("cam0Enabled", true);
+    @PostMapping("/doneWeighing_0")
+    public String doneWeighing0(Model m) {
+        m.addAttribute("cam0Enabled", false);
         m.addAttribute("magonNumLeght_0", UnitService.W_NUM_LEN);
         m.addAttribute("conId_0", comService.getPortByIndex(0).getComName());
-        procesCom0.sendDataTSR4000(GlobalRight.getSequenceIdHex_1() + "CABORT933C" + GlobalRight.getSuffixHex_1());
+        trainService.closeTrain(comService.getPortByIndex(0).getComName());
+        return "proces/scale0";
+    }
+
+    @PostMapping("/abortWeighing_0")
+    public String abortWeighing0(Model m) {
+        m.addAttribute("cam0Enabled", false);
+        m.addAttribute("magonNumLeght_0", UnitService.W_NUM_LEN);
+        m.addAttribute("conId_0", comService.getPortByIndex(0).getComName());
+        trainService.deleteTrainByConId(comService.getPortByIndex(0).getComName());
+        procesCom0.sendDataTSR4000(GlobalRight.getSequenceIdHex_0() + "CABORT933C" + GlobalRight.getSuffixHex_0());
         return "proces/scale0";
     }
 
@@ -89,7 +99,8 @@ public class ScaleCon0 {
             @RequestParam("product") String product,
             @RequestParam("wagonNumber") String wagonNum) {
 
-        return trainService.updateWagonToTrain(id, connId, wagonNum, product, true);
+        return trainService.updateWagonToTrain(id, connId, wagonNum, product,
+                comService.getPortByIndex(0).isRightToUpdateTare());
     }
 
     @GetMapping(value = "/sendscale0", produces = MediaType.TEXT_EVENT_STREAM_VALUE)

@@ -1,5 +1,5 @@
 // =============================================================================
-// scale0.js — მოდული #scale0-container-ისთვის (განახლებული, უსაფრთხო)
+// scale0.js — მოდული #scale0-container-ისთვის (განახლებული 2025/2026)
 // =============================================================================
 
 let intervalIds = new Set();
@@ -32,6 +32,7 @@ function clearEventListeners() {
 
 // =============================================================================
 // Helper: ვაგონის ნომრის სიგრძე (8, 10, 12)
+// =============================================================================
 function getAllowedWagonLength(netContainer) {
     const input = netContainer.querySelector("#magonNumLeght_0");
     const value = input?.value?.trim();
@@ -41,10 +42,28 @@ function getAllowedWagonLength(netContainer) {
 
 // =============================================================================
 // Helper: conId_0-ის მიღება
-
+// =============================================================================
 function getConId(netContainer) {
     const input = netContainer.querySelector("#conId_0");
-    return input?.value?.trim() || " unknown";
+    return input?.value?.trim() || "unknown";
+}
+
+// =============================================================================
+// Helper: კავშირის ინდიკატორის განახლება (#con0-indicator)
+// =============================================================================
+function updateConIndicator(success) {
+    const indicator = document.querySelector("#con0-indicator");
+    if (!indicator) return;
+
+    indicator.style.transition = "background-color 0.5s ease";
+    indicator.style.backgroundColor = success ? "#00cc66" : "#ff3333";
+
+    // ავტომატური გაქრობა 5 წამში (შეგიძლია ამოიღო თუ მუდმივი გინდა)
+    const id = setTimeout(() => {
+        indicator.style.backgroundColor = "";
+    }, 5000);
+
+    intervalIds.add(id);
 }
 
 // =============================================================================
@@ -109,7 +128,6 @@ function bindEditWagonForm(netContainer, updateIndicator) {
                     alert(`ვაგონი ${result.message} - განახლება ვერ მოხერხდა.`);
                 }
             } catch (err) {
-                updateIndicator?.(false);
                 alert(`შეცდომა: ${err.message}`);
             }
         };
@@ -190,7 +208,7 @@ function observeVideoScale0(container) {
 }
 
 // =============================================================================
-// SSE: წონის მიღება /sendscale0 → #w-indic-0
+// SSE: წონის + კავშირის სტატუსის მიღება
 // =============================================================================
 function connectWeightSSE(netContainer, updateIndicator) {
     if (weightEventSource) {
@@ -203,39 +221,47 @@ function connectWeightSSE(netContainer, updateIndicator) {
     weightEventSource.addEventListener(getConId(netContainer), (e) => {
         const data = e.data.trim();
 
-        if (data === 'update-data-container') {
-            loadInitialWagonData(netContainer, updateIndicator);
-            return;
-        }
-        const weightInput = document.getElementById('w-indic-0');
+        switch (data) {
+            case 'update-data-container':
+                loadInitialWagonData(netContainer, updateIndicator);
+                break;
 
-        if (data === 'update-data-works-start') {
-            weightInput.value = "START"
-            weightInput.style.color = '#fdec04ff';
-            return;
-        }
+            case 'update-data-works-start':
+                document.getElementById('w-indic-0').value = "START";
+                document.getElementById('w-indic-0').style.color = '#fdec04ff';
+                break;
 
-        if (data === 'update-data-works-stop') {
-            weightInput.value = "END"
-            weightInput.style.color = '#fd048dff';
-            return;
-        }
+            case 'update-data-works-stop':
+                document.getElementById('w-indic-0').value = "END";
+                document.getElementById('w-indic-0').style.color = '#fd048dff';
+                break;
 
-        
-        if (weightInput) {
-            weightInput.value = data;
-            weightInput.style.color = '#04cbfdff';
-            setTimeout(() => { weightInput.style.color = ''; }, 1000);
+            case 'update-con-indicator':
+                updateConIndicator(true);
+                break;
+
+            default:
+                // წონის მნიშვნელობა
+                const weightInput = document.getElementById('w-indic-0');
+                if (weightInput) {
+                    weightInput.value = data;
+                    weightInput.style.color = '#04cbfdff';
+                    setTimeout(() => { weightInput.style.color = ''; }, 1000);
+                }
+                break;
         }
     });
 
-    weightEventSource.onerror = () => {
-        weightEventSource.close();
-        setTimeout(() => connectWeightSSE(netContainer, updateIndicator), 2000);
-    };
-
     weightEventSource.onopen = () => {
         console.log('SSE connected: /sendscale0');
+        updateConIndicator(true);
+    };
+
+    weightEventSource.onerror = () => {
+        updateConIndicator(false);
+        weightEventSource.close();
+        weightEventSource = null;
+        setTimeout(() => connectWeightSSE(netContainer, updateIndicator), 2000);
     };
 }
 
@@ -267,13 +293,16 @@ export function initScale0Module() {
         }
     }
 
-    // 1. Load initial data
+    // თავდაპირველი მდგომარეობა — კავშირი ჯერ არ არის
+    updateConIndicator(false);
+
+    // 1. Load initial data & SSE
     loadInitialWagonData(netContainer, updateIndicator);
     connectWeightSSE(netContainer, updateIndicator);
 
     // 2. Helper: Reload module safely
     const reloadModule = async (actionUrl) => {
-        cleanupScale0Module(); // სრული გასუფთავება
+        cleanupScale0Module();
 
         try {
             const response = await fetch(actionUrl, { method: "POST" });
@@ -293,7 +322,7 @@ export function initScale0Module() {
     };
 
     // 3. START WEIGHING
-    const startForm = netContainer.querySelector('form[action="/startWeighing_0"]');
+    const startForm = netContainer.querySelector('form[action="/startWeighing_0"]' );
     const startBtn = startForm?.querySelector("#scale0-start-weighing-btn");
     if (startForm && startBtn) {
         const newBtn = startBtn.cloneNode(true);
@@ -304,7 +333,19 @@ export function initScale0Module() {
         });
     }
 
-    // 4. ABORT WEIGHING
+    // 4. DONE WEIGHING
+    const doneForm = netContainer.querySelector('form[action="/doneWeighing_0"]');
+    const doneBtn = doneForm?.querySelector("#scale0-done-weighing-btn");
+    if (doneForm && doneBtn) {
+        const newBtn = doneBtn.cloneNode(true);
+        doneBtn.replaceWith(newBtn);
+        trackEventListener(newBtn, "click", (e) => {
+            e.preventDefault();
+            reloadModule(doneForm.action);
+        });
+    }
+
+    // 5. ABORT WEIGHING
     const abortForm = netContainer.querySelector('form[action="/abortWeighing_0"]');
     const abortBtn = abortForm?.querySelector("#scale0-abort-weighing-btn");
     if (abortForm && abortBtn) {
@@ -316,7 +357,7 @@ export function initScale0Module() {
         });
     }
 
-    // 5. ADD WAGON
+    // 6. ADD WAGON
     const addForm = netContainer.querySelector('form[action="/addwagonWeighing_0"]');
     const addBtn = addForm?.querySelector("#scale0-add-wagon-btn");
     const wagonNumberInput = addForm?.querySelector("#scale0-number-input");
@@ -378,7 +419,7 @@ export function initScale0Module() {
         });
     }
 
-    // 6. UPDATE ALL
+    // 7. UPDATE ALL
     const updateForm = netContainer.querySelector('form[action="/updateAllWeighing_0"]');
     const updateBtn = updateForm?.querySelector("#scale0-update-weighing-btn");
 
@@ -405,16 +446,16 @@ export function initScale0Module() {
         });
     }
 
-    // 7. VIDEO
+    // 8. VIDEO
     initVideoScale0();
     observeVideoScale0(netContainer);
 
-    // 8. Global cleanup access
+    // 9. Global cleanup access
     window.cleanupScale0Module = cleanupScale0Module;
 }
 
 // =============================================================================
-// FULL CLEANUP — ყოველ ჯერზე გამოიძახება
+// FULL CLEANUP
 // =============================================================================
 export function cleanupScale0Module() {
     console.log('Cleaning up scale0 module...');
@@ -438,6 +479,13 @@ export function cleanupScale0Module() {
         weightEventSource.close();
         weightEventSource = null;
     }
+
+    // ინდიკატორების გასუფთავება
+    const indicators = ["#scale0-indicator", "#con0-indicator"];
+    indicators.forEach(sel => {
+        const el = document.querySelector(sel);
+        if (el) el.style.backgroundColor = "";
+    });
 
     isScale0Initialized = false;
 

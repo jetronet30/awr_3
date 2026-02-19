@@ -7,6 +7,9 @@
             <form action="/startWeighing_0" method="post">
                 <input type="button" th:value="#{weighing.start}" id="scale0-start-weighing-btn">
             </form>
+            <form action="/doneWeighing_0" method="post">
+                <input type="button" th:value="#{weighing.done}" id="scale0-done-weighing-btn">
+            </form>
             <form action="/abortWeighing_0" method="post">
                 <input type="button" th:value="#{weighing.abort}" id="scale0-abort-weighing-btn">
             </form>
@@ -20,7 +23,9 @@
         <form action="/updateAllWeighing_0" method="post">
             <input type="button" th:value="#{weighing.update}" id="scale0-update-weighing-btn">
         </form>
+        <div id="con0-indicator" hidden></div>
         <div id="scale0-indicator"></div>
+        
     </div>
 
     <div class="scale0-info">

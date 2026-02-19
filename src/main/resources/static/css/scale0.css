@@ -22,6 +22,7 @@
     border: none;
 }
 
+
 #scale0-btn-container {
     display: flex;
     gap: 10px;
@@ -30,6 +31,7 @@
 }
 
 #scale0-start-weighing-btn,
+#scale0-done-weighing-btn,
 #scale0-abort-weighing-btn,
 #scale0-add-wagon-btn,
 #scale0-update-weighing-btn {
@@ -44,6 +46,7 @@
 }
 
 #scale0-start-weighing-btn:hover,
+#scale0-done-weighing-btn:hover,
 #scale0-abort-weighing-btn:hover,
 #scale0-add-wagon-btn:hover,
 #scale0-update-weighing-btn:hover {
@@ -70,6 +73,12 @@
     height: 20px;
     border-radius: 50px;
     background-color: aliceblue;
+}
+#con0-indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 50px;
+    background-color: red;
 }
 
 /* === მარცხენა სია === */

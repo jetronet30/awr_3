@@ -1,15 +1,18 @@
 <div id="scale2-container">
     <input type="number" id="magonNumLeght_2" th:value="${magonNumLeght_2}" readonly hidden>
+    <input type="text" id="conId_2" th:value="${conId_2}" readonly hidden>
     <div id="scale2-action">
         <div id="scale2-btn-container">
             <input type="text" id="w-indic-2" readonly>
             <form action="/startWeighing_2" method="post">
                 <input type="button" th:value="#{weighing.start}" id="scale2-start-weighing-btn">
             </form>
+            <form action="/doneWeighing_2" method="post">
+                <input type="button" th:value="#{weighing.done}" id="scale2-done-weighing-btn">
+            </form>
             <form action="/abortWeighing_2" method="post">
                 <input type="button" th:value="#{weighing.abort}" id="scale2-abort-weighing-btn">
             </form>
-
             <form action="/addwagonWeighing_2" method="post">
                 <input type="number" id="scale2-count-input" name="count" placeholder="count">
                 <input type="text" id="scale2-product-input" name="product" th:placeholder="#{weighing.product}">
@@ -20,16 +23,21 @@
         <form action="/updateAllWeighing_2" method="post">
             <input type="button" th:value="#{weighing.update}" id="scale2-update-weighing-btn">
         </form>
+        <div id="con2-indicator" hidden></div>
         <div id="scale2-indicator"></div>
+        
     </div>
 
     <div class="scale2-info">
         <div class="scale2-info-container">
-            <video th:if="${cam2Enabled}" id="player-2" class="scale2-camera" muted data-hls-src="/cam2/index.m3u8"></video>
+            <video th:if="${cam2Enabled}" id="player-2" class="scale2-camera" muted
+                data-hls-src="/cam2/index.m3u8"></video>
             <div class="scale2-done-info">
                 <a target="_blank" href="/pdflast_2/report2.pdf">Print Report</a>
             </div>
         </div>
         <div id="operation-data2-container"></div>
     </div>
+
+
 </div>

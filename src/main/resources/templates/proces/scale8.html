@@ -1,0 +1,43 @@
+<div id="scale8-container">
+    <input type="number" id="magonNumLeght_8" th:value="${magonNumLeght_8}" readonly hidden>
+    <input type="text" id="conId_8" th:value="${conId_8}" readonly hidden>
+    <div id="scale8-action">
+        <div id="scale8-btn-container">
+            <input type="text" id="w-indic-8" readonly>
+            <form action="/startWeighing_8" method="post">
+                <input type="button" th:value="#{weighing.start}" id="scale8-start-weighing-btn">
+            </form>
+            <form action="/doneWeighing_8" method="post">
+                <input type="button" th:value="#{weighing.done}" id="scale8-done-weighing-btn">
+            </form>
+            <form action="/abortWeighing_8" method="post">
+                <input type="button" th:value="#{weighing.abort}" id="scale8-abort-weighing-btn">
+            </form>
+            <form action="/addwagonWeighing_8" method="post">
+                <input type="number" id="scale8-count-input" name="count" placeholder="count">
+                <input type="text" id="scale8-product-input" name="product" th:placeholder="#{weighing.product}">
+                <input type="number" id="scale8-number-input" name="wagonNumber" th:placeholder="#{weighing.number}">
+                <input type="button" th:value="#{weighing.addwagon}" id="scale8-add-wagon-btn">
+            </form>
+        </div>
+        <form action="/updateAllWeighing_8" method="post">
+            <input type="button" th:value="#{weighing.update}" id="scale8-update-weighing-btn">
+        </form>
+        <div id="con8-indicator" hidden></div>
+        <div id="scale8-indicator"></div>
+        
+    </div>
+
+    <div class="scale8-info">
+        <div class="scale8-info-container">
+            <video th:if="${cam8Enabled}" id="player-8" class="scale8-camera" muted
+                data-hls-src="/cam8/index.m3u8"></video>
+            <div class="scale8-done-info">
+                <a target="_blank" href="/pdflast_8/report8.pdf">Print Report</a>
+            </div>
+        </div>
+        <div id="operation-data8-container"></div>
+    </div>
+
+
+</div>

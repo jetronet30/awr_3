@@ -191,6 +191,25 @@ public class TrainService {
     }
 
     @Transactional
+    public void closeTrain(String conId) {
+        TrainMod train = trainJpa.findByOpenTrueAndConId(conId).orElse(null);
+        if (train == null) {
+            LOGGER.warn("No open train found for conId: {}", conId);
+            return;
+        }
+        if (!train.isDone()) {
+            LOGGER.warn("Train is not done for conId: {}", conId);
+            return;
+        }
+        train.setOpen(false);
+        train.setWeighingStopDateTime(ServerManager.getSystemDateTime());
+        recalculateTrainTotals(train);
+        trainJpa.save(train);
+        pdfCreator.createPdf(train);
+        LOGGER.info("Train conId {} closed successfully", conId);
+    }
+
+    @Transactional
     public void closeTrainAndOpenNewTrain(String conId, String scaleName, int scaleIndex) {
         TrainMod train = trainJpa.findByOpenTrueAndConId(conId).orElse(null);
         if (train == null) {
@@ -280,6 +299,17 @@ public class TrainService {
     public boolean isWorkInProgress(String conId) {
         TrainMod train = trainJpa.findByOpenTrueAndConId(conId).orElse(null);
         return train != null && !train.isDone();
+    }
+
+    @Transactional
+    public void deleteTrainByConId(String conId) {
+        TrainMod train = trainJpa.findByOpenTrueAndConId(conId).orElse(null);
+        if (train != null) {
+            trainJpa.delete(train);
+            LOGGER.info("Train with conId {} deleted successfully", conId);
+        } else {
+            LOGGER.warn("No open train found to delete with conId: {}", conId);
+        }
     }
 
 

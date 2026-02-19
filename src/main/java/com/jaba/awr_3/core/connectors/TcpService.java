@@ -39,11 +39,11 @@ public class TcpService {
 
             List<TcpMod> tcpMods = new ArrayList<>();
 
-            TcpMod tcp1 = createTcp(5, "Scale 5", "TCP_0", "TCP_0", "TSR4000", "0.0.0.0", 5501, false, false, true);
-            TcpMod tcp2 = createTcp(6, "Scale 6", "TCP_1", "TCP_1", "TSR4000", "0.0.0.0", 5502, false, false, true);
-            TcpMod tcp3 = createTcp(7, "Scale 7", "TCP_2", "TCP_2", "TSR4000", "0.0.0.0", 5503, false, false, true);
-            TcpMod tcp4 = createTcp(8, "Scale 8", "TCP_3", "TCP_3", "TSR4000", "0.0.0.0", 5504, false, false, true);
-            TcpMod tcp5 = createTcp(9, "Scale 9", "TCP_4", "TCP_4", "TSR4000", "0.0.0.0", 5505, false, false, true);
+            TcpMod tcp1 = createTcp(5, "Scale 6", "TCP_0", "TCP_0", "TSR4000", "0.0.0.0", 5501, false, false, true);
+            TcpMod tcp2 = createTcp(6, "Scale 7", "TCP_1", "TCP_1", "TSR4000", "0.0.0.0", 5502, false, false, true);
+            TcpMod tcp3 = createTcp(7, "Scale 8", "TCP_2", "TCP_2", "TSR4000", "0.0.0.0", 5503, false, false, true);
+            TcpMod tcp4 = createTcp(8, "Scale 9", "TCP_3", "TCP_3", "TSR4000", "0.0.0.0", 5504, false, false, true);
+            TcpMod tcp5 = createTcp(9, "Scale 10", "TCP_4", "TCP_4", "TSR4000", "0.0.0.0", 5505, false, false, true);
 
             tcpMods.addAll(Arrays.asList(tcp1, tcp2, tcp3, tcp4, tcp5));
 
@@ -113,14 +113,14 @@ public class TcpService {
         }
     }
 
-    public TcpMod getTcpModByIndex(int index) {
+    public TcpMod getTcpByIndex(int index) {
         for (TcpMod cm : listTcps()) {
             if (cm.getIndex() == index) {
-                LOGGER.debug("პორტი ნაპოვნია getPortByIndex-ით: {}", index);
+                LOGGER.debug("პორტი ნაპოვნია getTcpByIndex-ით: {}", index);
                 return cm;
             }
         }
-        LOGGER.debug("პორტი ვერ მოიძებნა getPortByIndex-ით: {}", index);
+        LOGGER.debug("პორტი ვერ მოიძებნა getTcpByIndex-ით: {}", index);
         return null;
     }
 

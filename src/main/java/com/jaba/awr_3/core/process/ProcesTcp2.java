@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
-public class ProcesTcp0 {
+public class ProcesTcp2 {
 
     private final Tsr4000Parser tsr4000Parser;
     private final TcpService tcpService;
@@ -39,9 +39,9 @@ public class ProcesTcp0 {
     private boolean rightToUpdateTare;
     private String ipAddress;
     private int port;
-    private final int scaleIndex = 5; // TcpService-ში პირველი TCP კონფიგურაციის ინდექსი (მუდმივი 5-ით)
+    private final int scaleIndex = 7; // TcpService-ში პირველი TCP კონფიგურაციის ინდექსი (მუდმივი 7-ით)
 
-    private static final Logger log = LoggerFactory.getLogger(ProcesTcp0.class);
+    private static final Logger log = LoggerFactory.getLogger(ProcesTcp2.class);
     private static final int BUFFER_SIZE = 1024;
 
     // === TCP სოკეტები (volatile — reconnection-ისთვის) ===

@@ -25,11 +25,11 @@ public class MainCon {
         ComMod chan3 = comService.getPortByIndex(3);
         ComMod chan4 = comService.getPortByIndex(4);
         
-        TcpMod chan5 = tcpService.getTcpByName("TCP_0");
-        TcpMod chan6 = tcpService.getTcpByName("TCP_1");
-        TcpMod chan7 = tcpService.getTcpByName("TCP_2");
-        TcpMod chan8 = tcpService.getTcpByName("TCP_3");
-        TcpMod chan9 = tcpService.getTcpByName("TCP_4");
+        TcpMod chan5 = tcpService.getTcpByIndex(5);
+        TcpMod chan6 = tcpService.getTcpByIndex(6);
+        TcpMod chan7 = tcpService.getTcpByIndex(7);
+        TcpMod chan8 = tcpService.getTcpByIndex(8);
+        TcpMod chan9 = tcpService.getTcpByIndex(9);
 
         // აქტიურობა (isActive)
         m.addAttribute("scale0Enabled", chan0 != null && chan0.isActive());

@@ -1,5 +1,3 @@
-/* ==================== SCALE 3 — სრულიად ადაპტური ვერსია (2025) ==================== */
-
 #scale3-action {
     width: 100%;
     position: sticky;
@@ -24,6 +22,7 @@
     border: none;
 }
 
+
 #scale3-btn-container {
     display: flex;
     gap: 10px;
@@ -32,6 +31,7 @@
 }
 
 #scale3-start-weighing-btn,
+#scale3-done-weighing-btn,
 #scale3-abort-weighing-btn,
 #scale3-add-wagon-btn,
 #scale3-update-weighing-btn {
@@ -46,6 +46,7 @@
 }
 
 #scale3-start-weighing-btn:hover,
+#scale3-done-weighing-btn:hover,
 #scale3-abort-weighing-btn:hover,
 #scale3-add-wagon-btn:hover,
 #scale3-update-weighing-btn:hover {
@@ -73,6 +74,12 @@
     border-radius: 50px;
     background-color: aliceblue;
 }
+#con3-indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 50px;
+    background-color: red;
+}
 
 /* === მარცხენა სია === */
 #operation-data3-container {
@@ -90,6 +97,7 @@
 .scale3-operdata-row-input,
 .scale3-operdata-weight-input,
 .scale3-operdata-wagonNum-input,
+.scale3-operdata-tare-input,
 .scale3-operdata-product-input {
     padding: 2px; text-align: center; font-size: small; font-weight: 600;
     border: 1px solid #ccc; border-radius: 3px;
@@ -97,6 +105,7 @@
 
 .scale3-operdata-row-input     { width: 5ch; }
 .scale3-operdata-weight-input  { width: 7ch; }
+.scale3-operdata-tare-input    { width: 7ch; }
 .scale3-operdata-wagonNum-input{ width: 14ch; }
 .scale3-operdata-product-input { width: 12ch; }
 
@@ -193,28 +202,57 @@
     #w-indic-3 { width: 90%; }
 }
 
-/* === დიდი ეკრანები — ვიდეო იზრდება 1600px-დან ზევით (იდენტურად scale1/scale2) === */
+/* === დიდი ეკრანები — ვიდეო იზრდება! (1600px-დან ზევით) === */
 @media (min-width: 1600px) {
-    .scale3-info-container { width: 48vw; max-width: 1600px; min-height: 500px; }
+    .scale3-info-container {
+        width: 48vw;           /* 1600px-ზე ~768px → 1920px-ზე ~922px */
+        max-width: 1600px;
+        min-height: 500px;
+    }
 }
 
 @media (min-width: 1920px) {
-    .scale3-info-container { width: 50vw; max-width: 1800px; min-height: 600px; }
+    .scale3-info-container {
+        width: 50vw;           /* Full HD-ზე ~960px */
+        max-width: 1800px;
+        min-height: 600px;
+    }
 }
 
 @media (min-width: 2560px) {
-    .scale3-info-container { width: 52vw; max-width: 2000px; min-height: 750px; }
+    .scale3-info-container {
+        width: 52vw;           /* 2K / QHD+ ~1350px */
+        max-width: 2000px;
+        min-height: 750px;
+    }
 }
 
 @media (min-width: 3440px) {
-    .scale3-info-container { width: 55vw; max-width: 2400px; min-height: 900px; }
+    .scale3-info-container {
+        width: 55vw;           /* Ultrawide 21:9 ~1890px */
+        max-width: 2400px;
+        min-height: 900px;
+    }
 }
 
 @media (min-width: 3840px) {
-    .scale3-info-container { width: 58vw; max-width: 2800px; min-height: 1000px; padding: 15px; }
-    .scale3-done-info a { padding: 20px 50px; font-size: 1.4rem; }
+    .scale3-info-container {
+        width: 58vw;           /* 4K-ზე ~2200px+ */
+        max-width: 2800px;
+        min-height: 1000px;
+        padding: 15px;
+    }
+    
+    .scale3-done-info a {
+        padding: 20px 50px;
+        font-size: 1.4rem;
+    }
 }
 
 @media (min-width: 5120px) {
-    .scale3-info-container { width: 60vw; max-width: 3400px; min-height: 1200px; }
+    .scale3-info-container {
+        width: 60vw;           /* 5K / 8K */
+        max-width: 3400px;
+        min-height: 1200px;
+    }
 }

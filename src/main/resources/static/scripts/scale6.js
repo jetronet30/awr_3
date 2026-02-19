@@ -1,6 +1,6 @@
-/* ============================== scale5.js ============================== */
-// მოდული #scale6-container-ისთვის (TCP_4) — უსაფრთხო, განახლებული ვერსია
-/* ====================================================================== */
+// =============================================================================
+// scale6.js — მოდული #scale6-container-ისთვის (განახლებული 2025/2026)
+// =============================================================================
 
 let intervalIds = new Set();
 let eventListeners = new Map();
@@ -11,7 +11,9 @@ let weightEventSource = null;
 // === ინიციალიზაციის ფლაგი (მხოლოდ ერთხელ) ===
 let isScale6Initialized = false;
 
-/* ---------- Event-listener მართვა ---------- */
+// =============================================================================
+// Helper: Event Listener-ების თრექინგი და გასუფთავება
+// =============================================================================
 function trackEventListener(element, event, handler) {
     if (!element) return;
     const list = eventListeners.get(element) || [];
@@ -28,7 +30,9 @@ function clearEventListeners() {
     eventListeners.clear();
 }
 
-/* ---------- Helper: წაიკითხავს #magonNumLeght_4-ს → 8, 10, 12 (default: 8) ---------- */
+// =============================================================================
+// Helper: ვაგონის ნომრის სიგრძე (8, 10, 12)
+// =============================================================================
 function getAllowedWagonLength(netContainer) {
     const input = netContainer.querySelector("#magonNumLeght_6");
     const value = input?.value?.trim();
@@ -36,7 +40,35 @@ function getAllowedWagonLength(netContainer) {
     return (Number.isInteger(num) && [8, 10, 12].includes(num)) ? num : 8;
 }
 
-/* ---------- საწყისი ვაგონების ჩატვირთვა ---------- */
+// =============================================================================
+// Helper: conId_6-ის მიღება
+// =============================================================================
+function getConId(netContainer) {
+    const input = netContainer.querySelector("#conId_6");
+    return input?.value?.trim() || "unknown";
+}
+
+// =============================================================================
+// Helper: კავშირის ინდიკატორის განახლება (#con6-indicator)
+// =============================================================================
+function updateConIndicator(success) {
+    const indicator = document.querySelector("#con6-indicator");
+    if (!indicator) return;
+
+    indicator.style.transition = "background-color 0.5s ease";
+    indicator.style.backgroundColor = success ? "#00cc66" : "#ff3333";
+
+    // ავტომატური გაქრობა 5 წამში (შეგიძლია ამოიღო თუ მუდმივი გინდა)
+    const id = setTimeout(() => {
+        indicator.style.backgroundColor = "";
+    }, 5000);
+
+    intervalIds.add(id);
+}
+
+// =============================================================================
+// INITIAL LOAD: /showweighingWagons6 → #operation-data6-container
+// =============================================================================
 async function loadInitialWagonData(netContainer, updateIndicator) {
     if (!netContainer) return;
 
@@ -58,7 +90,9 @@ async function loadInitialWagonData(netContainer, updateIndicator) {
     }
 }
 
-/* ---------- რედაქტირების ფორმების დაკავშირება + ავტომატური გაგზავნა ---------- */
+// =============================================================================
+// BIND EDIT FORMS: .oprdata6-set-from ფორმები + ავტომატური გაგზავნა
+// =============================================================================
 function bindEditWagonForm(netContainer, updateIndicator) {
     const editForms = netContainer.querySelectorAll('form.oprdata6-set-from');
     const allowedLength = getAllowedWagonLength(netContainer);
@@ -94,7 +128,6 @@ function bindEditWagonForm(netContainer, updateIndicator) {
                     alert(`ვაგონი ${result.message} - განახლება ვერ მოხერხდა.`);
                 }
             } catch (err) {
-                updateIndicator?.(false);
                 alert(`შეცდომა: ${err.message}`);
             }
         };
@@ -122,7 +155,9 @@ function bindEditWagonForm(netContainer, updateIndicator) {
     });
 }
 
-/* ---------- ვიდეოს HLS ინიციალიზაცია ---------- */
+// =============================================================================
+// VIDEO: HLS.js ინიციალიზაცია
+// =============================================================================
 function initVideoScale6() {
     const video = document.getElementById('player-6');
     if (!video || !video.getAttribute('data-hls-src')) return;
@@ -172,7 +207,9 @@ function observeVideoScale6(container) {
     videoObserver.observe(container, { childList: true, subtree: true });
 }
 
-/* ---------- SSE CONNECTION: /sendscale4 → TCP_4 → #w-indic-6 ---------- */
+// =============================================================================
+// SSE: წონის + კავშირის სტატუსის მიღება
+// =============================================================================
 function connectWeightSSE(netContainer, updateIndicator) {
     if (weightEventSource) {
         weightEventSource.close();
@@ -181,46 +218,56 @@ function connectWeightSSE(netContainer, updateIndicator) {
 
     weightEventSource = new EventSource('/sendscale6');
 
-    weightEventSource.addEventListener('TCP_4', (e) => {
+    weightEventSource.addEventListener(getConId(netContainer), (e) => {
         const data = e.data.trim();
 
-        if (data === 'update-data-container') {
-            loadInitialWagonData(netContainer, updateIndicator);
-            return;
-        }
+        switch (data) {
+            case 'update-data-container':
+                loadInitialWagonData(netContainer, updateIndicator);
+                break;
 
-        const weightInput = document.getElementById('w-indic-6');
+            case 'update-data-works-start':
+                document.getElementById('w-indic-6').value = "START";
+                document.getElementById('w-indic-6').style.color = '#fdec04ff';
+                break;
 
-        if (data === 'update-data-works-start') {
-            weightInput.value = "START"
-            weightInput.style.color = '#fdec04ff';
-            return;
-        }
+            case 'update-data-works-stop':
+                document.getElementById('w-indic-6').value = "END";
+                document.getElementById('w-indic-6').style.color = '#fd048dff';
+                break;
 
-        if (data === 'update-data-works-stop') {
-            weightInput.value = "END"
-            weightInput.style.color = '#fd048dff';
-            return;
-        }
+            case 'update-con-indicator':
+                updateConIndicator(true);
+                break;
 
-        if (weightInput) {
-            weightInput.value = data;
-            weightInput.style.color = '#04cbfdff';
-            setTimeout(() => { weightInput.style.color = ''; }, 1000);
+            default:
+                // წონის მნიშვნელობა
+                const weightInput = document.getElementById('w-indic-6');
+                if (weightInput) {
+                    weightInput.value = data;
+                    weightInput.style.color = '#04cbfdff';
+                    setTimeout(() => { weightInput.style.color = ''; }, 1000);
+                }
+                break;
         }
     });
 
-    weightEventSource.onerror = () => {
-        weightEventSource.close();
-        setTimeout(() => connectWeightSSE(netContainer, updateIndicator), 2000);
+    weightEventSource.onopen = () => {
+        console.log('SSE connected: /sendscale6');
+        updateConIndicator(true);
     };
 
-    weightEventSource.onopen = () => {
-        console.log('SSE connected: /sendscale6 (TCP_4)');
+    weightEventSource.onerror = () => {
+        updateConIndicator(false);
+        weightEventSource.close();
+        weightEventSource = null;
+        setTimeout(() => connectWeightSSE(netContainer, updateIndicator), 2000);
     };
 }
 
-/* ---------- მოდულის ინიციალიზაცია — მხოლოდ ერთხელ! ---------- */
+// =============================================================================
+// MAIN INITIALIZATION — მხოლოდ ერთხელ!
+// =============================================================================
 export function initScale6Module() {
     if (isScale6Initialized) {
         console.warn("scale6 უკვე ინიციალიზებულია. გამოტოვება.");
@@ -246,13 +293,16 @@ export function initScale6Module() {
         }
     }
 
-    // 1. Load initial data
+    // თავდაპირველი მდგომარეობა — კავშირი ჯერ არ არის
+    updateConIndicator(false);
+
+    // 1. Load initial data & SSE
     loadInitialWagonData(netContainer, updateIndicator);
     connectWeightSSE(netContainer, updateIndicator);
 
     // 2. Helper: Reload module safely
     const reloadModule = async (actionUrl) => {
-        cleanupScale6Module(); // სრული გასუფთავება
+        cleanupScale0Module();
 
         try {
             const response = await fetch(actionUrl, { method: "POST" });
@@ -272,7 +322,7 @@ export function initScale6Module() {
     };
 
     // 3. START WEIGHING
-    const startForm = netContainer.querySelector('form[action="/startWeighing_6"]');
+    const startForm = netContainer.querySelector('form[action="/startWeighing_6"]' );
     const startBtn = startForm?.querySelector("#scale6-start-weighing-btn");
     if (startForm && startBtn) {
         const newBtn = startBtn.cloneNode(true);
@@ -283,7 +333,19 @@ export function initScale6Module() {
         });
     }
 
-    // 4. ABORT WEIGHING
+    // 4. DONE WEIGHING
+    const doneForm = netContainer.querySelector('form[action="/doneWeighing_6"]');
+    const doneBtn = doneForm?.querySelector("#scale6-done-weighing-btn");
+    if (doneForm && doneBtn) {
+        const newBtn = doneBtn.cloneNode(true);
+        doneBtn.replaceWith(newBtn);
+        trackEventListener(newBtn, "click", (e) => {
+            e.preventDefault();
+            reloadModule(doneForm.action);
+        });
+    }
+
+    // 5. ABORT WEIGHING
     const abortForm = netContainer.querySelector('form[action="/abortWeighing_6"]');
     const abortBtn = abortForm?.querySelector("#scale6-abort-weighing-btn");
     if (abortForm && abortBtn) {
@@ -295,7 +357,7 @@ export function initScale6Module() {
         });
     }
 
-    // 5. ADD WAGON + AUTO-SUBMIT
+    // 6. ADD WAGON
     const addForm = netContainer.querySelector('form[action="/addwagonWeighing_6"]');
     const addBtn = addForm?.querySelector("#scale6-add-wagon-btn");
     const wagonNumberInput = addForm?.querySelector("#scale6-number-input");
@@ -312,7 +374,7 @@ export function initScale6Module() {
             if (isSubmitting) return;
             isSubmitting = true;
 
-            const targetContainer = netContainer.querySelector("#operation-data5-container");
+            const targetContainer = netContainer.querySelector("#operation-data6-container");
             if (!targetContainer) return;
 
             try {
@@ -357,7 +419,7 @@ export function initScale6Module() {
         });
     }
 
-    // 6. UPDATE ALL WAGONS
+    // 7. UPDATE ALL
     const updateForm = netContainer.querySelector('form[action="/updateAllWeighing_6"]');
     const updateBtn = updateForm?.querySelector("#scale6-update-weighing-btn");
 
@@ -384,15 +446,17 @@ export function initScale6Module() {
         });
     }
 
-    // 7. VIDEO
+    // 8. VIDEO
     initVideoScale6();
     observeVideoScale6(netContainer);
 
-    // 8. Global cleanup access
+    // 9. Global cleanup access
     window.cleanupScale6Module = cleanupScale6Module;
 }
 
-/* ---------- სრული გასუფთავება — ყოველ ჯერზე გამოიძახება ---------- */
+// =============================================================================
+// FULL CLEANUP
+// =============================================================================
 export function cleanupScale6Module() {
     console.log('Cleaning up scale6 module...');
 
@@ -415,6 +479,13 @@ export function cleanupScale6Module() {
         weightEventSource.close();
         weightEventSource = null;
     }
+
+    // ინდიკატორების გასუფთავება
+    const indicators = ["#scale6-indicator", "#con6-indicator"];
+    indicators.forEach(sel => {
+        const el = document.querySelector(sel);
+        if (el) el.style.backgroundColor = "";
+    });
 
     isScale6Initialized = false;
 

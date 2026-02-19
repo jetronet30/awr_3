@@ -40,7 +40,7 @@ public class Tsr4000Parser {
                 // String lastsector8 = text.substring(45);
                 trainService.updateTrain(conId, processId, getWeight(fuulWeight), getDate(weghtingDate),
                         getSpeed(maxSpeed), getSpeed(minSpeed), getRowNum(countsector7));
-                
+
                 emitterServic.sendToScale(conId, "update-data-container");
             } else if (first3.contains("V")) {
                 if (text.length() < 45) {
@@ -73,7 +73,7 @@ public class Tsr4000Parser {
                 }
             } else if (text.toLowerCase().contains("cstart")) {
                 trainService.closeTrainAndOpenNewTrain(conId, scaleName, scaleIndex);
-                
+
                 emitterServic.sendToScale(conId, "update-data-container");
                 emitterServic.sendToScale(conId, "update-data-works-start");
             } else if (text.contains("Trn_Dir:")) {
@@ -81,20 +81,20 @@ public class Tsr4000Parser {
                 if (upper.contains(" IN ") || upper.contains(":IN ") || upper.contains("(IN")) {
                     trainService.updateTrainAndWagons(conId, "IN");
                     emitterServic.sendToScale(conId, "update-data-works-stop");
-                    
+
                     if (automatic) {
                         emitterServic.sendToScale(conId, "update-data-container");
                     }
                 } else if (upper.contains(" OUT ") || upper.contains(":OUT ") || upper.contains("(OUT")) {
                     trainService.updateTrainAndWagons(conId, "OUT");
                     emitterServic.sendToScale(conId, "update-data-works-stop");
-                    
+
                     if (automatic) {
                         emitterServic.sendToScale(conId, "update-data-container");
                     }
                 }
-            } else if (text.endsWith("6B")) {
-
+            } else if (text.toLowerCase().endsWith("6b")) {
+                emitterServic.sendToScale(conId, "update-con-indicator");
             } else {
                 LOGGER.warn("Unknown identifier: {}", first3);
             }

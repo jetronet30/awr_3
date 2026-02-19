@@ -1,15 +1,18 @@
 <div id="scale3-container">
     <input type="number" id="magonNumLeght_3" th:value="${magonNumLeght_3}" readonly hidden>
+    <input type="text" id="conId_3" th:value="${conId_3}" readonly hidden>
     <div id="scale3-action">
         <div id="scale3-btn-container">
-            <input type="text" id="w-indic-3" readonly >
+            <input type="text" id="w-indic-3" readonly>
             <form action="/startWeighing_3" method="post">
                 <input type="button" th:value="#{weighing.start}" id="scale3-start-weighing-btn">
+            </form>
+            <form action="/doneWeighing_3" method="post">
+                <input type="button" th:value="#{weighing.done}" id="scale3-done-weighing-btn">
             </form>
             <form action="/abortWeighing_3" method="post">
                 <input type="button" th:value="#{weighing.abort}" id="scale3-abort-weighing-btn">
             </form>
-
             <form action="/addwagonWeighing_3" method="post">
                 <input type="number" id="scale3-count-input" name="count" placeholder="count">
                 <input type="text" id="scale3-product-input" name="product" th:placeholder="#{weighing.product}">
@@ -20,12 +23,15 @@
         <form action="/updateAllWeighing_3" method="post">
             <input type="button" th:value="#{weighing.update}" id="scale3-update-weighing-btn">
         </form>
+        <div id="con3-indicator" hidden></div>
         <div id="scale3-indicator"></div>
+        
     </div>
 
     <div class="scale3-info">
         <div class="scale3-info-container">
-            <video  th:if="${cam3Enabled}" id="player-3" class="scale3-camera"  muted data-hls-src="/cam3/index.m3u8"></video>
+            <video th:if="${cam3Enabled}" id="player-3" class="scale3-camera" muted
+                data-hls-src="/cam3/index.m3u8"></video>
             <div class="scale3-done-info">
                 <a target="_blank" href="/pdflast_3/report3.pdf">Print Report</a>
             </div>

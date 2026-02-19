@@ -1,0 +1,43 @@
+<div id="scale7-container">
+    <input type="number" id="magonNumLeght_7" th:value="${magonNumLeght_7}" readonly hidden>
+    <input type="text" id="conId_7" th:value="${conId_7}" readonly hidden>
+    <div id="scale7-action">
+        <div id="scale7-btn-container">
+            <input type="text" id="w-indic-7" readonly>
+            <form action="/startWeighing_7" method="post">
+                <input type="button" th:value="#{weighing.start}" id="scale7-start-weighing-btn">
+            </form>
+            <form action="/doneWeighing_7" method="post">
+                <input type="button" th:value="#{weighing.done}" id="scale7-done-weighing-btn">
+            </form>
+            <form action="/abortWeighing_7" method="post">
+                <input type="button" th:value="#{weighing.abort}" id="scale7-abort-weighing-btn">
+            </form>
+            <form action="/addwagonWeighing_7" method="post">
+                <input type="number" id="scale7-count-input" name="count" placeholder="count">
+                <input type="text" id="scale7-product-input" name="product" th:placeholder="#{weighing.product}">
+                <input type="number" id="scale7-number-input" name="wagonNumber" th:placeholder="#{weighing.number}">
+                <input type="button" th:value="#{weighing.addwagon}" id="scale7-add-wagon-btn">
+            </form>
+        </div>
+        <form action="/updateAllWeighing_7" method="post">
+            <input type="button" th:value="#{weighing.update}" id="scale7-update-weighing-btn">
+        </form>
+        <div id="con7-indicator" hidden></div>
+        <div id="scale7-indicator"></div>
+        
+    </div>
+
+    <div class="scale7-info">
+        <div class="scale7-info-container">
+            <video th:if="${cam7Enabled}" id="player-7" class="scale7-camera" muted
+                data-hls-src="/cam7/index.m3u8"></video>
+            <div class="scale7-done-info">
+                <a target="_blank" href="/pdflast_7/report7.pdf">Print Report</a>
+            </div>
+        </div>
+        <div id="operation-data7-container"></div>
+    </div>
+
+
+</div>
