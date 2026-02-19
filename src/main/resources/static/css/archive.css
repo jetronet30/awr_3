@@ -12,31 +12,54 @@
     z-index: 100;
 }
 
-#archive-btn-container {
+
+#archive-vi-container {
     display: flex;
+    flex-direction: column;
     gap: 10px;
-    align-items: center;
-    justify-content: space-between;
+    padding: 5px;
 }
 
-#archive-indicator {
+.archiv-train-from {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    background-color: aliceblue;
+    padding: 2px;
+}
+
+.archiv-train-btn {
+    padding: 5px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 20%;
+}
+
+.archiv-train-status-red {
+    padding: 5px;
+    width: 18ch;
+    border: 1px solid #140606;
+    background: none;
+    text-align: center;
+    color: red;
+}
+
+.archiv-train-status-green {
+    padding: 5px;
+    width: 18ch;
+    border: 1px solid #140606;
+    background: none;
+    text-align: center;
+    color: green;
+}
+
+.status-indic {
     width: 20px;
     height: 20px;
-    border-radius: 50px;
-    background-color: aliceblue;
-}
-
-
-.archiv_name {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    text-decoration: none;
-    color: #333;
-    font-weight: 500;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 50%;
+    background-color: red;
+    /* Default color, can be changed based on status */
 }

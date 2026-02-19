@@ -41,6 +41,10 @@ public class TrainMod {
     private BigDecimal sysGross;
     private boolean open;
     private boolean done;
+    private boolean normalWeight;
+    private boolean normalSpeed;
+    private boolean allwagonsNumbered;
+    private boolean bloked;
     private int count;
     private String videoPatch;
 

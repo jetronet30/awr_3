@@ -1,0 +1,10 @@
+<div th:each=" train : ${trains}" id="archive-vi-container">
+    <form th:action="@{/trainArchiv/{id}(id=${train.id})}" method="get" target="_blank" class="archiv-train-from">
+        <button type="submit" class="archiv-train-btn"
+            th:text="${train.scaleName} + ' >>>  ' + ${train.weighingStopDateTime}">Train Name</button>
+        <input type="text" class="archiv-train-status-red" value="weight status" readonly>
+        <input type="text" class="archiv-train-status-red" value="speed status" readonly>
+        <input type="text" class="archiv-train-status-red" value="tare only" readonly>
+        <input type="text" class="archiv-train-status-green" value="completion status" readonly>
+    </form>
+</div>
