@@ -64,9 +64,17 @@
     border-radius: 4px;
 }
 
-#scale7-number-input { width: 20ch; }
-#scale7-product-input { width: 20ch; }
-#scale7-count-input { width: 10ch; }
+#scale7-number-input {
+    width: 20ch;
+}
+
+#scale7-product-input {
+    width: 20ch;
+}
+
+#scale7-count-input {
+    width: 10ch;
+}
 
 #scale7-indicator {
     width: 20px;
@@ -74,6 +82,7 @@
     border-radius: 50px;
     background-color: aliceblue;
 }
+
 #con7-indicator {
     width: 20px;
     height: 20px;
@@ -92,29 +101,61 @@
 }
 
 /* === ვაგონების ფორმები === */
-.oprdata7-set-from { margin: 1px; padding: 4px; border-radius: 4px; transition: background-color 0.3s ease; }
+.oprdata7-set-from {
+    margin: 1px;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
 
 .scale7-operdata-row-input,
 .scale7-operdata-weight-input,
 .scale7-operdata-wagonNum-input,
 .scale7-operdata-tare-input,
 .scale7-operdata-product-input {
-    padding: 2px; text-align: center; font-size: small; font-weight: 600;
-    border: 1px solid #ccc; border-radius: 3px;
+    padding: 2px;
+    text-align: center;
+    font-size: small;
+    font-weight: 600;
+    border: 1px solid #ccc;
+    border-radius: 3px;
 }
 
-.scale7-operdata-row-input     { width: 5ch; }
-.scale7-operdata-weight-input  { width: 7ch; }
-.scale7-operdata-tare-input    { width: 7ch; }
-.scale7-operdata-wagonNum-input{ width: 14ch; }
-.scale7-operdata-product-input { width: 12ch; }
+.scale7-operdata-row-input {
+    width: 5ch;
+}
+
+.scale7-operdata-weight-input {
+    width: 7ch;
+}
+
+.scale7-operdata-tare-input {
+    width: 7ch;
+}
+
+.scale7-operdata-wagonNum-input {
+    width: 14ch;
+}
+
+.scale7-operdata-product-input {
+    width: 12ch;
+}
 
 .oprdata7-set-btn {
-    background-color: #2b853a; color: white; border: none; padding: 2px 6px;
-    cursor: pointer; font-weight: 800; border-radius: 3px; transition: all 0.2s ease;
+    background-color: #2b853a;
+    color: white;
+    border: none;
+    padding: 2px 6px;
+    cursor: pointer;
+    font-weight: 800;
+    border-radius: 3px;
+    transition: all 0.2s ease;
 }
 
-.oprdata7-set-btn:hover { background-color: #3aac4d; padding: 4px 8px; }
+.oprdata7-set-btn:hover {
+    background-color: #3aac4d;
+    padding: 4px 8px;
+}
 
 /* === მთავარი განლაგება === */
 .scale7-info {
@@ -183,7 +224,7 @@
 
 #scale7-print-btn {
     display: inline-block;
-    padding: 15px ;
+    padding: 15px;
     background-color: #007bff;
     color: #ffffff;
     border: none;
@@ -193,6 +234,7 @@
     transition: all 0.3s ease;
     margin-left: 20px;
 }
+
 #scale7-print-btn:hover {
     background-color: #0069d9;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
@@ -208,20 +250,40 @@
         margin: 20px auto;
         border-radius: 16px;
     }
-    .scale7-info { flex-direction: column; padding: 0 10px; }
-    #operation-data7-container { margin-left: 0; max-width: none; min-width: auto; }
+
+    .scale7-info {
+        flex-direction: column;
+        padding: 0 10px;
+    }
+
+    #operation-data7-container {
+        margin-left: 0;
+        max-width: none;
+        min-width: auto;
+    }
 }
 
 @media (max-width: 640px) {
-    #scale7-action { flex-direction: column; text-align: center; }
-    #scale7-btn-container { flex-direction: column; width: 100%; }
-    #w-indic-7 { width: 90%; }
+    #scale7-action {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    #scale7-btn-container {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    #w-indic-7 {
+        width: 90%;
+    }
 }
 
 /* === დიდი ეკრანები — ვიდეო იზრდება! (1600px-დან ზევით) === */
 @media (min-width: 1600px) {
     .scale7-info-container {
-        width: 48vw;           /* 1600px-ზე ~768px → 1920px-ზე ~922px */
+        width: 48vw;
+        /* 1600px-ზე ~768px → 1920px-ზე ~922px */
         max-width: 1600px;
         min-height: 500px;
     }
@@ -229,7 +291,8 @@
 
 @media (min-width: 1920px) {
     .scale7-info-container {
-        width: 50vw;           /* Full HD-ზე ~960px */
+        width: 50vw;
+        /* Full HD-ზე ~960px */
         max-width: 1800px;
         min-height: 600px;
     }
@@ -237,7 +300,8 @@
 
 @media (min-width: 2560px) {
     .scale7-info-container {
-        width: 52vw;           /* 2K / QHD+ ~1350px */
+        width: 52vw;
+        /* 2K / QHD+ ~1350px */
         max-width: 2000px;
         min-height: 750px;
     }
@@ -245,7 +309,8 @@
 
 @media (min-width: 3440px) {
     .scale7-info-container {
-        width: 55vw;           /* Ultrawide 21:9 ~1890px */
+        width: 55vw;
+        /* Ultrawide 21:9 ~1890px */
         max-width: 2400px;
         min-height: 900px;
     }
@@ -253,12 +318,13 @@
 
 @media (min-width: 3840px) {
     .scale7-info-container {
-        width: 58vw;           /* 4K-ზე ~2200px+ */
+        width: 58vw;
+        /* 4K-ზე ~2200px+ */
         max-width: 2800px;
         min-height: 1000px;
         padding: 15px;
     }
-    
+
     .scale7-done-info a {
         padding: 20px 50px;
         font-size: 1.4rem;
@@ -267,7 +333,8 @@
 
 @media (min-width: 5120px) {
     .scale7-info-container {
-        width: 60vw;           /* 5K / 8K */
+        width: 60vw;
+        /* 5K / 8K */
         max-width: 3400px;
         min-height: 1200px;
     }

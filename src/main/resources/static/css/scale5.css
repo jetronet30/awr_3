@@ -213,7 +213,7 @@
 
 #scale5-print-btn {
     display: inline-block;
-    padding: 15px ;
+    padding: 15px;
     background-color: #007bff;
     color: #ffffff;
     border: none;
@@ -223,6 +223,7 @@
     transition: all 0.3s ease;
     margin-left: 20px;
 }
+
 #scale5-print-btn:hover {
     background-color: #0069d9;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
