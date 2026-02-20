@@ -122,6 +122,66 @@ function bindEditWagonForm(netContainer, updateIndicator) {
     });
 }
 
+// ================================================
+// Print ღილაკი — იყენებს iframe-ს და ბრაუზერის print()
+// ================================================
+function initScale5PrintButton() {
+    const printBtn = document.getElementById("scale5-print-btn");
+    if (!printBtn) return;
+
+    // წინა listener-ების გაწმენდა (თუ გვაქვს დუბლიკატი)
+    const cleanBtn = printBtn.cloneNode(true);
+    printBtn.replaceWith(cleanBtn);
+
+    cleanBtn.addEventListener("click", () => {
+        // ქმნით ფარულ iframe-ს
+        const iframe = document.createElement("iframe");
+        iframe.style.cssText = `
+            position: fixed;
+            right:   -9999px;
+            bottom:  -9999px;
+            width:    1px;
+            height:   1px;
+            border:   none;
+            visibility: hidden;
+        `;
+
+        // დროებითი query string ქეშის თავიდან ასაცილებლად
+        iframe.src = `/pdf5?t=${Date.now()}`;
+
+        document.body.appendChild(iframe);
+
+        iframe.onload = () => {
+            try {
+                // მცირე დაყოვნება PDF-ის ჩატვირთვისთვის (განსაკუთრებით Chrome/Edge-ში)
+                setTimeout(() => {
+                    const iframeWin = iframe.contentWindow || iframe.contentDocument.defaultView;
+                    if (iframeWin) {
+                        iframeWin.focus();
+                        iframeWin.print();
+                    }
+                }, 1000);  // 600–1500 ms ჩვეულებრივ საკმარისია
+            } catch (err) {
+                console.error("Print error:", err);
+                alert("ბეჭდვის ფანჯარა ვერ გაიხსნა.\nსცადეთ Ctrl + P ხელით.");
+            }
+
+            // iframe-ის ავტომატური წაშლა 15 წამში
+            setTimeout(() => {
+                if (iframe.parentNode) {
+                    iframe.parentNode.removeChild(iframe);
+                }
+            }, 15000);
+        };
+
+        // თუ iframe არ ჩაიტვირთა 20 წამში
+        iframe.onerror = () => {
+            alert("PDF ფაილის ჩატვირთვა ვერ მოხერხდა (/pdf0).");
+            if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+        };
+    });
+}
+
 /* ---------- ვიდეოს HLS ინიციალიზაცია ---------- */
 function initVideoScale5() {
     const video = document.getElementById('player-5');
@@ -145,7 +205,7 @@ function initVideoScale5() {
         hlsInstanceScale5.loadSource(video.getAttribute('data-hls-src'));
         hlsInstanceScale5.attachMedia(video);
 
-        hlsInstanceScale5.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
+        hlsInstanceScale5.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => { }));
         hlsInstanceScale5.on(Hls.Events.ERROR, (event, data) => {
             if (data.fatal || data.details === 'levelLoadError') {
                 hlsInstanceScale5.destroy();
@@ -155,7 +215,7 @@ function initVideoScale5() {
         });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = video.getAttribute('data-hls-src');
-        video.play().catch(() => {});
+        video.play().catch(() => { });
     }
 }
 
@@ -282,7 +342,7 @@ export function initScale5Module() {
             reloadModule(startForm.action);
         });
     }
-    
+
 
     // 4. DONE WEIGHING
     const doneForm = netContainer.querySelector('form[action="/doneWeighing_5"]');
@@ -400,6 +460,7 @@ export function initScale5Module() {
     // 8. VIDEO
     initVideoScale5();
     observeVideoScale5(netContainer);
+    initScale5PrintButton();
 
     // 9. Global cleanup access
     window.cleanupScale5Module = cleanupScale5Module;

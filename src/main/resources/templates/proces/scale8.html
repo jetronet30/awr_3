@@ -33,7 +33,9 @@
             <video th:if="${cam8Enabled}" id="player-8" class="scale8-camera" muted
                 data-hls-src="/cam8/index.m3u8"></video>
             <div class="scale8-done-info">
-                <a target="_blank" href="/pdflast_8/report8.pdf">Print Report</a>
+                <button id="scale8-print-btn" >Print</button>
+                <a href="/pdf8" download>Download</a>
+                <a href="/pdflast_8/report8.pdf"  target="_blank">View PDF</a>
             </div>
         </div>
         <div id="operation-data8-container"></div>

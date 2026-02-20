@@ -27,7 +27,9 @@
         <div class="scale6-info-container">
             <video  th:if="${cam6Enabled}" id="player-6" class="scale6-camera"  muted data-hls-src="/cam6/index.m3u8"></video>
             <div class="scale6-done-info">
-                <a target="_blank" href="/pdflast_6/report6.pdf">Print Report</a>
+                <button id="scale6-print-btn" >Print</button>
+                <a href="/pdf6" download>Download</a>
+                <a href="/pdflast_6/report6.pdf"  target="_blank">View PDF</a>
             </div>
         </div>
         <div id="operation-data6-container"></div>

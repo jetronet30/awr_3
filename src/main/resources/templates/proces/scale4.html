@@ -33,7 +33,9 @@
             <video th:if="${cam4Enabled}" id="player-4" class="scale4-camera" muted
                 data-hls-src="/cam4/index.m3u8"></video>
             <div class="scale4-done-info">
-                <a target="_blank" href="/pdflast_4/report4.pdf">Print Report</a>
+                <button id="scale4-print-btn" >Print</button>
+                <a href="/pdf4" download>Download</a>
+                <a href="/pdflast_4/report4.pdf"  target="_blank">View PDF</a>
             </div>
         </div>
         <div id="operation-data4-container"></div>

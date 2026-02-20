@@ -2,7 +2,10 @@ package com.jaba.awr_3.controllers.scalescontrollers;
 
 import java.util.Map;
 
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +20,7 @@ import com.jaba.awr_3.core.globalvar.GlobalRight;
 import com.jaba.awr_3.core.process.ProcesCom1;
 import com.jaba.awr_3.core.prodata.services.TrainService;
 import com.jaba.awr_3.core.units.UnitService;
+import com.jaba.awr_3.inits.repo.RepoInit;
 
 import lombok.RequiredArgsConstructor;
 
@@ -102,6 +106,16 @@ public class ScaleCon1 {
         return trainService.updateWagonToTrain(id, connId, wagonNum, product,
                 comService.getPortByIndex(1).isRightToUpdateTare());
     }
+
+    @GetMapping("/pdf1")
+    public ResponseEntity<Resource> getPdf1() {
+        FileSystemResource file = new FileSystemResource(RepoInit.PDF_REPOSITOR_LAST_1 + "/report1.pdf");
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(file);
+    }
+
+    
 
     @GetMapping(value = "/sendscale1", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter getSendScale1() {

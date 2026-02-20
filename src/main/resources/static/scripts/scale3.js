@@ -155,6 +155,66 @@ function bindEditWagonForm(netContainer, updateIndicator) {
     });
 }
 
+// ================================================
+// Print ღილაკი — იყენებს iframe-ს და ბრაუზერის print()
+// ================================================
+function initScale3PrintButton() {
+    const printBtn = document.getElementById("scale3-print-btn");
+    if (!printBtn) return;
+
+    // წინა listener-ების გაწმენდა (თუ გვაქვს დუბლიკატი)
+    const cleanBtn = printBtn.cloneNode(true);
+    printBtn.replaceWith(cleanBtn);
+
+    cleanBtn.addEventListener("click", () => {
+        // ქმნით ფარულ iframe-ს
+        const iframe = document.createElement("iframe");
+        iframe.style.cssText = `
+            position: fixed;
+            right:   -9999px;
+            bottom:  -9999px;
+            width:    1px;
+            height:   1px;
+            border:   none;
+            visibility: hidden;
+        `;
+
+        // დროებითი query string ქეშის თავიდან ასაცილებლად
+        iframe.src = `/pdf3?t=${Date.now()}`;
+
+        document.body.appendChild(iframe);
+
+        iframe.onload = () => {
+            try {
+                // მცირე დაყოვნება PDF-ის ჩატვირთვისთვის (განსაკუთრებით Chrome/Edge-ში)
+                setTimeout(() => {
+                    const iframeWin = iframe.contentWindow || iframe.contentDocument.defaultView;
+                    if (iframeWin) {
+                        iframeWin.focus();
+                        iframeWin.print();
+                    }
+                }, 1000);  // 600–1500 ms ჩვეულებრივ საკმარისია
+            } catch (err) {
+                console.error("Print error:", err);
+                alert("ბეჭდვის ფანჯარა ვერ გაიხსნა.\nსცადეთ Ctrl + P ხელით.");
+            }
+
+            // iframe-ის ავტომატური წაშლა 15 წამში
+            setTimeout(() => {
+                if (iframe.parentNode) {
+                    iframe.parentNode.removeChild(iframe);
+                }
+            }, 15000);
+        };
+
+        // თუ iframe არ ჩაიტვირთა 20 წამში
+        iframe.onerror = () => {
+            alert("PDF ფაილის ჩატვირთვა ვერ მოხერხდა (/pdf0).");
+            if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+        };
+    });
+}
+
 // =============================================================================
 // VIDEO: HLS.js ინიციალიზაცია
 // =============================================================================
@@ -180,7 +240,7 @@ function initVideoScale3() {
         hlsInstanceScale3.loadSource(video.getAttribute('data-hls-src'));
         hlsInstanceScale3.attachMedia(video);
 
-        hlsInstanceScale3.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
+        hlsInstanceScale3.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => { }));
         hlsInstanceScale3.on(Hls.Events.ERROR, (event, data) => {
             if (data.fatal || data.details === 'levelLoadError') {
                 hlsInstanceScale3.destroy();
@@ -190,7 +250,7 @@ function initVideoScale3() {
         });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = video.getAttribute('data-hls-src');
-        video.play().catch(() => {});
+        video.play().catch(() => { });
     }
 }
 
@@ -322,7 +382,7 @@ export function initScale3Module() {
     };
 
     // 3. START WEIGHING
-    const startForm = netContainer.querySelector('form[action="/startWeighing_3"]' );
+    const startForm = netContainer.querySelector('form[action="/startWeighing_3"]');
     const startBtn = startForm?.querySelector("#scale3-start-weighing-btn");
     if (startForm && startBtn) {
         const newBtn = startBtn.cloneNode(true);
@@ -449,6 +509,7 @@ export function initScale3Module() {
     // 8. VIDEO
     initVideoScale3();
     observeVideoScale3(netContainer);
+    initScale3PrintButton();
 
     // 9. Global cleanup access
     window.cleanupScale3Module = cleanupScale3Module;

@@ -33,7 +33,9 @@
             <video th:if="${cam2Enabled}" id="player-2" class="scale2-camera" muted
                 data-hls-src="/cam2/index.m3u8"></video>
             <div class="scale2-done-info">
-                <a target="_blank" href="/pdflast_2/report2.pdf">Print Report</a>
+                <button id="scale2-print-btn" >Print</button>
+                <a href="/pdf2" download>Download</a>
+                <a href="/pdflast_2/report2.pdf"  target="_blank">View PDF</a>
             </div>
         </div>
         <div id="operation-data2-container"></div>

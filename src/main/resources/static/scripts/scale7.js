@@ -155,6 +155,66 @@ function bindEditWagonForm(netContainer, updateIndicator) {
     });
 }
 
+// ================================================
+// Print ღილაკი — იყენებს iframe-ს და ბრაუზერის print()
+// ================================================
+function initScale7PrintButton() {
+    const printBtn = document.getElementById("scale7-print-btn");
+    if (!printBtn) return;
+
+    // წინა listener-ების გაწმენდა (თუ გვაქვს დუბლიკატი)
+    const cleanBtn = printBtn.cloneNode(true);
+    printBtn.replaceWith(cleanBtn);
+
+    cleanBtn.addEventListener("click", () => {
+        // ქმნით ფარულ iframe-ს
+        const iframe = document.createElement("iframe");
+        iframe.style.cssText = `
+            position: fixed;
+            right:   -9999px;
+            bottom:  -9999px;
+            width:    1px;
+            height:   1px;
+            border:   none;
+            visibility: hidden;
+        `;
+
+        // დროებითი query string ქეშის თავიდან ასაცილებლად
+        iframe.src = `/pdf7?t=${Date.now()}`;
+
+        document.body.appendChild(iframe);
+
+        iframe.onload = () => {
+            try {
+                // მცირე დაყოვნება PDF-ის ჩატვირთვისთვის (განსაკუთრებით Chrome/Edge-ში)
+                setTimeout(() => {
+                    const iframeWin = iframe.contentWindow || iframe.contentDocument.defaultView;
+                    if (iframeWin) {
+                        iframeWin.focus();
+                        iframeWin.print();
+                    }
+                }, 1000);  // 600–1500 ms ჩვეულებრივ საკმარისია
+            } catch (err) {
+                console.error("Print error:", err);
+                alert("ბეჭდვის ფანჯარა ვერ გაიხსნა.\nსცადეთ Ctrl + P ხელით.");
+            }
+
+            // iframe-ის ავტომატური წაშლა 15 წამში
+            setTimeout(() => {
+                if (iframe.parentNode) {
+                    iframe.parentNode.removeChild(iframe);
+                }
+            }, 15000);
+        };
+
+        // თუ iframe არ ჩაიტვირთა 20 წამში
+        iframe.onerror = () => {
+            alert("PDF ფაილის ჩატვირთვა ვერ მოხერხდა (/pdf0).");
+            if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+        };
+    });
+}
+
 // =============================================================================
 // VIDEO: HLS.js ინიციალიზაცია
 // =============================================================================
@@ -449,6 +509,8 @@ export function initScale7Module() {
     // 8. VIDEO
     initVideoScale7();
     observeVideoScale7(netContainer);
+
+    initScale7PrintButton();
 
     // 9. Global cleanup access
     window.cleanupScale7Module = cleanupScale7Module;

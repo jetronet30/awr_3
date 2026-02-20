@@ -167,7 +167,7 @@
 
 .scale1-done-info a {
     display: inline-block;
-    padding: 15px 30px;
+    padding: 15px;
     background-color: #28a745;
     color: #ffffff;
     text-decoration: none;
@@ -178,7 +178,23 @@
 
 .scale1-done-info a:hover {
     background-color: #218838;
-    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+}
+
+#scale1-print-btn {
+    display: inline-block;
+    padding: 15px ;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 20px;
+}
+#scale1-print-btn:hover {
+    background-color: #0069d9;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
 }
 

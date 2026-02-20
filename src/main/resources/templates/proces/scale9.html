@@ -33,7 +33,9 @@
             <video th:if="${cam9Enabled}" id="player-9" class="scale9-camera" muted
                 data-hls-src="/cam9/index.m3u8"></video>
             <div class="scale9-done-info">
-                <a target="_blank" href="/pdflast_9/report9.pdf">Print Report</a>
+                <button id="scale9-print-btn" >Print</button>
+                <a href="/pdf9" download>Download</a>
+                <a href="/pdflast_9/report9.pdf"  target="_blank">View PDF</a>
             </div>
         </div>
         <div id="operation-data9-container"></div>
