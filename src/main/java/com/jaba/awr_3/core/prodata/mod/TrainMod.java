@@ -44,6 +44,8 @@ public class TrainMod {
     private boolean normalWeight;
     private boolean normalSpeed;
     private boolean allwagonsNumbered;
+    private boolean matched;
+    private boolean tareOnly;
     private boolean bloked;
     private int count;
     private String videoPatch;

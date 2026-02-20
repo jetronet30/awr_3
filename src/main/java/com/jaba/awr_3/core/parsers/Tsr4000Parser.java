@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.jaba.awr_3.controllers.emitter.EmitterServic;
 import com.jaba.awr_3.core.prodata.services.TrainService;
-import com.jaba.awr_3.core.units.UnitService;
+
 
 import lombok.RequiredArgsConstructor;
 
@@ -137,11 +137,11 @@ public class Tsr4000Parser {
 
     private String getSpeed(String speed) {
         if (speed == null || speed.isEmpty()) {
-            return "0,0" + UnitService.SPEED_UNIT;
+            return "0,0" ;
         }
         speed = speed.replaceFirst("^0+", "");
         if (speed.isEmpty()) {
-            return "0,0" + UnitService.SPEED_UNIT;
+            return "0,0" ;
         }
         double result = 0;
         try {
@@ -149,7 +149,7 @@ public class Tsr4000Parser {
         } catch (NumberFormatException e) {
             result = 0;
         }
-        return String.valueOf(result) + UnitService.SPEED_UNIT;
+        return String.valueOf(result) ;
     }
 
     private int getRowNum(String row) {

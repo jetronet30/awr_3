@@ -55,6 +55,9 @@ public class UnitService {
                 WEIGHT_UNIT = uMod.getWeightUnit();
                 W_NUM_LEN = uMod.getWagonNumLenUnit();
                 TARE_LIMIT = uMod.getTarLimit();
+                WEIGHT_LIMIT = uMod.getWeightLimit();
+                SPEED_LIMIT = uMod.getSpeedLimit();
+                LOGGER.info(" read UNITS from JSON COMPLECTE ");
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +42,10 @@ public class TrainService {
         train.setCount(0);
         train.setScaleName(scaleName);
         train.setScaleIndex(scaleIndex);
+        train.setNormalWeight(false);
+        train.setNormalSpeed(false);
+        train.setAllwagonsNumbered(false);
+        train.setBloked(false);
         trainJpa.save(train);
         LOGGER.info("New train created with conId: {}, scaleIndex: {}", conId, scaleIndex);
     }
@@ -201,6 +206,9 @@ public class TrainService {
             LOGGER.warn("Train is not done for conId: {}", conId);
             return;
         }
+
+        updateValidationFlags(train);
+
         train.setOpen(false);
         train.setWeighingStopDateTime(ServerManager.getSystemDateTime());
         recalculateTrainTotals(train);
@@ -263,7 +271,7 @@ public class TrainService {
         train.setWeighingStopDateTime(ServerManager.getSystemDateTime());
 
         recalculateTrainTotals(train);
-
+        updateValidationFlags(train);
         train.setDone(true);
         trainJpa.save(train);
         pdfCreator.createPdf(train);
@@ -312,10 +320,52 @@ public class TrainService {
         }
     }
 
-
     // ────────────────────────────────────────────────
     // დამხმარე მეთოდები
     // ────────────────────────────────────────────────
+
+    private void updateValidationFlags(TrainMod train) {
+        if (train.getWagons().isEmpty()) {
+            train.setNormalWeight(true);
+            train.setNormalSpeed(true);
+            train.setAllwagonsNumbered(true);
+            train.setTareOnly(false);
+            train.setMatched(true);
+            train.setBloked(false);
+            return;
+        }
+
+        boolean allValid = train.getWagons().stream().allMatch(WagonMod::isValid);
+        if (!allValid) {
+            // შეიძლება განსხვავებული ლოგიკა, თუ არ გჭირდება valid-ების იგნორირება
+        }
+
+        train.setNormalWeight(
+                train.getWagons().stream()
+                        .allMatch(w -> w.getWeight() != null && w.getWeight().compareTo(UnitService.WEIGHT_LIMIT) < 0));
+
+        train.setNormalSpeed(
+                train.getWagons().stream().allMatch(w -> w.getSpeed() != null
+                        && new BigDecimal(w.getSpeed()).compareTo(UnitService.SPEED_LIMIT) < 0));
+
+        train.setAllwagonsNumbered(
+                train.getWagons().stream().allMatch(
+                        w -> w.getWagonNumber() != null && w.getWagonNumber().length() == UnitService.W_NUM_LEN));
+
+        train.setTareOnly(
+                train.getWagons().stream()
+                        .allMatch(w -> w.getWeight() != null && w.getWeight().compareTo(UnitService.TARE_LIMIT) <= 0));
+
+        train.setMatched(
+                train.getWagons().stream()
+                        .allMatch(w -> w.getNeto() != null && w.getNeto().compareTo(BigDecimal.ZERO) > 0));
+
+        train.setBloked(
+                train.isNormalWeight() &&
+                        train.isNormalSpeed() &&
+                        train.isAllwagonsNumbered() &&
+                        train.isMatched());
+    }
 
     private void applyWeightAndTare(WagonMod wagon, BigDecimal weight, boolean updateTare) {
         if (weight == null) {
@@ -356,7 +406,7 @@ public class TrainService {
             } else {
                 tareSum = tareSum.add(wagonTare);
             }
-            
+
         }
 
         train.setGross(gross);

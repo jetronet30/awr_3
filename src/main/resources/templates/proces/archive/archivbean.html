@@ -2,9 +2,17 @@
     <form th:action="@{/trainArchiv/{id}(id=${train.id})}" method="get" target="_blank" class="archiv-train-from">
         <button type="submit" class="archiv-train-btn"
             th:text="${train.scaleName} + ' >>>  ' + ${train.weighingStopDateTime}">Train Name</button>
-        <input type="text" class="archiv-train-status-red" value="weight status" readonly>
-        <input type="text" class="archiv-train-status-red" value="speed status" readonly>
-        <input type="text" class="archiv-train-status-red" value="tare only" readonly>
-        <input type="text" class="archiv-train-status-green" value="completion status" readonly>
+        <input type="text" th:class="${train.normalWeight} 
+          ? 'archiv-train-status-green' 
+          : 'archiv-train-status-red'" th:value="${train.normalWeight ? 'normal weight' : 'not normal weight'}" readonly>
+        <input type="text" th:class="${train.normalSpeed} 
+          ? 'archiv-train-status-green' 
+          : 'archiv-train-status-red'" th:value="${train.normalSpeed ? 'normal speed' : 'not normal speed'}" readonly>
+        <input type="text" th:class="${train.tareOnly} 
+          ? 'archiv-train-status-green' 
+          : 'archiv-train-status-red'" th:value="${train.tareOnly ? 'tare only' : 'not tare only'}" readonly>
+        <input type="text" th:class="${train.matched} 
+          ? 'archiv-train-status-green' 
+          : 'archiv-train-status-red'" th:value="${train.matched ? 'matched' : 'not matched'}" readonly>
     </form>
 </div>
