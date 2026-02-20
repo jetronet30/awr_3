@@ -1,5 +1,34 @@
 <div id="archive-container">
     <div id="archive-action">
+        <form method="post" action="/archive" class="archive-filter-form">
+            <div class="filter-row">
+                <label>Scale:</label>
+                <select name="scaleName">
+                    <option value="all" selected>all</option>
+                    <option th:each="scaleName: ${scaleNames}" th:value="${scaleName}" th:text="${scaleName}" >
+                </select>
+
+                <label>Date:</label>
+                <input type="date" name="from" step="1">
+
+                <label>To:</label>
+                <input type="date" name="to" step="1">
+
+                <label>Status:</label>
+                <select name="status">
+                    <option value="">All</option>
+                    <option value="matched">Matched</option>
+                    <option value="not_matched">Not matched</option>
+                    <option value="normal_weight">Normal weight</option>
+                    <option value="not_normal_weight">Not normal weight</option>
+                </select>
+                <button type="submit">Filter</button>
+                <a href="/archive" class="btn-clear">Clear</a>
+            </div>
+        </form>
+
     </div>
-    <div id="train-data-container"></div>
+    <div id="train-data-container">
+
+    </div>
 </div>
