@@ -12,7 +12,83 @@
     z-index: 100;
     color: white;
 }
+#archive-indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 50px;
+    background-color: aliceblue;
+}
 
+#archive-filters-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#archive-filter-selector {
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.archive-filter-date {
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+#archive-filter-btn,
+#archive-clear-btn {
+    background-color: #0078ff;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+#archive-filter-btn:hover,
+#archive-clear-btn:hover {
+    background: linear-gradient(45deg, #00b7eb, #007bff);
+    box-shadow: 0 0 15px rgba(0, 183, 255, 0.6);
+}
+
+
+#archive-fast-buttons-container {
+    display: flex;
+    gap: 10px;
+}
+
+#archive-nonumberd-btn{
+    background-color: #ff5722;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+#archive-nonumberd-btn:hover {
+    background: linear-gradient(45deg, #ff7043, #ff5722);
+    box-shadow: 0 0 15px rgba(255, 87, 34, 0.6);
+}
+
+#archive-nomatched-btn{
+    background-color: #ff5722;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+#archive-nomatched-btn:hover {
+    background: linear-gradient(45deg, #ff7043, #ff5722);
+    box-shadow: 0 0 15px rgba(255, 87, 34, 0.6);
+}
 
 #archive-vi-container {
     display: flex;
@@ -21,6 +97,8 @@
     padding: 5px;
 }
 
+
+
 .archiv-train-from {
     display: flex;
     align-items: center;
@@ -28,6 +106,7 @@
     width: 100%;
     background-color: aliceblue;
     padding: 2px;
+    cursor: default;
 }
 
 .archiv-train-btn {
@@ -46,6 +125,7 @@
     background: none;
     text-align: center;
     color: red;
+    cursor: default;
 }
 
 .archiv-train-status-green {
@@ -55,12 +135,5 @@
     background: none;
     text-align: center;
     color: green;
-}
-
-.status-indic {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: red;
-    /* Default color, can be changed based on status */
+    cursor: default;
 }

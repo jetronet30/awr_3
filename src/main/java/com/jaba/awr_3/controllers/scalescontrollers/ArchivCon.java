@@ -1,13 +1,18 @@
 package com.jaba.awr_3.controllers.scalescontrollers;
 
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.jaba.awr_3.core.archive.ArchiveService;
-
+import com.jaba.awr_3.inits.repo.RepoInit;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,22 +24,51 @@ public class ArchivCon {
     @PostMapping("/archive")
     public String postArchive(Model m) {
         m.addAttribute("scaleNames", archiveService.getScaleNames());
-
         return "proces/archive/archive";
     }
 
-    @PostMapping("/showTrains")
+    @PostMapping("/archive/showTrains")
     public String postTrains(Model m) {
         m.addAttribute("trains", archiveService.getLas100Trains());
         return "proces/archive/archivbean";
     }
 
-    @GetMapping("/trainArchiv/{id}")
+    @PostMapping("/archive/notNumberd")
+    public String postNotNumberd(Model m) {
+        m.addAttribute("trains", archiveService.getTrainsWithoutNumbers());
+        return "proces/archive/archivbean";
+    }
+
+
+    @PostMapping("/archive/notMatched")
+    public String postNotMatched(Model m) {
+        m.addAttribute("trains", archiveService.getTrainsWithoutMatched());
+        return "proces/archive/archivbean";
+    }
+
+    @PostMapping("/archive/filter")
+    public String postFilter(Model m ,
+        @RequestParam ("scaleName") String scaleName, 
+        @RequestParam ("dateFrom") String dateFrom,
+        @RequestParam ("dateTo") String dateTo) {
+        m.addAttribute("trains", archiveService.getTrainsFiltered(scaleName, dateFrom, dateTo));
+        return "proces/archive/archivbean";
+    }
+
+    @PostMapping("/archive/edit/{id}")
     public String getTrainArchiv(@PathVariable Long id, Model m) {
         System.out.println("Received request for train archive with ID: " + id);
         return "proces/archive/trainpage"; 
     }
 
-    
+    @PostMapping("/archive/showPDF/{id}")
+    public ResponseEntity<Resource> getPdf0(@PathVariable Long id) {
+        FileSystemResource file = new FileSystemResource(RepoInit.PDF_REPOSITOR_LAST_0 + "/report0.pdf");
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(file);
+    }
+
 
 }

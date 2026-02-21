@@ -1,32 +1,35 @@
 <div id="archive-container">
     <div id="archive-action">
-        <form method="post" action="/archive" class="archive-filter-form">
-            <div class="filter-row">
+        <div id="archive-filters-container">
+            <form method="post" action="/archive/filter" class="archive-filter-form">
                 <label>Scale:</label>
-                <select name="scaleName">
+                <select name="scaleName" id="archive-filter-selector">
                     <option value="all" selected>all</option>
-                    <option th:each="scaleName: ${scaleNames}" th:value="${scaleName}" th:text="${scaleName}" >
+                    <option th:each="scaleName: ${scaleNames}" th:value="${scaleName}" th:text="${scaleName}">
                 </select>
-
                 <label>Date:</label>
-                <input type="date" name="from" step="1">
-
+                <input type="date" name="dateFrom" step="1" class="archive-filter-date">
                 <label>To:</label>
-                <input type="date" name="to" step="1">
+                <input type="date" name="dateTo" step="1" class="archive-filter-date">
+                <button type="submit" id="archive-filter-btn">Filter</button>
+            </form>
+            <form method="post" action="/archive/showTrains" class="archive-clear-form">
+                <button type="submit" id="archive-clear-btn">Clear</button>
+            </form>
+        </div>
+        <div id="archive-fast-buttons-container">
+            <form action="/archive/notNumberd" method="post">
+                <input type="button" value="No Number" id="archive-nonumberd-btn">
+            </form>
 
-                <label>Status:</label>
-                <select name="status">
-                    <option value="">All</option>
-                    <option value="matched">Matched</option>
-                    <option value="not_matched">Not matched</option>
-                    <option value="normal_weight">Normal weight</option>
-                    <option value="not_normal_weight">Not normal weight</option>
-                </select>
-                <button type="submit">Filter</button>
-                <a href="/archive" class="btn-clear">Clear</a>
-            </div>
+            <form action="/archive/notMatched" method="post">
+                <input type="button" value="No Matched" id="archive-nomatched-btn">
+            </form>
+        </div>
+        <form action="/archive/showTrains" method="post">
+            <input type="button" value="Close" id="archive-close-btn">
         </form>
-
+        <div id="archive-indicator"></div>
     </div>
     <div id="train-data-container">
 
