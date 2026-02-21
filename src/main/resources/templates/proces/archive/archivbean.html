@@ -18,6 +18,6 @@
             <input type="text" th:class="${train.matched} 
           ? 'archiv-train-status-green' 
           : 'archiv-train-status-red'" th:value="${train.matched ? 'matched' : 'not matched'}" readonly>
-            <input type="button" value="Show Report" th:formaction="@{/archive/showPDF/{id}(id=${train.id})}" formmethod="post">
+            <input type="button" value="Show Report" th:formaction="@{/archive/showPDF/post/{id}(id=${train.id})}" formmethod="post">
       </form>
 </div>

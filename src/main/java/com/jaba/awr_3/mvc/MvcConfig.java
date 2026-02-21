@@ -64,6 +64,10 @@ public class MvcConfig implements WebMvcConfigurer {
                                 .addResourceLocations("file:" + RepoInit.PDF_REPOSITOR_LAST_9.getAbsolutePath() + "/")
                                 .setCachePeriod(0);
                 registry
+                                .addResourceHandler("/videoarchive/**")
+                                .addResourceLocations("file:" + RepoInit.VIDEO_ARCHIVE.getAbsolutePath() + "/")
+                                .setCachePeriod(0);
+                registry
                                 .addResourceHandler("/cam0/**")
                                 .addResourceLocations("file:" + RepoInit.CAM_0_REPO.getAbsolutePath() + "/")
                                 .setCachePeriod(0);
@@ -90,11 +94,11 @@ public class MvcConfig implements WebMvcConfigurer {
                 registry
                                 .addResourceHandler("/cam6/**")
                                 .addResourceLocations("file:" + RepoInit.CAM_6_REPO.getAbsolutePath() + "/")
-                                .setCachePeriod(0); 
-                                  registry
+                                .setCachePeriod(0);
+                registry
                                 .addResourceHandler("/cam7/**")
                                 .addResourceLocations("file:" + RepoInit.CAM_7_REPO.getAbsolutePath() + "/")
-                                .setCachePeriod(0);   
+                                .setCachePeriod(0);
                 registry
                                 .addResourceHandler("/cam8/**")
                                 .addResourceLocations("file:" + RepoInit.CAM_8_REPO.getAbsolutePath() + "/")
@@ -103,7 +107,6 @@ public class MvcConfig implements WebMvcConfigurer {
                                 .addResourceHandler("/cam9/**")
                                 .addResourceLocations("file:" + RepoInit.CAM_9_REPO.getAbsolutePath() + "/")
                                 .setCachePeriod(0);
-                                          
 
         }
 

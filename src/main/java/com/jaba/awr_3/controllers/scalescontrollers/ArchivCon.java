@@ -6,7 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,7 +39,6 @@ public class ArchivCon {
         return "proces/archive/archivbean";
     }
 
-
     @PostMapping("/archive/notMatched")
     public String postNotMatched(Model m) {
         m.addAttribute("trains", archiveService.getTrainsWithoutMatched());
@@ -47,28 +46,40 @@ public class ArchivCon {
     }
 
     @PostMapping("/archive/filter")
-    public String postFilter(Model m ,
-        @RequestParam ("scaleName") String scaleName, 
-        @RequestParam ("dateFrom") String dateFrom,
-        @RequestParam ("dateTo") String dateTo) {
+    public String postFilter(Model m,
+            @RequestParam("scaleName") String scaleName,
+            @RequestParam("dateFrom") String dateFrom,
+            @RequestParam("dateTo") String dateTo) {
         m.addAttribute("trains", archiveService.getTrainsFiltered(scaleName, dateFrom, dateTo));
         return "proces/archive/archivbean";
     }
 
     @PostMapping("/archive/edit/{id}")
     public String getTrainArchiv(@PathVariable Long id, Model m) {
-        System.out.println("Received request for train archive with ID: " + id);
-        return "proces/archive/trainpage"; 
+        m.addAttribute("wagons", archiveService.getWagonsByTrainId(id));
+        m.addAttribute("id", id);
+        System.out.println(id);
+        return "proces/archive/trainpage";
     }
 
-    @PostMapping("/archive/showPDF/{id}")
+    //////////////////////////////////////////////////////////////////////////////
+    /// 
+    @GetMapping("/archive/showPDF/{id}")
     public ResponseEntity<Resource> getPdf0(@PathVariable Long id) {
-        FileSystemResource file = new FileSystemResource(RepoInit.PDF_REPOSITOR_LAST_0 + "/report0.pdf");
-
+        FileSystemResource file = new FileSystemResource(RepoInit.PDF_REPOSITOR_FULL + "/" + id + ".pdf");
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(file);
     }
 
+    @PostMapping("/archive/showPDF/post/{id}")
+    public ResponseEntity<Resource> postPDF(@PathVariable Long id) {
+        FileSystemResource file = new FileSystemResource(RepoInit.PDF_REPOSITOR_FULL + "/" + id + ".pdf");
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(file);
+    }
+    ///////////////////////////////////////////////////////////////////////////////
+    /// 
 
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.jaba.awr_3.core.prodata.jparepo.TrainJpa;
 import com.jaba.awr_3.core.prodata.mod.TrainMod;
+import com.jaba.awr_3.core.prodata.mod.WagonMod;
 
 import lombok.RequiredArgsConstructor;
 
@@ -48,6 +49,10 @@ public class ArchiveService {
             dateTo = null;
         }
         return trainJpa.findFilteredTrains(scaleName, dateFrom, dateTo);
+    }
+
+    public List<WagonMod> getWagonsByTrainId(Long id){
+        return trainJpa.findById(id).orElse(null).getWagons();
     }
 
 }

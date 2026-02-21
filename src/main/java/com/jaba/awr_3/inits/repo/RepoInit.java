@@ -18,6 +18,7 @@ public class RepoInit {
     public static final File BACKUP_UPLOAD_REPO = new File(MAIN_REPO, "backupupload");
     public static final File UTYL_REPO = new File(MAIN_REPO, "utils");
     public static final File USR_SRC = new File("/usr/local/src");
+    public static final File VIDEO_ARCHIVE = new File(MAIN_REPO,"videoarchive");
     public static final File STREAM_ALL_REPO = new File(MAIN_REPO, "streams");
     public static final File CAM_0_REPO = new File(STREAM_ALL_REPO, "cam0");
     public static final File CAM_1_REPO = new File(STREAM_ALL_REPO, "cam1");
@@ -50,6 +51,7 @@ public class RepoInit {
         createDirectory(BACKUP_REPO_TEMP);
         createDirectory(BACKUP_REPO_MVC);
         createDirectory(BACKUP_UPLOAD_REPO);
+        createDirectory(VIDEO_ARCHIVE);
         createDirectory(STREAM_ALL_REPO);
         createDirectory(PDF_REPOSITOR_FULL);
         createDirectory(PDF_REPOSITOR_LAST_0);

@@ -1,11 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    AAAAAAAAAAAAAAAAAAAAAAAAAAA
-</body>
-</html>
+<div class="arcive-train-info">
+    <div class="train-info-container">
+        <video id="player" class="train-video" controls  muted>
+            <source th:src="@{'/videoarchive/' + ${id}+'.mp4'}" type="video/mp4">
+        </video>
+        <div class="train-done-info">
+            <button id="train-print-btn">Print</button>
+            <a th:href="@{/archive/showPDF/{id}(id=${id})}" download>Download</a>
+            <a th:href="@{'/archipdf/' + ${id} + '.pdf'}" target="_blank">View PDF</a>
+        </div>
+    </div>
+    <div id="train-wagons-container">
+        <div th:each=" wagon : ${wagons}">
+            <form method="post" action="/archive/editWgon" class="train-wagons-set-from">
+                <input type="text" name="connId" th:value="${wagon.connId}" hidden>
+                <input type="text" name="id" th:value="${wagon.id}" hidden>
+                <input type="text" name="rowNumber" class="train-wagons-row-input" th:value="${wagon.rowNum}" readonly>
+                <input type="text" class="train-wagons-tare-input" th:value="${wagon.tare}" readonly>
+                <input type="text" class="train-wagons-weight-input" th:value="${wagon.weight}" readonly>
+                <input type="text" name="product" class="train-wagons-product-input" th:value="${wagon.product}"
+                    th:placeholder="#{weighing.product}">
+                <input type="text" name="wagonNumber" class="train-wagons-wagonNum-input"
+                    th:value="${wagon.wagonNumber}" th:placeholder="#{weighing.number}">
+                <input type="button" value="EDIT" class="train-wagons-set-btn">
+            </form>
+        </div>
+    </div>
+</div>
