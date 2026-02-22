@@ -46,7 +46,7 @@ public class TrainMod {
     private boolean allwagonsNumbered;
     private boolean matched;
     private boolean tareOnly;
-    private boolean bloked;
+    private boolean blocked;
     private int count;
     private String videoPatch;
 

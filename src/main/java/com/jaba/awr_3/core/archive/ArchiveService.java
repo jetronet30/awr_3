@@ -1,12 +1,21 @@
 package com.jaba.awr_3.core.archive;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.jaba.awr_3.core.connectors.ComService;
+import com.jaba.awr_3.core.connectors.TcpService;
+import com.jaba.awr_3.core.pdf.PdfCreator;
 import com.jaba.awr_3.core.prodata.jparepo.TrainJpa;
+import com.jaba.awr_3.core.prodata.jparepo.WagonJpa;
 import com.jaba.awr_3.core.prodata.mod.TrainMod;
 import com.jaba.awr_3.core.prodata.mod.WagonMod;
+import com.jaba.awr_3.core.prodata.services.TrainService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,6 +23,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ArchiveService {
     private final TrainJpa trainJpa;
+    private final PdfCreator pdfCreator;
+    private final WagonJpa wagonJpa;
+    private final TrainService trainService;
+    private final ComService comService;
+    private final TcpService tcpService;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ArchiveService.class);
 
     public List<TrainMod> getLas100Trains() {
         return trainJpa.findTop100ByOrderByWeighingStopDateTimeDesc();
@@ -51,8 +67,39 @@ public class ArchiveService {
         return trainJpa.findFilteredTrains(scaleName, dateFrom, dateTo);
     }
 
-    public List<WagonMod> getWagonsByTrainId(Long id){
+    public List<WagonMod> getWagonsByTrainId(Long id) {
         return trainJpa.findById(id).orElse(null).getWagons();
+    }
+
+    public Map<String,Object> setWagonNumber(Long id,String wagonNumber, String product){
+        Map<String, Object> response = new HashMap<>();
+        WagonMod wagon = wagonJpa.findById(id).orElse(null);
+        if (wagon == null) {
+            response.put("success", false);
+            response.put("message", "Wagon not found with id: " + id);
+            LOGGER.warn("Wagon not found with id: {}", id);
+            return response;
+        }
+        if(wagon.getTrain().isBlocked()){
+            response.put("success", false);
+            response.put("message", "Train  is Blocked : " + id);
+            LOGGER.warn("Train is Blocked: {}", id);
+            return response;
+        }
+
+        String conId = wagon.getConnId();
+        boolean updateTare = false;
+        if (comService.getPortByName(conId) !=null) {
+            updateTare = comService.getPortByName(conId).isRightToUpdateTare();
+        }else if (tcpService.getTcpByName(conId) !=null) {
+            updateTare = tcpService.getTcpByName(conId).isRightToUpdateTare();
+        }
+        pdfCreator.createPdfWeb(wagon.getTrain());
+        return trainService.updateWagonToTrain(id, conId, wagonNumber, product, updateTare);
+    }
+
+    public void setTrainBlocked(Long id){
+
     }
 
 }

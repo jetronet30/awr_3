@@ -45,7 +45,7 @@ public class TrainService {
         train.setNormalWeight(false);
         train.setNormalSpeed(false);
         train.setAllwagonsNumbered(false);
-        train.setBloked(false);
+        train.setBlocked(false);
         trainJpa.save(train);
         LOGGER.info("New train created with conId: {}, scaleIndex: {}", conId, scaleIndex);
     }
@@ -331,7 +331,7 @@ public class TrainService {
             train.setAllwagonsNumbered(true);
             train.setTareOnly(false);
             train.setMatched(true);
-            train.setBloked(false);
+            train.setBlocked(false);
             return;
         }
 
@@ -360,10 +360,8 @@ public class TrainService {
                 train.getWagons().stream()
                         .allMatch(w -> w.getNeto() != null && w.getNeto().compareTo(BigDecimal.ZERO) > 0));
 
-        train.setBloked(
-                train.isNormalWeight() &&
-                        train.isNormalSpeed() &&
-                        train.isAllwagonsNumbered() &&
+        train.setBlocked(
+                train.isAllwagonsNumbered() &&
                         train.isMatched());
     }
 
