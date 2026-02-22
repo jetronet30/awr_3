@@ -5,6 +5,7 @@
 let intervalIds = new Set();
 let eventListeners = new Map();
 let isArchiveInitialized = false;
+let printObserver = null;  // MutationObserver Print ღილაკისთვის
 
 // =============================================================================
 // Helper: Event Listener-ების თრექინგი და გასუფთავება
@@ -43,6 +44,16 @@ function updateArchiveIndicator(success) {
 }
 
 // =============================================================================
+// Helper: ვაგონის ნომრის სიგრძე (8, 10, 12)
+// =============================================================================
+function getAllowedWagonLength(netContainer) {
+    const input = netContainer.querySelector("#magonNumLeght_train");
+    const value = input?.value?.trim();
+    const num = parseInt(value, 10);
+    return (Number.isInteger(num) && [8, 10, 12].includes(num)) ? num : 8;
+}
+
+// =============================================================================
 // Helper: #train-data-container-ის განახლება + rebinding
 // =============================================================================
 function updateTrainDataContainer(container, html, updateIndicator) {
@@ -50,8 +61,81 @@ function updateTrainDataContainer(container, html, updateIndicator) {
     if (!target) return;
 
     target.innerHTML = html;
+
     bindArchiveTrainForms(container, updateIndicator);
+    bindEditWagonForm(container, updateIndicator);
+
+    // Print ღილაკის დაკვირვება
+    observePrintButton();
+
     updateIndicator?.(true);
+}
+
+// =============================================================================
+// Observer: ავტომატურად აღმოაჩენს Print ღილაკს როცა გამოჩნდება
+// =============================================================================
+function observePrintButton() {
+    if (printObserver) printObserver.disconnect();
+
+    printObserver = new MutationObserver(() => {
+        const printBtn = document.getElementById("train-print-btn");
+        if (printBtn && !printBtn.dataset.listenerAdded) {
+            console.log("Print ღილაკი აღმოჩენილია MutationObserver-ით! ID:", printBtn.dataset.trainId || "არ არის");
+
+            printBtn.dataset.listenerAdded = "true";  // მხოლოდ ერთხელ დამატება
+
+            printBtn.addEventListener("click", () => {
+                const trainId = printBtn.dataset.trainId;
+
+                if (!trainId) {
+                    alert("ვერ მოიძებნა Train ID");
+                    return;
+                }
+
+                console.log(`Print requested for train ID: ${trainId}`);
+
+                const iframe = document.createElement("iframe");
+                iframe.style.cssText = `
+                    position: fixed;
+                    right:   -9999px;
+                    bottom:  -9999px;
+                    width:    1px;
+                    height:   1px;
+                    border:   none;
+                    visibility: hidden;
+                `;
+
+                iframe.src = `/archive/showPDF/${trainId}?t=${Date.now()}`;
+
+                document.body.appendChild(iframe);
+
+                iframe.onload = () => {
+                    console.log("PDF iframe ჩაიტვირთა");
+                    setTimeout(() => {
+                        const win = iframe.contentWindow || iframe.contentDocument?.defaultView;
+                        if (win) {
+                            win.focus();
+                            win.print();
+                            console.log("print() გამოძახებულია");
+                        }
+                    }, 1500);
+
+                    setTimeout(() => {
+                        if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+                    }, 15000);
+                };
+
+                iframe.onerror = () => {
+                    console.error("iframe load error");
+                    alert("PDF ვერ ჩაიტვირთა");
+                    if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+                };
+            });
+        }
+    });
+
+    const target = document.querySelector("#train-data-container") || document.body;
+    printObserver.observe(target, { childList: true, subtree: true });
 }
 
 // =============================================================================
@@ -83,7 +167,6 @@ async function loadInitialTrainData(container, updateIndicator = null) {
 function bindArchiveFiltersAndButtons(container, updateIndicator) {
     if (!container) return;
 
-    // ფილტრის ფორმა
     const filterForm = container.querySelector('form.archive-filter-form');
     if (filterForm) {
         const submitBtn = filterForm.querySelector('#archive-filter-btn');
@@ -112,7 +195,6 @@ function bindArchiveFiltersAndButtons(container, updateIndicator) {
         }
     }
 
-    // Clear ღილაკი (ახლა action="/archive/showTrains" → სიის გასუფთავება/ჩატვირთვა)
     const clearForm = container.querySelector('form.archive-clear-form');
     if (clearForm) {
         const clearBtn = clearForm.querySelector('#archive-clear-btn');
@@ -130,11 +212,10 @@ function bindArchiveFiltersAndButtons(container, updateIndicator) {
                     const html = await response.text();
                     updateTrainDataContainer(container, html, updateIndicator);
 
-                    // ველების გასუფთავება
                     const dateFrom = container.querySelector('input[name="dateFrom"]');
-                    const dateTo = container.querySelector('input[name="dateTo"]');
+                    const dateTo   = container.querySelector('input[name="dateTo"]');
                     if (dateFrom) dateFrom.value = '';
-                    if (dateTo) dateTo.value = '';
+                    if (dateTo)   dateTo.value   = '';
                 } catch (err) {
                     updateTrainDataContainer(container, `<p style="color:red;">გასუფთავება ვერ მოხერხდა: ${err.message}</p>`, updateIndicator);
                     updateIndicator(false);
@@ -143,7 +224,6 @@ function bindArchiveFiltersAndButtons(container, updateIndicator) {
         }
     }
 
-    // Fast buttons
     const fastButtons = container.querySelectorAll('#archive-fast-buttons-container form, #archive-container form[action="/archive/showTrains"]');
     fastButtons.forEach(form => {
         const btn = form.querySelector('input[type="button"]');
@@ -178,7 +258,6 @@ function bindArchiveTrainForms(container, updateIndicator) {
     const forms = container.querySelectorAll('#train-data-container .archiv-train-from');
 
     forms.forEach(form => {
-        // 1. დიდი ღილაკი → edit/details
         const mainBtn = form.querySelector('.archiv-train-btn');
         if (mainBtn) {
             const cleanBtn = mainBtn.cloneNode(true);
@@ -208,6 +287,7 @@ function bindArchiveTrainForms(container, updateIndicator) {
 
                     updateIndicator?.(true);
                     bindArchiveTrainForms(container, updateIndicator);
+                    bindEditWagonForm(container, updateIndicator);
 
                 } catch (err) {
                     target.innerHTML = `
@@ -220,7 +300,6 @@ function bindArchiveTrainForms(container, updateIndicator) {
             });
         }
 
-        // 2. Show Report → PDF
         const reportBtn = form.querySelector('input[type="button"][value="Show Report"]');
         if (reportBtn) {
             const cleanReportBtn = reportBtn.cloneNode(true);
@@ -255,12 +334,11 @@ function bindArchiveTrainForms(container, updateIndicator) {
 
                     target.innerHTML = `
                         <iframe 
-                    src="${url}" 
-                    style="width:100%; height:85vh; border:none; display:block;"
-                    title="Train Report PDF">
-                </iframe>
-            `;
-
+                            src="${url}" 
+                            style="width:100%; height:85vh; border:none; display:block;"
+                            title="Train Report PDF">
+                        </iframe>
+                    `;
 
                     updateIndicator?.(true);
 
@@ -274,6 +352,71 @@ function bindArchiveTrainForms(container, updateIndicator) {
                 }
             });
         }
+    });
+}
+
+// =============================================================================
+// BIND EDIT FORMS: .train-wagons-set-from ფორმები + ავტომატური გაგზავნა
+// =============================================================================
+function bindEditWagonForm(container, updateIndicator) {
+    const editForms = container.querySelectorAll('form.train-wagons-set-from');
+    const allowedLength = getAllowedWagonLength(container);
+
+    editForms.forEach((editForm) => {
+        const editBtn = editForm.querySelector('.train-wagons-set-btn');
+        const wagonNumberInput = editForm.querySelector('.train-wagons-wagonNum-input');
+
+        if (!editBtn || !wagonNumberInput) return;
+
+        const clonedBtn = editBtn.cloneNode(true);
+        editBtn.replaceWith(clonedBtn);
+
+        const submitHandler = async (e) => {
+            e?.preventDefault();
+
+            const formData = new FormData(editForm);
+            const actionUrl = editForm.getAttribute("action");
+
+            if (!actionUrl) return;
+
+            try {
+                const response = await fetch(actionUrl, { method: "POST", body: formData });
+                if (!response.ok) throw new Error(`Server error: ${response.status}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    editForm.style.backgroundColor = "#1da81dff";
+                    setTimeout(() => editForm.style.backgroundColor = "", 2000);
+                } else {
+                    editForm.style.backgroundColor = "#fc0a1eff";
+                    setTimeout(() => editForm.style.backgroundColor = "", 3000);
+                    alert(`ვაგონი ${result.message} - განახლება ვერ მოხერხდა.`);
+                }
+            } catch (err) {
+                alert(`შეცდომა: ${err.message}`);
+            }
+        };
+
+        trackEventListener(clonedBtn, "click", submitHandler);
+
+        let isSubmitting = false;
+        const autoSubmitHandler = () => {
+            const value = wagonNumberInput.value.trim();
+            if (value.length === allowedLength && !isSubmitting) {
+                isSubmitting = true;
+                submitHandler();
+                setTimeout(() => { isSubmitting = false; }, 1000);
+            }
+        };
+
+        trackEventListener(wagonNumberInput, "input", autoSubmitHandler);
+        trackEventListener(wagonNumberInput, "keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                const len = wagonNumberInput.value.trim().length;
+                if (len === allowedLength || len > 0) submitHandler();
+            }
+        });
     });
 }
 
@@ -298,11 +441,15 @@ export function initArchiveModule() {
     // თავდაპირველი ჩატვირთვა
     loadInitialTrainData(container, updateArchiveIndicator);
 
-    // ბაინდინგი ყველაფრის
+    // Print ღილაკის დაკვირვება თავიდანვე
+    observePrintButton();
+
+    // ბაინდინგი
     setTimeout(() => {
         bindArchiveFiltersAndButtons(container, updateArchiveIndicator);
         bindArchiveTrainForms(container, updateArchiveIndicator);
-        console.log("Filters + train forms bound");
+        bindEditWagonForm(container, updateArchiveIndicator);
+        console.log("All bindings initialized");
     }, 500);
 
     console.log("archive module initialized");
@@ -318,6 +465,8 @@ export function cleanupArchiveModule() {
     intervalIds.clear();
 
     clearEventListeners();
+
+    if (printObserver) printObserver.disconnect();
 
     const indicator = document.querySelector("#archive-indicator");
     if (indicator) indicator.style.backgroundColor = "";

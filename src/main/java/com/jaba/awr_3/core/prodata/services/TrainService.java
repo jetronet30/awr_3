@@ -304,6 +304,16 @@ public class TrainService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<WagonMod> getWagonsOpenAndByConIdAndSortedRow(Long id) {
+        return trainJpa.findById(id)
+                .map(TrainMod::getWagons)
+                .orElse(List.of())
+                .stream()
+                .sorted((w1, w2) -> Integer.compare(w1.getRowNum(), w2.getRowNum()))
+                .toList();
+    }
+
     public boolean isWorkInProgress(String conId) {
         TrainMod train = trainJpa.findByOpenTrueAndConId(conId).orElse(null);
         return train != null && !train.isDone();

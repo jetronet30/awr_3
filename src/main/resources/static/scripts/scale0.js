@@ -193,7 +193,7 @@ function initScale0PrintButton() {
                         iframeWin.focus();
                         iframeWin.print();
                     }
-                }, 1000);  // 600–1500 ms ჩვეულებრივ საკმარისია
+                }, 1500);  // 600–1500 ms ჩვეულებრივ საკმარისია
             } catch (err) {
                 console.error("Print error:", err);
                 alert("ბეჭდვის ფანჯარა ვერ გაიხსნა.\nსცადეთ Ctrl + P ხელით.");

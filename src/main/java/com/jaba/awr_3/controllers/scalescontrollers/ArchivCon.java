@@ -1,5 +1,7 @@
 package com.jaba.awr_3.controllers.scalescontrollers;
 
+import java.util.Map;
+
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -10,8 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.jaba.awr_3.core.archive.ArchiveService;
+import com.jaba.awr_3.core.units.UnitService;
 import com.jaba.awr_3.inits.repo.RepoInit;
 
 import lombok.RequiredArgsConstructor;
@@ -23,6 +27,7 @@ public class ArchivCon {
 
     @PostMapping("/archive")
     public String postArchive(Model m) {
+        m.addAttribute("magonNumLeght_train", UnitService.W_NUM_LEN);
         m.addAttribute("scaleNames", archiveService.getScaleNames());
         return "proces/archive/archive";
     }
@@ -62,11 +67,22 @@ public class ArchivCon {
         return "proces/archive/trainpage";
     }
 
+    @PostMapping("/arhcive/editWgonNumber")
+    @ResponseBody
+    public Map<String, Object> editWagon0(
+            @RequestParam("id") Long id,
+            @RequestParam("product") String product,
+            @RequestParam("wagonNumber") String wagonNum) {
+
+        return archiveService.setWagonNumber(id, wagonNum, product);
+    }
+
     //////////////////////////////////////////////////////////////////////////////
     /// 
     @GetMapping("/archive/showPDF/{id}")
     public ResponseEntity<Resource> getPdf0(@PathVariable Long id) {
         FileSystemResource file = new FileSystemResource(RepoInit.PDF_REPOSITOR_FULL + "/" + id + ".pdf");
+        System.out.println(" test    test     "+ id);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(file);

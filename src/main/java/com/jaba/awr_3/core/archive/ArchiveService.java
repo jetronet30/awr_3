@@ -68,7 +68,8 @@ public class ArchiveService {
     }
 
     public List<WagonMod> getWagonsByTrainId(Long id) {
-        return trainJpa.findById(id).orElse(null).getWagons();
+        
+        return trainService.getWagonsOpenAndByConIdAndSortedRow(id);
     }
 
     public Map<String,Object> setWagonNumber(Long id,String wagonNumber, String product){
@@ -94,8 +95,11 @@ public class ArchiveService {
         }else if (tcpService.getTcpByName(conId) !=null) {
             updateTare = tcpService.getTcpByName(conId).isRightToUpdateTare();
         }
+        
+        response =  trainService.updateWagonToTrain(id, conId, wagonNumber, product, updateTare);
+
         pdfCreator.createPdfWeb(wagon.getTrain());
-        return trainService.updateWagonToTrain(id, conId, wagonNumber, product, updateTare);
+        return response;
     }
 
     public void setTrainBlocked(Long id){
