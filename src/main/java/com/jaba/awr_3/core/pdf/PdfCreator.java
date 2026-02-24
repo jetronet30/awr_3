@@ -124,7 +124,9 @@ public class PdfCreator {
             writeLineMixed(cs, LEFT, y--, "Train Max Speed: " + safe(train.getMaxSpeed()));
             y -= LINE_H;
             writeLineMixed(cs, LEFT, y, "Train Min Speed: " + safe(train.getMinSpeed()));
-
+            y -= LINE_H;
+            writeLineMixed(cs, LEFT, y,"რუსული: Привет, как дела?  ქართული: გამარჯობა  სომხურ: Բարեւ Ձեզ");
+            y -= LINE_H;
             cs.close();
 
             // === Metadata + Protection ===

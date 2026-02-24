@@ -1,0 +1,95 @@
+
+
+<div id="ocr-settings-container">
+    <div id="ocr-settings-action">
+        <form action="/ocr-setting-reboot" method="post">
+            <input type="button" th:value="#{save.and.reboot}" id="ocr-settings-reboot-btn">
+        </form>
+        <div id="ocr-settings-indicator"></div>
+    </div>
+
+    <div th:each="ocr : ${ocrModels}" id="ocr-settings-forms-container">
+        <form method="post" action="/updateOcrSettings" class="tcp-settings-from">  <!-- იგივე კლასი დავტოვე თანმიმდევრულობისთვის -->
+
+            <!-- Index (hidden, readonly) -->
+            <label th:for="'index' + ${ocr.index}" class="tcp-settings-main-lable" th:text="'OCR ' + ${ocr.index}"></label>
+            <input type="number" name="index" th:value="${ocr.index}" readonly="readonly"
+                   th:id="'index' + ${ocr.index}" hidden>
+
+            <!-- Camera 1 Username -->
+            <label th:for="'cam1Usr' + ${ocr.index}">Cam1 Username</label>
+            <input type="text" name="cam1Usr" class="tcp-settings-selector"
+                   th:id="'cam1Usr' + ${ocr.index}" th:value="${ocr.cam1Usr}">
+
+            <!-- Camera 1 Password -->
+            <label th:for="'cam1Passwd' + ${ocr.index}">Cam1 Password</label>
+            <input type="password" name="cam1Passwd" class="tcp-settings-selector"
+                   th:id="'cam1Passwd' + ${ocr.index}" th:value="${ocr.cam1Passwd}">
+
+            <!-- Camera 2 Username -->
+            <label th:for="'cam2Usr' + ${ocr.index}">Cam2 Username</label>
+            <input type="text" name="cam2Usr" class="tcp-settings-selector"
+                   th:id="'cam2Usr' + ${ocr.index}" th:value="${ocr.cam2Usr}">
+
+            <!-- Camera 2 Password -->
+            <label th:for="'cam2Passwd' + ${ocr.index}">Cam2 Password</label>
+            <input type="password" name="cam2Passwd" class="tcp-settings-selector"
+                   th:id="'cam2Passwd' + ${ocr.index}" th:value="${ocr.cam2Passwd}">
+
+            <!-- Ports -->
+            <label th:for="'cam1Port' + ${ocr.index}">Cam1 Port</label>
+            <input type="number" name="cam1Port" class="tcp-settings-selector"
+                   th:id="'cam1Port' + ${ocr.index}" th:value="${ocr.cam1Port}">
+
+            <label th:for="'cam2Port' + ${ocr.index}">Cam2 Port</label>
+            <input type="number" name="cam2Port" class="tcp-settings-selector"
+                   th:id="'cam2Port' + ${ocr.index}" th:value="${ocr.cam2Port}">
+
+            <!-- RTSP URLs -->
+            <label th:for="'rtspUrl1' + ${ocr.index}">RTSP URL 1</label>
+            <input type="text" name="rtspUrl1" class="tcp-settings-selector"
+                   th:id="'rtspUrl1' + ${ocr.index}" th:value="${ocr.rtspUrl_1}">
+
+            <label th:for="'rtspUrl2' + ${ocr.index}">RTSP URL 2</label>
+            <input type="text" name="rtspUrl2" class="tcp-settings-selector"
+                   th:id="'rtspUrl2' + ${ocr.index}" th:value="${ocr.rtspUrl_2}">
+
+            <!-- ROI (Region of Interest) -->
+            <label th:for="'roiX1' + ${ocr.index}">ROI X1</label>
+            <input type="number" step="0.01" name="roiX1" class="tcp-settings-selector"
+                   th:id="'roiX1' + ${ocr.index}" th:value="${ocr.roiX1}">
+
+            <label th:for="'roiY1' + ${ocr.index}">ROI Y1</label>
+            <input type="number" step="0.01" name="roiY1" class="tcp-settings-selector"
+                   th:id="'roiY1' + ${ocr.index}" th:value="${ocr.roiY1}">
+
+            <label th:for="'roiX2' + ${ocr.index}">ROI X2</label>
+            <input type="number" step="0.01" name="roiX2" class="tcp-settings-selector"
+                   th:id="'roiX2' + ${ocr.index}" th:value="${ocr.roiX2}">
+
+            <label th:for="'roiY2' + ${ocr.index}">ROI Y2</label>
+            <input type="number" step="0.01" name="roiY2" class="tcp-settings-selector"
+                   th:id="'roiY2' + ${ocr.index}" th:value="${ocr.roiY2}">
+
+            <!-- Active Detection -->
+            <label th:for="'activeDetection' + ${ocr.index}">Active Detection</label>
+            <select name="activeDetection" class="tcp-settings-selector" th:id="'activeDetection' + ${ocr.index}">
+                <option value="true"  th:selected="${ocr.activeDetection}">ON</option>
+                <option value="false" th:selected="${!ocr.activeDetection}">OFF</option>
+            </select>
+
+            <!-- Active Stream -->
+            <label th:for="'activeStream' + ${ocr.index}">Active Stream</label>
+            <select name="activeStream" class="tcp-settings-selector" th:id="'activeStream' + ${ocr.index}">
+                <option value="true"  th:selected="${ocr.activeStream}">ON</option>
+                <option value="false" th:selected="${!ocr.activeStream}">OFF</option>
+            </select>
+
+            <!-- Submit button -->
+            <input type="button" th:value="#{tcp.set.settings}" class="tcp-settings-btn">
+            <!-- თუ გინდა გამოიყენო იგივე ტექსტი #{ocr.set.settings} და properties-ში დაამატო -->
+
+        </form>
+    </div>
+</div>
+

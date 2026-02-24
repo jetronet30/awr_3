@@ -1,4 +1,5 @@
 package com.jaba.awr_3.controllers.settingscontrollers;
+
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
@@ -12,8 +13,6 @@ import com.jaba.awr_3.seversettings.basic.BasicService;
 import com.jaba.awr_3.seversettings.network.NetService;
 
 import lombok.RequiredArgsConstructor;
-
-
 
 @Controller
 @RequiredArgsConstructor
@@ -31,10 +30,11 @@ public class BasicCon {
     @PostMapping("/setBasicSettings")
     @ResponseBody
     public Map<String, Object> setBasicSettings(@RequestParam("language") String language,
-                                                 @RequestParam("timeZone") String timeZone,
-                                                 @RequestParam("port") int port,
-                                                 @RequestParam("ipAddress") String ip) {
-        return bService.updateBasic(language, timeZone,port, ip);
+            @RequestParam("docLanguage") String docLanguage,
+            @RequestParam("timeZone") String timeZone,
+            @RequestParam("port") int port,
+            @RequestParam("ipAddress") String ip) {
+        return bService.updateBasic(language, docLanguage, timeZone, port, ip);
     }
 
     @PostMapping("/basic-save-and-reboot")

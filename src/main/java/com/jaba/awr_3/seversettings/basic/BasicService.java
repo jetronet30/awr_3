@@ -30,6 +30,7 @@ public class BasicService {
     private static final DateTimeFormatter FORMATTER_DATE_TIME = DateTimeFormatter.ofPattern(" yyyy/MM/dd HH:mm:ss");
 
     public static String LANGUAGE;
+    public static String DOCLANGUAGE;
     public static String TIMEZONE;
     public static int LISTING_PORT;
     public static String LISTING_ADDRESS;
@@ -40,6 +41,8 @@ public class BasicService {
                 BasicMod bMod = new BasicMod();
                 bMod.setLanguage("en");
                 LANGUAGE = "en";
+                bMod.setDocLanguage("en");
+                DOCLANGUAGE = "en";
                 bMod.setTimeZone("Asia/Tbilisi");
                 TIMEZONE = "Asia/Tbilisi";
                 bMod.setListingPort(8087);
@@ -56,6 +59,7 @@ public class BasicService {
             try {
                 BasicMod bMod = MAPPER.readValue(BASIC_SETTINGS_JSON, BasicMod.class);
                 LANGUAGE = bMod.getLanguage();
+                DOCLANGUAGE = bMod.getDocLanguage();
                 TIMEZONE = bMod.getTimeZone();
                 LISTING_PORT = bMod.getListingPort();
                 LISTING_ADDRESS = bMod.getListingAddress();
@@ -65,12 +69,14 @@ public class BasicService {
         }
     }
 
-    public Map<String, Object> updateBasic(String language, String timeZone, int port, String ip) {
+    public Map<String, Object> updateBasic(String language, String docLanguage , String timeZone, int port, String ip) {
         Map<String, Object> respons = new HashMap<>();
         try {
             BasicMod bMod = new BasicMod();
             bMod.setLanguage(language);
             LANGUAGE = language;
+            bMod.setDocLanguage(docLanguage);
+            DOCLANGUAGE = docLanguage;
             bMod.setTimeZone(timeZone);
             TIMEZONE = timeZone;
             bMod.setListingPort(port);

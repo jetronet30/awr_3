@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class BasicMod {
     private String language;
     private String timeZone;
+    private String docLanguage;
     private int listingPort;
     private String listingAddress;
 

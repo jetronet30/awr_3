@@ -34,6 +34,16 @@
                 <option value="ru" th:selected="${basic.language} == 'ru'">русский</option>
             </select>
 
+            <label for="docLanguage" th:text="#{docLanguage}"></label>
+            <select class="basic-selector" name="docLanguage" id="docLanguage">
+                <option value="en" th:selected="${basic.language} == 'en'">english</option>
+                <option value="ka" th:selected="${basic.language} == 'ka'">ქართული</option>
+                <option value="az" th:selected="${basic.language} == 'az'">Azerbaijani</option>
+                <option value="arm" th:selected="${basic.language} == 'arm'">Armenian</option>
+                <option value="tuk" th:selected="${basic.language} == 'tuk'">Turkmen</option>
+                <option value="ru" th:selected="${basic.language} == 'ru'">русский</option>
+            </select>
+
 
             <label for="timeZone" th:text="#{timezone}"></label>
             <select class="basic-selector" name="timeZone" id="timeZone">

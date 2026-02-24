@@ -19,14 +19,14 @@ public class FontManager {
 
     private void loadFonts() {
         Map<String, String> fontPaths = Map.of(
-            "latin",    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-            "georgian", "/usr/share/fonts/truetype/noto/NotoSansGeorgian-Regular.ttf",
-            "cyrillic", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-            "azeri",    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-            "armenian", "/usr/share/fonts/truetype/noto/NotoSansArmenian-Regular.ttf",
-            "kazakh",   "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-            "turkish",  "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-            "tukmen",   "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+                "latin", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+                "georgian", "/usr/share/fonts/truetype/noto/NotoSansGeorgian-Regular.ttf",
+                "cyrillic", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+                "azeri", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+                "armenian", "/usr/share/fonts/truetype/noto/NotoSansArmenian-Regular.ttf",
+                "kazakh", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+                "turkish", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+                "tukmen", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 
         );
 
@@ -62,20 +62,33 @@ public class FontManager {
     }
 
     private String getScript(char c) {
-        int code = (int) c;
+        int code = c; // auto-boxing-ის გარეშე
 
-        // ქართული (მხედრული + მთავრული)
-        if ((code >= 0x10A0 && code <= 0x10FF) || // Mkhedruli
-            (code >= 0x1C90 && code <= 0x1CFF)) { // Mtavruli
+        // 1. ქართული (მხედრული + მთავრული)
+        if ((code >= 0x10A0 && code <= 0x10FF) ||
+                (code >= 0x1C90 && code <= 0x1CFF)) {
             return "georgian";
         }
 
-        // ლათინური, ციფრები, პუნქტუაცია
-        if (code <= 0x02FF) {
+        // 2. სომხური (Armenian)
+        if (code >= 0x0530 && code <= 0x058F) {
+            return "armenian";
+        }
+
+        // 3. კირილიცა (Cyrillic) — ძირითადი დიაპაზონი
+        if (code >= 0x0400 && code <= 0x04FF) {
+            return "cyrillic";
+        }
+
+        // 4. ლათინური + ციფრები + პუნქტუაცია + Latin-1 Supplement + Latin Extended-A/B
+        // (ძალიან უხეშად)
+        if (code <= 0x02FF ||
+                (code >= 0x1E00 && code <= 0x1EFF) || // Latin Extended Additional
+                (code >= 0x0180 && code <= 0x024F)) { // Latin Extended-B
             return "latin";
         }
 
-        // სხვა სიმბოლოებისთვის — ვერ ამოვიცანით, ვაბრუნებთ null → გამოიყენება fallback
+        // თუ არც ერთი → fallback-ზე გადავა (□)
         return null;
     }
 }
