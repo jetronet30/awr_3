@@ -5,7 +5,8 @@
 let intervalIds = new Set();
 let eventListeners = new Map();
 let isArchiveInitialized = false;
-let printObserver = null;  // MutationObserver Print ღილაკისთვის
+let printObserver = null;
+let videoObserver = null;
 
 // =============================================================================
 // Helper: Event Listener-ების თრექინგი და გასუფთავება
@@ -64,15 +65,14 @@ function updateTrainDataContainer(container, html, updateIndicator) {
 
     bindArchiveTrainForms(container, updateIndicator);
     bindEditWagonForm(container, updateIndicator);
-
-    // Print ღილაკის დაკვირვება
     observePrintButton();
+    observeVideoArchive();  // ← ვიდეო კონტროლი
 
     updateIndicator?.(true);
 }
 
 // =============================================================================
-// Observer: ავტომატურად აღმოაჩენს Print ღილაკს როცა გამოჩნდება
+// Observer: Print ღილაკის აღმოჩენა
 // =============================================================================
 function observePrintButton() {
     if (printObserver) printObserver.disconnect();
@@ -80,9 +80,9 @@ function observePrintButton() {
     printObserver = new MutationObserver(() => {
         const printBtn = document.getElementById("train-print-btn");
         if (printBtn && !printBtn.dataset.listenerAdded) {
-            console.log("Print ღილაკი აღმოჩენილია MutationObserver-ით! ID:", printBtn.dataset.trainId || "არ არის");
+            console.log("Print ღილაკი აღმოჩენილია! ID:", printBtn.dataset.trainId || "არ არის");
 
-            printBtn.dataset.listenerAdded = "true";  // მხოლოდ ერთხელ დამატება
+            printBtn.dataset.listenerAdded = "true";
 
             printBtn.addEventListener("click", () => {
                 const trainId = printBtn.dataset.trainId;
@@ -122,7 +122,7 @@ function observePrintButton() {
 
                     setTimeout(() => {
                         if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
-                    }, 15000);
+                    }, 20000);
                 };
 
                 iframe.onerror = () => {
@@ -136,6 +136,107 @@ function observePrintButton() {
 
     const target = document.querySelector("#train-data-container") || document.body;
     printObserver.observe(target, { childList: true, subtree: true });
+}
+
+// =============================================================================
+// Observer + Logic: ორი ვიდეოს სინქრონიზაცია (შენი მუშა ლოგიკა + დინამიური)
+// =============================================================================
+function observeVideoArchive() {
+    if (videoObserver) videoObserver.disconnect();
+
+    videoObserver = new MutationObserver(() => {
+        initSyncedVideoControls();
+    });
+
+    const target = document.querySelector("#train-data-container") || document.body;
+    videoObserver.observe(target, { childList: true, subtree: true });
+
+    // დამატებითი ცდა (თუ Observer გამოტოვებს)
+    setTimeout(initSyncedVideoControls, 500);
+}
+
+function initSyncedVideoControls() {
+    const vid1 = document.getElementById('player_1');
+    const vid2 = document.getElementById('player_2');
+    const playPauseBtn = document.getElementById('tarin-video-playPause');
+    const progress = document.getElementById('train-video-progress');
+    const timeDisplay = document.getElementById('time');
+
+    if (!playPauseBtn || !progress || !timeDisplay) {
+        return; // კონტროლი ჯერ არ ჩატვირთულა
+    }
+
+    // თუ უკვე ინიციალიზებულია — არ გავიმეოროთ
+    if (playPauseBtn.dataset.initialized === "true") return;
+    playPauseBtn.dataset.initialized = "true";
+
+    let isPlaying = false;
+    let duration = 0;
+
+    // ვიდეოების სინქრონიზაცია (მთავარი vid1-ის მიხედვით)
+    function syncVideos() {
+        if (vid2 && Math.abs(vid1.currentTime - vid2.currentTime) > 0.1) {
+            vid2.currentTime = vid1.currentTime;
+        }
+    }
+
+    // მოვლენები vid1-ზე (მასტერი)
+    vid1.addEventListener('timeupdate', () => {
+        if (!duration && vid1.duration) {
+            duration = vid1.duration;
+            progress.max = duration;
+        }
+        progress.value = vid1.currentTime;
+        const current = formatTime(vid1.currentTime);
+        const total = formatTime(duration);
+        timeDisplay.textContent = `${current} / ${total}`;
+
+        syncVideos();
+    });
+
+    vid1.addEventListener('seeking', syncVideos);
+    vid1.addEventListener('play', () => { 
+        if (vid2) vid2.play().catch(() => {});
+        isPlaying = true; 
+        playPauseBtn.textContent = '⏸ Pause'; 
+    });
+    vid1.addEventListener('pause', () => { 
+        if (vid2) vid2.pause();
+        isPlaying = false; 
+        playPauseBtn.textContent = '▶ Play'; 
+    });
+
+    // პროგრესის სლაიდერი (seek)
+    progress.addEventListener('input', () => {
+        vid1.currentTime = progress.value;
+        if (vid2) vid2.currentTime = progress.value;
+    });
+
+    // Play/Pause ღილაკი
+    playPauseBtn.addEventListener('click', () => {
+        if (isPlaying) {
+            vid1.pause();
+        } else {
+            vid1.play().catch(e => console.log("Autoplay blocked", e));
+        }
+    });
+
+    // დროის ფორმატი
+    function formatTime(seconds) {
+        const min = Math.floor(seconds / 60);
+        const sec = Math.floor(seconds % 60);
+        return `${min}:${sec.toString().padStart(2, '0')}`;
+    }
+
+    // თუ vid1 დასრულდა
+    vid1.addEventListener('ended', () => {
+        vid1.currentTime = 0;
+        if (vid2) vid2.currentTime = 0;
+        vid1.play();
+        if (vid2) vid2.play();
+    });
+
+    console.log("ვიდეო კონტროლი სრულად ინიციალიზებულია");
 }
 
 // =============================================================================
@@ -441,8 +542,9 @@ export function initArchiveModule() {
     // თავდაპირველი ჩატვირთვა
     loadInitialTrainData(container, updateArchiveIndicator);
 
-    // Print ღილაკის დაკვირვება თავიდანვე
+    // Print და ვიდეოების დაკვირვება
     observePrintButton();
+    observeVideoArchive();
 
     // ბაინდინგი
     setTimeout(() => {
@@ -467,6 +569,7 @@ export function cleanupArchiveModule() {
     clearEventListeners();
 
     if (printObserver) printObserver.disconnect();
+    if (videoObserver) videoObserver.disconnect();
 
     const indicator = document.querySelector("#archive-indicator");
     if (indicator) indicator.style.backgroundColor = "";

@@ -230,6 +230,12 @@
     gap: 20px;
 }
 
+#tarin-video-playPause {
+    padding: 8px 16px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
 #train-video-progress {
     width: 300px;
 }
@@ -336,7 +342,7 @@
         width: 100%;
     }
 
-    #archive-indicator{
+    #archive-indicator {
         width: 90%;
     }
 }
