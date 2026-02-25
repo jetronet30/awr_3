@@ -62,6 +62,8 @@ public class ArchivCon {
     @PostMapping("/archive/edit/{id}")
     public String getTrainArchiv(@PathVariable Long id, Model m) {
         m.addAttribute("wagons", archiveService.getWagonsByTrainId(id));
+        m.addAttribute("video_1_exists", RepoInit.VIDEO_ARCHIVE + "/1_" + id + ".mp4");
+        m.addAttribute("video_2_exists", RepoInit.VIDEO_ARCHIVE + "/2_" + id + ".mp4");
         m.addAttribute("id", id);
         System.out.println(id);
         return "proces/archive/trainpage";

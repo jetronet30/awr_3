@@ -20,14 +20,12 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fazecast.jSerialComm.SerialPort;
 import com.jaba.awr_3.inits.repo.RepoInit;
 
-
 @Service
 public class ComService {
 
     private static final File COM_PORT_SETTINGS = new File(RepoInit.SERVER_SETTINGS_REPO, "comportsettings.json");
     private static final ObjectMapper MAPPER = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     private static final Logger LOGGER = LoggerFactory.getLogger(ComService.class);
-
 
     // Thread-safe file access
     private static final ReentrantReadWriteLock LOCK = new ReentrantReadWriteLock();
@@ -55,8 +53,8 @@ public class ComService {
                 ComMod cMod = new ComMod();
                 cMod.setIndex(i);
                 cMod.setComName(port.getSystemPortName());
-                cMod.setComNick("COM" + (i + 1));
-                cMod.setScaleName("Scale " + (i + 1));
+                cMod.setComNick("COM" + i);
+                cMod.setScaleName("Scale " + i);
                 cMod.setInstrument("TSR4000");
                 cMod.setBaudRate(9600);
                 cMod.setDataBits(8);
@@ -138,7 +136,8 @@ public class ComService {
     }
 
     // === Update port settings with validation ===
-    public Map<String, Object> updateComPort(String name, String scaleName, boolean active, boolean automatic, String instrument ,int parity, int baudRate, int dataBits, int stopBit, boolean rightToUpdate) {
+    public Map<String, Object> updateComPort(String name, String scaleName, boolean active, boolean automatic,
+            String instrument, int parity, int baudRate, int dataBits, int stopBit, boolean rightToUpdate) {
         Map<String, Object> response = new HashMap<>();
         response.put("success", false);
 
@@ -212,8 +211,6 @@ public class ComService {
 
         return response;
     }
-
-   
 
     public ComMod getPortByName(String name) {
         if (name == null || name.trim().isEmpty()) {

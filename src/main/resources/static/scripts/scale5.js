@@ -1,6 +1,6 @@
-/* ============================== scale5.js ============================== */
-// მოდული #scale5-container-ისთვის (TCP_3) — უსაფრთხო, განახლებული ვერსია
-/* ====================================================================== */
+// =============================================================================
+// scale5.js — მოდული #scale5-container-ისთვის (განახლებული 2025/2026)
+// =============================================================================
 
 let intervalIds = new Set();
 let eventListeners = new Map();
@@ -11,7 +11,9 @@ let weightEventSource = null;
 // === ინიციალიზაციის ფლაგი (მხოლოდ ერთხელ) ===
 let isScale5Initialized = false;
 
-/* ---------- Event-listener მართვა ---------- */
+// =============================================================================
+// Helper: Event Listener-ების თრექინგი და გასუფთავება
+// =============================================================================
 function trackEventListener(element, event, handler) {
     if (!element) return;
     const list = eventListeners.get(element) || [];
@@ -28,7 +30,9 @@ function clearEventListeners() {
     eventListeners.clear();
 }
 
-/* ---------- Helper: წაიკითხავს #magonNumLeght_4-ს → 8, 10, 12 (default: 8) ---------- */
+// =============================================================================
+// Helper: ვაგონის ნომრის სიგრძე (8, 10, 12)
+// =============================================================================
 function getAllowedWagonLength(netContainer) {
     const input = netContainer.querySelector("#magonNumLeght_5");
     const value = input?.value?.trim();
@@ -36,7 +40,35 @@ function getAllowedWagonLength(netContainer) {
     return (Number.isInteger(num) && [8, 10, 12].includes(num)) ? num : 8;
 }
 
-/* ---------- საწყისი ვაგონების ჩატვირთვა ---------- */
+// =============================================================================
+// Helper: conId_8-ის მიღება
+// =============================================================================
+function getConId(netContainer) {
+    const input = netContainer.querySelector("#conId_5");
+    return input?.value?.trim() || "unknown";
+}
+
+// =============================================================================
+// Helper: კავშირის ინდიკატორის განახლება (#con5-indicator)
+// =============================================================================
+function updateConIndicator(success) {
+    const indicator = document.querySelector("#con5-indicator");
+    if (!indicator) return;
+
+    indicator.style.transition = "background-color 0.5s ease";
+    indicator.style.backgroundColor = success ? "#00cc66" : "#ff3333";
+
+    // ავტომატური გაქრობა 5 წამში (შეგიძლია ამოიღო თუ მუდმივი გინდა)
+    const id = setTimeout(() => {
+        indicator.style.backgroundColor = "";
+    }, 5000);
+
+    intervalIds.add(id);
+}
+
+// =============================================================================
+// INITIAL LOAD: /showweighingWagons5 → #operation-data5-container
+// =============================================================================
 async function loadInitialWagonData(netContainer, updateIndicator) {
     if (!netContainer) return;
 
@@ -58,7 +90,9 @@ async function loadInitialWagonData(netContainer, updateIndicator) {
     }
 }
 
-/* ---------- რედაქტირების ფორმების დაკავშირება + ავტომატური გაგზავნა ---------- */
+// =============================================================================
+// BIND EDIT FORMS: .oprdata5-set-from ფორმები + ავტომატური გაგზავნა
+// =============================================================================
 function bindEditWagonForm(netContainer, updateIndicator) {
     const editForms = netContainer.querySelectorAll('form.oprdata5-set-from');
     const allowedLength = getAllowedWagonLength(netContainer);
@@ -94,7 +128,6 @@ function bindEditWagonForm(netContainer, updateIndicator) {
                     alert(`ვაგონი ${result.message} - განახლება ვერ მოხერხდა.`);
                 }
             } catch (err) {
-                updateIndicator?.(false);
                 alert(`შეცდომა: ${err.message}`);
             }
         };
@@ -176,13 +209,15 @@ function initScale5PrintButton() {
 
         // თუ iframe არ ჩაიტვირთა 20 წამში
         iframe.onerror = () => {
-            alert("PDF ფაილის ჩატვირთვა ვერ მოხერხდა (/pdf0).");
+            alert("PDF ფაილის ჩატვირთვა ვერ მოხერხდა (/pdf8).");
             if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
         };
     });
 }
 
-/* ---------- ვიდეოს HLS ინიციალიზაცია ---------- */
+// =============================================================================
+// VIDEO: HLS.js ინიციალიზაცია
+// =============================================================================
 function initVideoScale5() {
     const video = document.getElementById('player-5');
     if (!video || !video.getAttribute('data-hls-src')) return;
@@ -210,7 +245,7 @@ function initVideoScale5() {
             if (data.fatal || data.details === 'levelLoadError') {
                 hlsInstanceScale5.destroy();
                 hlsInstanceScale5 = null;
-                setTimeout(initVideoScale5, 2000);
+                setTimeout(initVideoScale8, 2000);
             }
         });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
@@ -232,7 +267,9 @@ function observeVideoScale5(container) {
     videoObserver.observe(container, { childList: true, subtree: true });
 }
 
-/* ---------- SSE CONNECTION: /sendscale4 → TCP_3 → #w-indic-5 ---------- */
+// =============================================================================
+// SSE: წონის + კავშირის სტატუსის მიღება
+// =============================================================================
 function connectWeightSSE(netContainer, updateIndicator) {
     if (weightEventSource) {
         weightEventSource.close();
@@ -241,46 +278,56 @@ function connectWeightSSE(netContainer, updateIndicator) {
 
     weightEventSource = new EventSource('/sendscale5');
 
-    weightEventSource.addEventListener('TCP_3', (e) => {
+    weightEventSource.addEventListener(getConId(netContainer), (e) => {
         const data = e.data.trim();
 
-        if (data === 'update-data-container') {
-            loadInitialWagonData(netContainer, updateIndicator);
-            return;
-        }
+        switch (data) {
+            case 'update-data-container':
+                loadInitialWagonData(netContainer, updateIndicator);
+                break;
 
-        const weightInput = document.getElementById('w-indic-5');
+            case 'update-data-works-start':
+                document.getElementById('w-indic-5').value = "START";
+                document.getElementById('w-indic-5').style.color = '#fdec04ff';
+                break;
 
-        if (data === 'update-data-works-start') {
-            weightInput.value = "START"
-            weightInput.style.color = '#fdec04ff';
-            return;
-        }
+            case 'update-data-works-stop':
+                document.getElementById('w-indic-5').value = "END";
+                document.getElementById('w-indic-5').style.color = '#fd048dff';
+                break;
 
-        if (data === 'update-data-works-stop') {
-            weightInput.value = "END"
-            weightInput.style.color = '#fd048dff';
-            return;
-        }
+            case 'update-con-indicator':
+                updateConIndicator(true);
+                break;
 
-        if (weightInput) {
-            weightInput.value = data;
-            weightInput.style.color = '#04cbfdff';
-            setTimeout(() => { weightInput.style.color = ''; }, 1000);
+            default:
+                // წონის მნიშვნელობა
+                const weightInput = document.getElementById('w-indic-5');
+                if (weightInput) {
+                    weightInput.value = data;
+                    weightInput.style.color = '#04cbfdff';
+                    setTimeout(() => { weightInput.style.color = ''; }, 1000);
+                }
+                break;
         }
     });
 
-    weightEventSource.onerror = () => {
-        weightEventSource.close();
-        setTimeout(() => connectWeightSSE(netContainer, updateIndicator), 2000);
+    weightEventSource.onopen = () => {
+        console.log('SSE connected: /sendscale5');
+        updateConIndicator(true);
     };
 
-    weightEventSource.onopen = () => {
-        console.log('SSE connected: /sendscale5 (TCP_3)');
+    weightEventSource.onerror = () => {
+        updateConIndicator(false);
+        weightEventSource.close();
+        weightEventSource = null;
+        setTimeout(() => connectWeightSSE(netContainer, updateIndicator), 2000);
     };
 }
 
-/* ---------- მოდულის ინიციალიზაცია — მხოლოდ ერთხელ! ---------- */
+// =============================================================================
+// MAIN INITIALIZATION — მხოლოდ ერთხელ!
+// =============================================================================
 export function initScale5Module() {
     if (isScale5Initialized) {
         console.warn("scale5 უკვე ინიციალიზებულია. გამოტოვება.");
@@ -306,13 +353,16 @@ export function initScale5Module() {
         }
     }
 
-    // 1. Load initial data
+    // თავდაპირველი მდგომარეობა — კავშირი ჯერ არ არის
+    updateConIndicator(false);
+
+    // 1. Load initial data & SSE
     loadInitialWagonData(netContainer, updateIndicator);
     connectWeightSSE(netContainer, updateIndicator);
 
     // 2. Helper: Reload module safely
     const reloadModule = async (actionUrl) => {
-        cleanupScale5Module(); // სრული გასუფთავება
+        cleanupScale5Module();
 
         try {
             const response = await fetch(actionUrl, { method: "POST" });
@@ -343,7 +393,6 @@ export function initScale5Module() {
         });
     }
 
-
     // 4. DONE WEIGHING
     const doneForm = netContainer.querySelector('form[action="/doneWeighing_5"]');
     const doneBtn = doneForm?.querySelector("#scale5-done-weighing-btn");
@@ -368,7 +417,7 @@ export function initScale5Module() {
         });
     }
 
-    // 6. ADD WAGON + AUTO-SUBMIT
+    // 6. ADD WAGON
     const addForm = netContainer.querySelector('form[action="/addwagonWeighing_5"]');
     const addBtn = addForm?.querySelector("#scale5-add-wagon-btn");
     const wagonNumberInput = addForm?.querySelector("#scale5-number-input");
@@ -430,7 +479,7 @@ export function initScale5Module() {
         });
     }
 
-    // 7. UPDATE ALL WAGONS
+    // 7. UPDATE ALL
     const updateForm = netContainer.querySelector('form[action="/updateAllWeighing_5"]');
     const updateBtn = updateForm?.querySelector("#scale5-update-weighing-btn");
 
@@ -460,13 +509,16 @@ export function initScale5Module() {
     // 8. VIDEO
     initVideoScale5();
     observeVideoScale5(netContainer);
+
     initScale5PrintButton();
 
     // 9. Global cleanup access
     window.cleanupScale5Module = cleanupScale5Module;
 }
 
-/* ---------- სრული გასუფთავება — ყოველ ჯერზე გამოიძახება ---------- */
+// =============================================================================
+// FULL CLEANUP
+// =============================================================================
 export function cleanupScale5Module() {
     console.log('Cleaning up scale5 module...');
 
@@ -489,6 +541,13 @@ export function cleanupScale5Module() {
         weightEventSource.close();
         weightEventSource = null;
     }
+
+    // ინდიკატორების გასუფთავება
+    const indicators = ["#scale5-indicator", "#con5-indicator"];
+    indicators.forEach(sel => {
+        const el = document.querySelector(sel);
+        if (el) el.style.backgroundColor = "";
+    });
 
     isScale5Initialized = false;
 

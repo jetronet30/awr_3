@@ -209,7 +209,7 @@ function initScale6PrintButton() {
 
         // თუ iframe არ ჩაიტვირთა 20 წამში
         iframe.onerror = () => {
-            alert("PDF ფაილის ჩატვირთვა ვერ მოხერხდა (/pdf0).");
+            alert("PDF ფაილის ჩატვირთვა ვერ მოხერხდა (/pdf6).");
             if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
         };
     });
@@ -362,7 +362,7 @@ export function initScale6Module() {
 
     // 2. Helper: Reload module safely
     const reloadModule = async (actionUrl) => {
-        cleanupScale0Module();
+        cleanupScale6Module();
 
         try {
             const response = await fetch(actionUrl, { method: "POST" });

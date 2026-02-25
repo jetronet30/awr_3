@@ -104,6 +104,7 @@
 
 .scale5-operdata-row-input,
 .scale5-operdata-weight-input,
+.scale5-operdata-tare-input,
 .scale5-operdata-wagonNum-input,
 .scale5-operdata-product-input {
     padding: 2px;
@@ -119,6 +120,10 @@
 }
 
 .scale5-operdata-weight-input {
+    width: 7ch;
+}
+
+.scale5-operdata-tare-input {
     width: 7ch;
 }
 

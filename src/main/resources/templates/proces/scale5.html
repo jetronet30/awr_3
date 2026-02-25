@@ -23,7 +23,9 @@
         <form action="/updateAllWeighing_5" method="post">
             <input type="button" th:value="#{weighing.update}" id="scale5-update-weighing-btn">
         </form>
+        <div id="con5-indicator" hidden></div>
         <div id="scale5-indicator"></div>
+
     </div>
 
     <div class="scale5-info">
@@ -31,11 +33,13 @@
             <video th:if="${cam5Enabled}" id="player-5" class="scale5-camera" muted
                 data-hls-src="/cam5/index.m3u8"></video>
             <div class="scale5-done-info">
-                <button id="scale5-print-btn" >Print</button>
+                <button id="scale5-print-btn">Print</button>
                 <a href="/pdf5" download>Download</a>
-                <a href="/pdflast_5/report5.pdf"  target="_blank">View PDF</a>
+                <a href="/pdflast_5/report5.pdf" target="_blank">View PDF</a>
             </div>
         </div>
         <div id="operation-data5-container"></div>
     </div>
+
+
 </div>
