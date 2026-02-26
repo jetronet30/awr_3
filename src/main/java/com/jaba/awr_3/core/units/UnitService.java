@@ -33,8 +33,8 @@ public class UnitService {
                 UnitMod uMod = new UnitMod();
                 uMod.setSpeedUnit("km/h");
                 SPEED_UNIT = "km/h";
-                uMod.setWeightUnit("tonne");
-                WEIGHT_UNIT = "tonne";
+                uMod.setWeightUnit("t");
+                WEIGHT_UNIT = "t";
                 uMod.setWagonNumLenUnit(8);
                 W_NUM_LEN = 8;
                 uMod.setTarLimit(new BigDecimal("29.0"));

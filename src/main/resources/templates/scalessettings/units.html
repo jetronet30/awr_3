@@ -24,7 +24,7 @@
             <!-- წონა -->
             <label for="weight" th:text="#{unit.weight}"></label>
             <select class="units-selector" name="weightUnit" id="weight">
-                <option value="tonne" th:selected="${units.weightUnit} == 'tonne'">tonne (Metric – International)</option>
+                <option value="tonne" th:selected="${units.weightUnit} == 't'">tonne (Metric – International)</option>
                 <option value="short_ton" th:selected="${units.weightUnit} == 'short_ton'">short ton (US – 2000 lb)</option>
                 <option value="long_ton" th:selected="${units.weightUnit} == 'long_ton'">long ton (Canadian/UK – 2240 lb)</option>
             </select>
