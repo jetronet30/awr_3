@@ -128,17 +128,17 @@ public class PdfCreator {
             y = er1.y - LINE_H * 2;
             writeLineMixed(cs, LEFT, y--, "--------------------------------------------------------------------------------");
             y -= LINE_H * 2;
-            writeLineMixed(cs, LEFT, y--, "Total Gross Weight : " + (safe(train.getGross())).replace(".", ",") + " " + UnitService.WEIGHT_UNIT);
+            writeLineMixed(cs, LEFT, y--, "Total Gross Weight : " + (safe(train.getGross())) + " " + UnitService.WEIGHT_UNIT);
             y -= LINE_H * 2;
-            writeLineMixed(cs, LEFT, y--, "Total Tare Weight : " + (safeOrXXXX(train.getTare())).replace(".", ",") + " " + UnitService.WEIGHT_UNIT);
+            writeLineMixed(cs, LEFT, y--, "Total Tare Weight : " + (safeOrXXXX(train.getTare())) + " " + UnitService.WEIGHT_UNIT);
             y -= LINE_H * 2;
-            writeLineMixed(cs, LEFT, y--, "Total Net Weight : " + (safeOrXXXX(train.getNeto())).replace(".", ",") + " " + UnitService.WEIGHT_UNIT);
+            writeLineMixed(cs, LEFT, y--, "Total Net Weight : " + (safeOrXXXX(train.getNeto()))+ " " + UnitService.WEIGHT_UNIT);
             y -= LINE_H * 2;
-            writeLineMixed(cs, LEFT, y--, "Total Train Weight Gross my : " + (safe(train.getSysGross())).replace(".", ",") + " " + UnitService.WEIGHT_UNIT);
+            writeLineMixed(cs, LEFT, y--, "Drection : " + train.getDirection());
             y -= LINE_H * 2;
-            writeLineMixed(cs, LEFT, y--, "Train Max Speed: " + safe(train.getMaxSpeed()).replace(".", ",") + " " + UnitService.SPEED_UNIT);
+            writeLineMixed(cs, LEFT, y--, "Train Max Speed: " + safe(train.getMaxSpeed()) + " " + UnitService.SPEED_UNIT);
             y -= LINE_H * 2;
-            writeLineMixed(cs, LEFT, y, "Train Min Speed: " + safe(train.getMinSpeed()).replace(".", ",") + " " + UnitService.SPEED_UNIT);
+            writeLineMixed(cs, LEFT, y, "Train Min Speed: " + safe(train.getMinSpeed()) + " " + UnitService.SPEED_UNIT);
             y -= LINE_H;
             cs.close();
             // === Metadata + Protection ===
@@ -213,10 +213,10 @@ public class PdfCreator {
                 writeCellMixed(cs, X_NO, y, String.format("%03d", rowNumber++));
                 writeCellMixed(cs, X_VEH, y, safe(w.getWagonNumber()));
                 writeCellMixed(cs, X_PROD, y, safe(w.getProduct()));
-                writeCellMixed(cs, X_TARE, y, safe(w.getTare()).replace(".", ","));
-                writeCellMixed(cs, X_GROSS, y, safe(w.getWeight()).replace(".", ","));
-                writeCellMixed(cs, X_NETT, y, safe(w.getNeto()).replace(".", ","));
-                writeCellMixed(cs, X_SPEED, y, safe(w.getSpeed()).replace(".", ","));
+                writeCellMixed(cs, X_TARE, y, safe(w.getTare()));
+                writeCellMixed(cs, X_GROSS, y, safe(w.getWeight()));
+                writeCellMixed(cs, X_NETT, y, safe(w.getNeto()));
+                writeCellMixed(cs, X_SPEED, y, safe(w.getSpeed()));
                 y -= LINE_H;
             }
             // === Totals ===
@@ -225,17 +225,17 @@ public class PdfCreator {
             y = er1.y - LINE_H * 2;
             writeLineMixed(cs, LEFT, y--, "--------------------------------------------------------------------------------");
             y -= LINE_H * 2;
-            writeLineMixed(cs, LEFT, y--, "Total Gross Weight : " + (safe(train.getGross())).replace(".", ",") + " " + UnitService.WEIGHT_UNIT);
+            writeLineMixed(cs, LEFT, y--, "Total Gross Weight : " + (safe(train.getGross())) + " " + UnitService.WEIGHT_UNIT);
             y -= LINE_H * 2;
-            writeLineMixed(cs, LEFT, y--, "Total Tare Weight : " + (safeOrXXXX(train.getTare())).replace(".", ",") + " " + UnitService.WEIGHT_UNIT);
+            writeLineMixed(cs, LEFT, y--, "Total Tare Weight : " + (safeOrXXXX(train.getTare())) + " " + UnitService.WEIGHT_UNIT);
             y -= LINE_H * 2;
-            writeLineMixed(cs, LEFT, y--, "Total Net Weight : " + (safeOrXXXX(train.getNeto())).replace(".", ",") + " " + UnitService.WEIGHT_UNIT);
+            writeLineMixed(cs, LEFT, y--, "Total Net Weight : " + (safeOrXXXX(train.getNeto())) + " " + UnitService.WEIGHT_UNIT);
             y -= LINE_H * 2;
-            writeLineMixed(cs, LEFT, y--, "Total Train Weight Gross my : " + (safe(train.getSysGross())).replace(".", ",") + " " + UnitService.WEIGHT_UNIT);
+            writeLineMixed(cs, LEFT, y--, "Drection : " + train.getDirection());
             y -= LINE_H * 2;
-            writeLineMixed(cs, LEFT, y--, "Train Max Speed: " + safe(train.getMaxSpeed()).replace(".", ",") + " " + UnitService.SPEED_UNIT);
+            writeLineMixed(cs, LEFT, y--, "Train Max Speed: " + safe(train.getMaxSpeed()) + " " + UnitService.SPEED_UNIT);
             y -= LINE_H * 2;
-            writeLineMixed(cs, LEFT, y, "Train Min Speed: " + safe(train.getMinSpeed()).replace(".", ",") + " " + UnitService.SPEED_UNIT);
+            writeLineMixed(cs, LEFT, y, "Train Min Speed: " + safe(train.getMinSpeed()) + " " + UnitService.SPEED_UNIT);
             cs.close();
             // === Metadata + Protection ===
             PDDocumentInformation info = doc.getDocumentInformation();
@@ -258,7 +258,7 @@ public class PdfCreator {
 
     // === Mixed Font – Table Cells (10 pt) ===
     private void writeCellMixed(PDPageContentStream cs, float x, float y, String text) throws IOException {
-        if (text == null || text.isEmpty()) text = "XXXX";
+        if (text == null || text.isEmpty()) text = "    ";
         cs.beginText();
         cs.newLineAtOffset(x, y);
         writeTextMixed(cs, text, 10);
@@ -267,7 +267,7 @@ public class PdfCreator {
 
     // === Mixed Font – Lines (12 pt) ===
     private void writeLineMixed(PDPageContentStream cs, float x, float y, String text) throws IOException {
-        if (text == null || text.isEmpty()) text = "XXXX";
+        if (text == null || text.isEmpty()) text = "    ";
         cs.beginText();
         cs.newLineAtOffset(x, y);
         writeTextMixed(cs, text, 12);
@@ -329,8 +329,6 @@ public class PdfCreator {
     private float writeMainInfo(PDPageContentStream cs, float y, TrainMod train) throws IOException {
         writeLineMixed(cs, LEFT, y, "Weighing Date: " + safe(train.getWeighingStopDateTime()));
         y -= LINE_H * 2;
-        writeLineMixed(cs, LEFT, y, "Direction: " + safe(train.getDirection()));
-        y -= LINE_H * 2;
         writeLineMixed(cs, LEFT, y, "Instrument: " + safe(train.getScaleName()));
         y -= LINE_H * 2;
         writeLineMixed(cs, LEFT, y, "-----------------------------------------------------------------------------------");
@@ -377,11 +375,11 @@ public class PdfCreator {
     }
 
     private String safe(Object o) {
-        return o == null ? "XXXX" : o.toString();
+        return o == null ? "    " : o.toString();
     }
 
     private String safeOrXXXX(BigDecimal bd) {
-        return bd != null ? bd.toPlainString() : "XXXX";
+        return bd != null ? bd.toPlainString() : "    ";
     }
 
     private File getLastReportFile(int connId) {
