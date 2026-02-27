@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.jaba.awr_3.servermanager.ServerManager;
 import com.jaba.awr_3.seversettings.owner.OwnerService;
@@ -32,6 +33,14 @@ public class OwnerCon {
                                        @RequestParam("ownerSerial")String serial,
                                        @RequestParam("ownerLicenzi")String licenzi){
         return oService.updateOwner(name,email,address,serial,licenzi);
+    }
+
+    @PostMapping("/logoupload")
+    public String uploadOwnerLogo(@RequestParam("logo") MultipartFile file, Model m) {
+        oService.uploadOwnerLogo(file);
+        m.addAttribute("owner", oService.getOwner());
+        System.out.println(file.getContentType());
+        return "settings/owner";
     }
 
     @PostMapping("/owner-save-and-reboot")

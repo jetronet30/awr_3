@@ -68,11 +68,11 @@ public class ArchiveService {
     }
 
     public List<WagonMod> getWagonsByTrainId(Long id) {
-        
+
         return trainService.getWagonsOpenAndByConIdAndSortedRow(id);
     }
 
-    public Map<String,Object> setWagonNumber(Long id,String wagonNumber, String product){
+    public Map<String, Object> setWagonNumber(Long id, String wagonNumber, String product) {
         Map<String, Object> response = new HashMap<>();
         WagonMod wagon = wagonJpa.findById(id).orElse(null);
         if (wagon == null) {
@@ -81,7 +81,7 @@ public class ArchiveService {
             LOGGER.warn("Wagon not found with id: {}", id);
             return response;
         }
-        if(wagon.getTrain().isBlocked()){
+        if (wagon.getTrain().isBlocked()) {
             response.put("success", false);
             response.put("message", "Train  is Blocked : " + id);
             LOGGER.warn("Train is Blocked: {}", id);
@@ -90,20 +90,30 @@ public class ArchiveService {
 
         String conId = wagon.getConnId();
         boolean updateTare = false;
-        if (comService.getPortByName(conId) !=null) {
+        if (comService.getPortByName(conId) != null) {
             updateTare = comService.getPortByName(conId).isRightToUpdateTare();
-        }else if (tcpService.getTcpByName(conId) !=null) {
+        } else if (tcpService.getTcpByName(conId) != null) {
             updateTare = tcpService.getTcpByName(conId).isRightToUpdateTare();
         }
-        
-        response =  trainService.updateWagonToTrain(id, conId, wagonNumber, product, updateTare);
+
+        response = trainService.updateWagonToTrain(id, conId, wagonNumber, product, updateTare);
 
         pdfCreator.createPdfWeb(wagon.getTrain());
         return response;
     }
 
-    public void setTrainBlocked(Long id){
+    public void setTrainBlocked(Long id) {
 
+    }
+
+    public void createPdfForArChiv(Long id) {
+        TrainMod train = trainJpa.findById(id).orElse(null);
+        if (train == null) {
+            LOGGER.warn("No train found for id: {}", id);
+            return;
+        }
+        pdfCreator.createPdfWeb(train);
+        LOGGER.info("PDF created for train with id: {}", id);
     }
 
 }

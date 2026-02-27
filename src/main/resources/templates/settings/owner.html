@@ -7,30 +7,43 @@
                 <input type="button" th:value="#{save.and.reboot}" id="owner-set-and-reboot-btn">
             </form>
         </div>
-
+        <div id="owner-logo-upload-btn-container">
+            <form id="owner_upload_logo" enctype="multipart/form-data" action="/logoupload" method="post">
+                <input  type="file" class="backuprecovery-input" name="logo" value="logo">
+                <input type="button" class="backuprecovery-btn" id="logo_btn" value="UP LOGO">
+            </form>
+            <progress id="logo-update-progressBar" value="0" max="100"></progress>
+        </div>
         <div id="owner-indicator"></div>
     </div>
 
-    <div id="owner-settings-div">
+    <div id="owner-settings-container">
+        <img id="owner-logo-img" src="/logo/logo.png" alt="logo">
         <form method="post" action="/setOwnerSettings" id="owner-set-from">
 
             <label for="ownerName" th:text="#{owner.name}"></label>
             <input type="text" class="owner-input" name="ownerName" id="ownerName" required th:value="${owner.name}">
 
             <label for="ownerEmail" th:text="#{owner.email}"></label>
-            <input type="email" class="owner-input" name="ownerEmail" id="ownerEmail" required th:value="${owner.email}">
+            <input type="email" class="owner-input" name="ownerEmail" id="ownerEmail" required
+                th:value="${owner.email}">
 
             <label for="ownerAddress" th:text="#{owner.address}"></label>
-            <input type="text" class="owner-input" name="ownerAddress" id="ownerAddress" required th:value="${owner.address}">
+            <input type="text" class="owner-input" name="ownerAddress" id="ownerAddress" required
+                th:value="${owner.address}">
 
             <label for="ownerSerial" th:text="#{owner.serial}"></label>
-            <input type="text" class="owner-input" name="ownerSerial" id="ownerSerial" required th:value="${owner.serial}">
+            <input type="text" class="owner-input" name="ownerSerial" id="ownerSerial" required
+                th:value="${owner.serial}">
 
             <label for="ownerLicenzi" th:text="#{owner.licenzi}"></label>
-            <input type="text" class="owner-input" name="ownerLicenzi" id="ownerLicenzi" required th:value="${owner.licenzi}">
-
+            <input type="text" class="owner-input" name="ownerLicenzi" id="ownerLicenzi" required
+                th:value="${owner.licenzi}">
 
             <input type="submit" value="Set Data Settings" id="owner-set-btn">
         </form>
+
+
+
     </div>
 </div>

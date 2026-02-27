@@ -83,6 +83,7 @@ public class ArchivCon {
     /// 
     @GetMapping("/archive/showPDF/{id}")
     public ResponseEntity<Resource> getPdf0(@PathVariable Long id) {
+        archiveService.createPdfForArChiv(id);
         FileSystemResource file = new FileSystemResource(RepoInit.PDF_REPOSITOR_FULL + "/" + id + ".pdf");
         System.out.println(" test    test     "+ id);
         return ResponseEntity.ok()
@@ -92,6 +93,7 @@ public class ArchivCon {
 
     @PostMapping("/archive/showPDF/post/{id}")
     public ResponseEntity<Resource> postPDF(@PathVariable Long id) {
+        archiveService.createPdfForArChiv(id);
         FileSystemResource file = new FileSystemResource(RepoInit.PDF_REPOSITOR_FULL + "/" + id + ".pdf");
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)

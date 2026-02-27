@@ -23,8 +23,8 @@ public class LocaleConfig implements WebMvcConfigurer {
     if (lang != null && !lang.trim().isEmpty()) {
       defaultLocale = Locale.forLanguageTag(lang);
     } else {
-      defaultLocale = Locale.ENGLISH; // ან Locale.US, Locale.of("ka", "GE") თუ ქართული გინდა
-      // ან შეგიძლია properties-დან აიღო default
+      defaultLocale = Locale.ENGLISH; 
+      
     }
 
     slr.setDefaultLocale(defaultLocale);

@@ -69,7 +69,7 @@ public class BaReCon {
     }
 
     @PostMapping("/uploadbackup")
-    public String uploadVideo(@RequestParam("backup") MultipartFile file, Model m) {
+    public String uploadBackup(@RequestParam("backup") MultipartFile file, Model m) {
         backupRecovery.uploadBackup(file);
         m.addAttribute("backupName", backupRecovery.getBackupName());
         m.addAttribute("backupDataName", backupRecovery.getBackupDataName());

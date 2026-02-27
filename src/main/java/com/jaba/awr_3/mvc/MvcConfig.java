@@ -18,6 +18,10 @@ public class MvcConfig implements WebMvcConfigurer {
                                 .addResourceLocations("file:" + RepoInit.BACKUP_REPO_MVC.getAbsolutePath() + "/")
                                 .setCachePeriod(0);
                 registry
+                                .addResourceHandler("/logo/**")
+                                .addResourceLocations("file:" + RepoInit.LOGO_REPO.getAbsolutePath() + "/")
+                                .setCachePeriod(0);
+                registry
                                 .addResourceHandler("/archipdf/**")
                                 .addResourceLocations("file:" + RepoInit.PDF_REPOSITOR_FULL.getAbsolutePath() + "/")
                                 .setCachePeriod(0);

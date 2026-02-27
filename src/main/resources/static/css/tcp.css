@@ -39,7 +39,7 @@
     text-align: center;
 }
 
-.tcp-settings-main-lable{
+.tcp-settings-main-lable {
     font-size: 20px;
     font-weight: 700;
     margin-bottom: 5px;
@@ -54,11 +54,9 @@
     width: 100%;
 }
 
-.tcp-settings-from:hover{
+.tcp-settings-from:hover {
     background-color: #0011ff27;
 }
-
-
 
 .tcp-settings-selector {
     width: 100%;

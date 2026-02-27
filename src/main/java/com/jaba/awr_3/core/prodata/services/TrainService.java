@@ -257,10 +257,11 @@ public class TrainService {
         trainJpa.save(train);
 
         LOGGER.info("Train conId {} updated (processId, speeds)", conId);
+        updateValidationFlags(train);
     }
 
     @Transactional
-    public void updateTrainAndWagons(String conId, String direction) {
+    public void updateTrainAndWagons(String conId, String direction, String wighingMethod) {
         TrainMod train = trainJpa.findByOpenTrueAndConId(conId).orElse(null);
         if (train == null) {
             LOGGER.warn("No open train found for conId: {}", conId);
@@ -268,6 +269,7 @@ public class TrainService {
         }
 
         train.setDirection(direction);
+        train.setWeighingMethod(wighingMethod);
         train.setWeighingStopDateTime(ServerManager.getSystemDateTime());
 
         recalculateTrainTotals(train);

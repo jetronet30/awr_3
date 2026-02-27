@@ -17,6 +17,15 @@ function clearEventListeners() {
     eventListeners.clear();
 }
 
+// Function to update progress bar
+function updateProgressBar(progress) {
+    const progressBar = document.querySelector("#logo-update-progressBar");
+    if (progressBar) {
+        progressBar.value = progress;
+    }
+}
+
+
 export function initOwnerModule() {
     const netContainer = document.querySelector("#owner-container");
     const content = document.querySelector("main.content");
@@ -97,11 +106,85 @@ export function initOwnerModule() {
         };
         trackEventListener(newSetWRBtn, "click", handler);
     }
+
+    /** --- 🌐 upload logo --- */
+        const uploadForm = netContainer.querySelector('form[action="/logoupload"]');
+        const uploadBtn = uploadForm?.querySelector('input[type="button"]');
+        const fileInput = uploadForm?.querySelector('input[type="file"]');
+    
+        if (uploadForm && uploadBtn && fileInput) {
+            uploadBtn.replaceWith(uploadBtn.cloneNode(true));
+            const newUploadBtn = uploadForm.querySelector('input[type="button"]');
+    
+            const handler = async (e) => {
+                e.preventDefault();
+                const file = fileInput.files[0];
+                if (!file) {
+                    alert("გთხოვთ, აირჩიეთ ფაილი!");
+                    return;
+                }
+    
+                // Check file size (100GB = 100 * 1024 * 1024 * 1024 bytes)
+                const maxSize = 100 * 1024 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    alert("ფაილი ძალიან დიდია! მაქსიმალური ზომაა 20GB.");
+                    return;
+                }
+    
+                const formData = new FormData(uploadForm);
+                try {
+                    // Use XMLHttpRequest for progress tracking
+                    const xhr = new XMLHttpRequest();
+                    
+                    // Progress event listener
+                    xhr.upload.addEventListener("progress", (event) => {
+                        if (event.lengthComputable) {
+                            const percentComplete = (event.loaded / event.total) * 100;
+                            updateProgressBar(percentComplete);
+                        }
+                    });
+    
+                    // Completion handler
+                    xhr.onload = () => {
+                        if (xhr.status === 200) {
+                            content.innerHTML = xhr.responseText;
+                            if (content.querySelector("#owner-container")) {
+                                import(`/scripts/owner.js?v=${Date.now()}`)
+                                    .then(mod => mod.initBackuprecoveryModule());
+                            }
+                            updateIndicator(true);
+                            updateProgressBar(0); // Reset progress bar
+                        } else {
+                            throw new Error(`Server error: ${xhr.status}`);
+                        }
+                    };
+    
+                    // Error handler
+                    xhr.onerror = () => {
+                        content.innerHTML = `<p style="color:red;">Error uploading backup.</p>`;
+                        updateIndicator(false);
+                        updateProgressBar(0); // Reset progress bar
+                        alert("შეცდომა ფაილის ატვირთვისას.");
+                    };
+    
+                    xhr.open("POST", uploadForm.action, true);
+                    xhr.send(formData);
+                } catch (err) {
+                    content.innerHTML = `<p style="color:red;">Error uploading backup.</p>`;
+                    updateIndicator(false);
+                    updateProgressBar(0); // Reset progress bar
+                    alert("შეცდომა ფაილის ატვირთვისას: " + err.message);
+                }
+            };
+            trackEventListener(newUploadBtn, "click", handler);
+        }
+
 }
 
 export function cleanupOwnerModule() {
     intervalIds.forEach(id => clearTimeout(id));
     intervalIds.clear();
     clearEventListeners();
+    updateProgressBar(0);
     console.log('✅ owner module cleaned up');
 }

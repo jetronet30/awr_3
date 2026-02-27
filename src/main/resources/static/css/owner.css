@@ -10,7 +10,8 @@
     align-items: center;
     justify-content: space-between;
 }
-#owner-btn-container{
+
+#owner-btn-container {
     display: flex;
     gap: 10px;
     align-items: center;
@@ -44,52 +45,60 @@
     box-shadow: 0 0 15px rgba(0, 183, 255, 0.6);
 }
 
-#owner-indicator{
+#owner-indicator {
     width: 20px;
     height: 20px;
     border-radius: 6px;
     background-color: transparent;
 }
 
-#owner-settings-div{
-    display: flex;
-    justify-content: center;
-    border-radius: 12px;
-    padding: 10px;
-    text-align: center;
+#owner-logo-uploader {
+    background-color: #00ff00;
 }
+
+#owner-logo-upload-btn-container{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#logo-update-progressBar{
+    height: 30px;
+    border: none;
+    background: none;
+}
+
+#owner-settings-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    gap: 10px;
+}
+#owner-logo-img{
+    width: auto;
+    height: 100px;
+}
+
 #owner-set-from {
     display: flex;
     flex-direction: column;
-    background-color: #f7f7f7;
-    border: 1px solid #ddd;
     border-radius: 6px;
     padding: 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     max-width: 600px;
     width: 100%;
 }
 
-#owner-settings-div label {
-    font-weight: 600;
-    color: #000000;
-    margin-bottom: 2px;
-    margin-top: 10px;
+#owner-set-from:hover {
+    background-color: #0011ff27;
 }
 
-.owner-input{
-    text-align: center;
+.owner-input {
     width: 100%;
     padding: 5px;
-    font-weight: 600;
-    color: #000000;
-    font-size: 18px;
-}
-
-.owner-selector{
     text-align: center;
-    width: 100%;
-    padding: 5px;
     font-weight: 600;
     color: #000000;
     font-size: 18px;
