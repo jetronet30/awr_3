@@ -1,23 +1,24 @@
 <div th:each=" train : ${trains}" id="archive-vi-container">
-      <form th:action="@{/archive/edit/{id}(id=${train.id})}" method="post"  class="archiv-train-from">
-            <button type="button" class="archiv-train-btn"
-                  th:text="${train.scaleName} + ' >>>  ' + ${train.weighingStopDateTime}">Train Name</button>
-            <input type="text" th:class="${train.normalWeight} 
+  <form th:action="@{/archive/edit/{id}(id=${train.id})}" method="post" class="archiv-train-from">
+    <button type="button" class="archiv-train-btn"
+      th:text="${train.scaleName} + ' >>>  ' + ${train.weighingStopDateTime}">Train Name</button>
+    <input type="text" th:class="${train.normalWeight} 
           ? 'archiv-train-status-green' 
           : 'archiv-train-status-red'" th:value="${train.normalWeight ? 'normal weight' : 'not normal weight'}"
-                  readonly>
-            <input type="text" th:class="${train.normalSpeed} 
+      readonly>
+    <input type="text" th:class="${train.normalSpeed} 
           ? 'archiv-train-status-green' 
           : 'archiv-train-status-red'" th:value="${train.normalSpeed ? 'normal speed' : 'not normal speed'}" readonly>
-            <input type="text" th:class="${train.tareOnly} 
+    <input type="text" th:class="${train.tareOnly} 
           ? 'archiv-train-status-green' 
           : 'archiv-train-status-red'" th:value="${train.tareOnly ? 'tare only' : 'not tare only'}" readonly>
-            <input type="text" th:class="${train.allwagonsNumbered} 
+    <input type="text" th:class="${train.allwagonsNumbered} 
           ? 'archiv-train-status-green' 
           : 'archiv-train-status-red'" th:value="${train.allwagonsNumbered ? 'numbered' : 'not  numbered'}" readonly>
-            <input type="text" th:class="${train.matched} 
+    <input type="text" th:class="${train.matched} 
           ? 'archiv-train-status-green' 
           : 'archiv-train-status-red'" th:value="${train.matched ? 'matched' : 'not matched'}" readonly>
-            <input type="button" value="Show Report" th:formaction="@{/archive/showPDF/post/{id}(id=${train.id})}" formmethod="post">
-      </form>
+    <input type="button" value="Show Report" th:formaction="@{/archive/showPDF/post/{id}(id=${train.id})}"
+      formmethod="post">
+  </form>
 </div>

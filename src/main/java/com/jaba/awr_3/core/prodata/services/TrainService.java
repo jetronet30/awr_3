@@ -185,6 +185,7 @@ public class TrainService {
 
         wagonJpa.save(wagon);
         recalculateTrainTotals(wagon.getTrain());
+        updateValidationFlags(wagon.getTrain());
         trainJpa.save(wagon.getTrain());
         pdfCreator.createPdf(wagon.getTrain());
 
@@ -206,12 +207,10 @@ public class TrainService {
             LOGGER.warn("Train is not done for conId: {}", conId);
             return;
         }
-
+        recalculateTrainTotals(train);
         updateValidationFlags(train);
-
         train.setOpen(false);
         train.setWeighingStopDateTime(ServerManager.getSystemDateTime());
-        recalculateTrainTotals(train);
         trainJpa.save(train);
         pdfCreator.createPdf(train);
         LOGGER.info("Train conId {} closed successfully", conId);
@@ -227,6 +226,9 @@ public class TrainService {
         }
         if (train.isDone()) {
             train.setOpen(false);
+            
+            recalculateTrainTotals(train);
+            updateValidationFlags(train);
             trainJpa.save(train);
         } else {
             trainJpa.delete(train);
@@ -254,10 +256,11 @@ public class TrainService {
         train.setSysGross(getBigDecimal(weighString));
         train.setSysDateTime(sysDateTime);
         train.setCount(count);
-        trainJpa.save(train);
-
-        LOGGER.info("Train conId {} updated (processId, speeds)", conId);
+        recalculateTrainTotals(train);
         updateValidationFlags(train);
+        trainJpa.save(train);
+        LOGGER.info("Train conId {} updated (processId, speeds)", conId);
+        
     }
 
     @Transactional
@@ -271,7 +274,6 @@ public class TrainService {
         train.setDirection(direction);
         train.setWeighingMethod(wighingMethod);
         train.setWeighingStopDateTime(ServerManager.getSystemDateTime());
-
         recalculateTrainTotals(train);
         updateValidationFlags(train);
         train.setDone(true);
@@ -362,7 +364,7 @@ public class TrainService {
 
         train.setAllwagonsNumbered(
                 train.getWagons().stream().allMatch(
-                        w -> w.getWagonNumber() != null && w.getWagonNumber().length() == UnitService.W_NUM_LEN));
+                        w -> w.getWagonNumber() != null && w.getWagonNumber().length() >= UnitService.W_NUM_LEN));
 
         train.setTareOnly(
                 train.getWagons().stream()
@@ -373,8 +375,7 @@ public class TrainService {
                         .allMatch(w -> w.getNeto() != null && w.getNeto().compareTo(BigDecimal.ZERO) > 0));
 
         train.setBlocked(
-                train.isAllwagonsNumbered() &&
-                        train.isMatched());
+                train.isAllwagonsNumbered());
     }
 
     private void applyWeightAndTare(WagonMod wagon, BigDecimal weight, boolean updateTare) {

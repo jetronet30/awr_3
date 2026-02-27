@@ -9,12 +9,14 @@ import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+
 import com.jaba.awr_3.core.prodata.mod.TrainMod;
 import com.jaba.awr_3.core.prodata.mod.WagonMod;
 import com.jaba.awr_3.core.units.UnitService;
@@ -53,9 +55,11 @@ public class PdfCreator {
     private static final float X_VEH = LEFT + 40;
     private static final float X_PROD = LEFT + 140;
     private static final float X_TARE = LEFT + 220;
-    private static final float X_GROSS = LEFT + 280;
-    private static final float X_NETT = LEFT + 340;
-    private static final float X_SPEED = LEFT + 400;
+    private static final float X_GROSS = LEFT + 300;
+    private static final float X_NETT = LEFT + 380;
+    private static final float X_SPEED = LEFT + 460;
+
+    private static final int KEEP_TOGETHER_WAGONS = 2;
 
     private FontManager fontManager;
     private int currentPageNumber;
@@ -63,18 +67,20 @@ public class PdfCreator {
     public void createPdfWeb(TrainMod train) {
         if (train == null || train.getWagons() == null || train.getWagons().isEmpty())
             return;
+
         String connId = train.getConId();
         try (PDDocument doc = new PDDocument()) {
             fontManager = new FontManager(doc);
             currentPageNumber = 1;
+
             PDPage page = addPage(doc);
             PDPageContentStream cs = new PDPageContentStream(doc, page);
+            drawPageNumber(cs, page);
 
-            drawPageNumber(cs, page); // პირველი გვერდი
+            float y = TOP;
 
-            // სათაური და ლოგო მოშორებულია
-
-            float y = TOP - 40; // დავიწყოთ ოდნავ ქვემოთ, რადგან სათაური/ლოგო აღარ არის
+            writeLineMixed(cs, LEFT, y--, getLocalized("weighing_report"));
+            y -= LINE_H * 2;
 
             y = writeMainInfo(cs, y, train);
             y = writeTableHeader(cs, y);
@@ -82,55 +88,95 @@ public class PdfCreator {
             List<WagonMod> wagons = train.getWagons();
             wagons.sort(Comparator.comparingInt(WagonMod::getRowNum));
             int rowNumber = 1;
+            int wagonCount = wagons.size();
+            int i = 0;
 
-            for (WagonMod w : wagons) {
-                EnsureResult er = ensureSpace(doc, cs, y, LINE_H);
+            while (i < wagonCount) {
+                boolean isNearEnd = (wagonCount - i) <= KEEP_TOGETHER_WAGONS;
+
+                float neededForBlock;
+                if (isNearEnd) {
+                    int remaining = wagonCount - i;
+                    neededForBlock = remaining * LINE_H + 6 * LINE_H + 6; // მინიმალური ბუფერი
+                    if (!train.isNormalSpeed() || !train.isNormalWeight()) {
+                        neededForBlock += 12;
+                    }
+                } else {
+                    neededForBlock = LINE_H + 1;
+                }
+
+                EnsureResult er = ensureSpace(doc, cs, y, neededForBlock);
+
                 if (er.newPageCreated) {
                     page = er.newPage;
                     cs.close();
                     cs = new PDPageContentStream(doc, page);
                     currentPageNumber++;
-                    drawPageNumber(cs, page); // ახალი გვერდის ნომერი
+                    drawPageNumber(cs, page);
                     y = writeTableHeader(cs, TOP);
                 } else {
                     cs = er.cs;
                     y = er.y;
                 }
-                writeCellMixed(cs, X_NO, y, String.format("%03d", rowNumber++));
-                writeCellMixed(cs, X_VEH, y, safe(w.getWagonNumber()));
-                writeCellMixed(cs, X_PROD, y, safe(w.getProduct()));
-                writeCellMixed(cs, X_TARE, y, safe(w.getTare()));
-                writeCellMixed(cs, X_GROSS, y, safe(w.getWeight()));
-                writeCellMixed(cs, X_NETT, y, safe(w.getNeto()));
-                writeCellMixed(cs, X_SPEED, y, safe(w.getSpeed()));
-                y -= LINE_H;
+
+                int toWrite = isNearEnd ? (wagonCount - i) : 1;
+                for (int k = 0; k < toWrite && i < wagonCount; k++) {
+                    WagonMod w = wagons.get(i);
+                    writeCellMixed(cs, X_NO, y, String.format("%03d", rowNumber++));
+                    writeCellMixed(cs, X_VEH, y, safe(w.getWagonNumber()));
+                    writeCellMixed(cs, X_PROD, y, safe(w.getProduct()));
+                    writeCellMixed(cs, X_TARE, y, safe(w.getTare()) + " " + UnitService.WEIGHT_UNIT);
+                    writeCellMixed(cs, X_GROSS, y, safe(w.getWeight()) + " " + UnitService.WEIGHT_UNIT);
+                    writeCellMixed(cs, X_NETT, y, safe(w.getNeto()) + " " + UnitService.WEIGHT_UNIT);
+                    writeCellMixed(cs, X_SPEED, y, safe(w.getSpeed()) + " " + UnitService.SPEED_UNIT);
+                    y -= LINE_H + 1;
+                    i++;
+                }
             }
+
+            // ფუტერი
+            float footerStartY = y;
+
+            int footerLines = 6;
+            if (!train.isNormalSpeed() || !train.isNormalWeight()) {
+                footerLines += 2;
+            }
+            float neededFooter = footerLines * LINE_H + 6;
+
+            EnsureResult erFooter = ensureSpace(doc, cs, footerStartY, neededFooter);
+            cs = erFooter.cs;
+
+            if (erFooter.newPageCreated) {
+                page = erFooter.newPage;
+                currentPageNumber++;
+                drawPageNumber(cs, page);
+                y = TOP - 40; // თითქმის თავიდან იწყება
+            } else {
+                y = erFooter.y;
+            }
+
+            writeLineMixed(cs, LEFT, y--,
+                    "----------------------------------------------------------------------------------------------------------------------");
+
+            y -= LINE_H + 2;
             writeCellMixed(cs, X_NO, y, "TOTAL TRAIN WEIGHT");
             writeCellMixed(cs, X_VEH, y, "");
             writeCellMixed(cs, X_PROD, y, safe(""));
-            writeCellMixed(cs, X_TARE, y, safeOrXXXX(train.getTare()));
-            writeCellMixed(cs, X_GROSS, y, safe(train.getGross()));
-            writeCellMixed(cs, X_NETT, y, safeOrXXXX(train.getNeto()));
+            writeCellMixed(cs, X_TARE, y, safeOrXXXX(train.getTare()) + " " + UnitService.WEIGHT_UNIT);
+            writeCellMixed(cs, X_GROSS, y, safe(train.getGross()) + " " + UnitService.WEIGHT_UNIT);
+            writeCellMixed(cs, X_NETT, y, safeOrXXXX(train.getNeto()) + " " + UnitService.WEIGHT_UNIT);
 
-            EnsureResult er1 = ensureSpace(doc, cs, y, 8 * LINE_H);
-            cs = er1.cs;
-            y = er1.y - LINE_H + 2;
-            writeLineMixed(cs, LEFT, y--,
-                    "--------------------------------------------------------------------------------");
             y -= LINE_H + 2;
             writeLineMixed(cs, LEFT, y--,
-                    getLocalized("total_gross") + " : " + safe(train.getGross()) + " " + UnitService.WEIGHT_UNIT);
-            y -= LINE_H + 2;
-            writeLineMixed(cs, LEFT, y--,
-                    getLocalized("total_tare") + " : " + safeOrXXXX(train.getTare()) + " " + UnitService.WEIGHT_UNIT);
-            y -= LINE_H + 2;
-            writeLineMixed(cs, LEFT, y--,
-                    getLocalized("total_net") + " : " + safeOrXXXX(train.getNeto()) + " " + UnitService.WEIGHT_UNIT);
+                    "----------------------------------------------------------------------------------------------------------------------");
+
             y -= LINE_H + 2;
             writeLineMixed(cs, LEFT, y--, getLocalized("direction") + " : " + getLocalized(train.getDirection()));
+
             y -= LINE_H + 2;
             writeLineMixed(cs, LEFT, y--,
                     getLocalized("max_speed") + " : " + safe(train.getMaxSpeed()) + " " + UnitService.SPEED_UNIT);
+
             y -= LINE_H + 2;
             writeLineMixed(cs, LEFT, y,
                     getLocalized("min_speed") + " : " + safe(train.getMinSpeed()) + " " + UnitService.SPEED_UNIT);
@@ -164,18 +210,20 @@ public class PdfCreator {
     public void createPdf(TrainMod train) {
         if (train == null || train.getWagons() == null || train.getWagons().isEmpty())
             return;
+
         String connId = train.getConId();
         try (PDDocument doc = new PDDocument()) {
             fontManager = new FontManager(doc);
             currentPageNumber = 1;
+
             PDPage page = addPage(doc);
             PDPageContentStream cs = new PDPageContentStream(doc, page);
+            drawPageNumber(cs, page);
 
-            drawPageNumber(cs, page); // პირველი გვერდის ნომერი
+            float y = TOP;
 
-            // სათაური და ლოგო მოშორებულია
-
-            float y = TOP - 40; // დავიწყოთ ოდნავ ქვემოთ
+            writeLineMixed(cs, LEFT, y--, "   Weighing Report  ");
+            y -= LINE_H * 2;
 
             y = writeMainInfo(cs, y, train);
             y = writeTableHeader(cs, y);
@@ -183,49 +231,95 @@ public class PdfCreator {
             List<WagonMod> wagons = train.getWagons();
             wagons.sort(Comparator.comparingInt(WagonMod::getRowNum));
             int rowNumber = 1;
+            int wagonCount = wagons.size();
+            int i = 0;
 
-            for (WagonMod w : wagons) {
-                EnsureResult er = ensureSpace(doc, cs, y, LINE_H);
+            while (i < wagonCount) {
+                boolean isNearEnd = (wagonCount - i) <= KEEP_TOGETHER_WAGONS;
+
+                float neededForBlock;
+                if (isNearEnd) {
+                    int remaining = wagonCount - i;
+                    neededForBlock = remaining * LINE_H + 6 * LINE_H + 6;
+                    if (!train.isNormalSpeed() || !train.isNormalWeight()) {
+                        neededForBlock += 12;
+                    }
+                } else {
+                    neededForBlock = LINE_H + 1;
+                }
+
+                EnsureResult er = ensureSpace(doc, cs, y, neededForBlock);
+
                 if (er.newPageCreated) {
                     page = er.newPage;
                     cs.close();
                     cs = new PDPageContentStream(doc, page);
                     currentPageNumber++;
-                    drawPageNumber(cs, page); // ახალი გვერდის ნომერი
+                    drawPageNumber(cs, page);
                     y = writeTableHeader(cs, TOP);
                 } else {
                     cs = er.cs;
                     y = er.y;
                 }
-                writeCellMixed(cs, X_NO, y, String.format("%03d", rowNumber++));
-                writeCellMixed(cs, X_VEH, y, safe(w.getWagonNumber()));
-                writeCellMixed(cs, X_PROD, y, safe(w.getProduct()));
-                writeCellMixed(cs, X_TARE, y, safe(w.getTare()));
-                writeCellMixed(cs, X_GROSS, y, safe(w.getWeight()));
-                writeCellMixed(cs, X_NETT, y, safe(w.getNeto()));
-                writeCellMixed(cs, X_SPEED, y, safe(w.getSpeed()));
-                y -= LINE_H;
+
+                int toWrite = isNearEnd ? (wagonCount - i) : 1;
+                for (int k = 0; k < toWrite && i < wagonCount; k++) {
+                    WagonMod w = wagons.get(i);
+
+                    writeCellMixed(cs, X_NO, y, String.format("%03d", rowNumber++));
+                    writeCellMixed(cs, X_VEH, y, safe(w.getWagonNumber()));
+                    writeCellMixed(cs, X_PROD, y, safe(w.getProduct()));
+                    writeCellMixed(cs, X_TARE, y, safe(w.getTare()) + " " + UnitService.WEIGHT_UNIT);
+                    writeCellMixed(cs, X_GROSS, y, safe(w.getWeight()) + " " + UnitService.WEIGHT_UNIT);
+                    writeCellMixed(cs, X_NETT, y, safe(w.getNeto()) + " " + UnitService.WEIGHT_UNIT);
+                    writeCellMixed(cs, X_SPEED, y, safe(w.getSpeed()) + " " + UnitService.SPEED_UNIT);
+                    y -= LINE_H + 1;
+                    i++;
+                }
             }
 
-            EnsureResult er1 = ensureSpace(doc, cs, y, 8 * LINE_H);
-            cs = er1.cs;
-            y = er1.y - LINE_H + 2;
+            float footerStartY = y;
+
+            int footerLines = 6;
+            if (!train.isNormalSpeed() || !train.isNormalWeight()) {
+                footerLines += 2;
+            }
+            float neededFooter = footerLines * LINE_H + 6;
+
+            EnsureResult erFooter = ensureSpace(doc, cs, footerStartY, neededFooter);
+            cs = erFooter.cs;
+
+            if (erFooter.newPageCreated) {
+                page = erFooter.newPage;
+                currentPageNumber++;
+                drawPageNumber(cs, page);
+                y = TOP - 40;
+            } else {
+                y = erFooter.y;
+            }
+
             writeLineMixed(cs, LEFT, y--,
-                    "-------------------------------------------------------------------------------- ");
+                    "-----------------------------------------------------------------------------------------------------------------------");
+
+            y -= LINE_H + 2;
+            writeCellMixed(cs, X_NO, y, "TOTAL TRAIN WEIGHT");
+            writeCellMixed(cs, X_VEH, y, "");
+            writeCellMixed(cs, X_PROD, y, safe(""));
+            writeCellMixed(cs, X_TARE, y, safeOrXXXX(train.getTare()) + " " + UnitService.WEIGHT_UNIT);
+            writeCellMixed(cs, X_GROSS, y, safe(train.getGross()) + " " + UnitService.WEIGHT_UNIT);
+            writeCellMixed(cs, X_NETT, y, safeOrXXXX(train.getNeto()) + " " + UnitService.WEIGHT_UNIT);
+
             y -= LINE_H + 2;
             writeLineMixed(cs, LEFT, y--,
-                    getLocalized("total_gross") + " : " + safe(train.getGross()) + " " + UnitService.WEIGHT_UNIT);
-            y -= LINE_H + 2;
-            writeLineMixed(cs, LEFT, y--,
-                    getLocalized("total_tare") + " : " + safeOrXXXX(train.getTare()) + " " + UnitService.WEIGHT_UNIT);
-            y -= LINE_H + 2;
-            writeLineMixed(cs, LEFT, y--,
-                    getLocalized("total_net") + " : " + safeOrXXXX(train.getNeto()) + " " + UnitService.WEIGHT_UNIT);
+                    "-----------------------------------------------------------------------------------------------------------------------");
+
             y -= LINE_H + 2;
             writeLineMixed(cs, LEFT, y--, getLocalized("direction") + " : " + getLocalized(train.getDirection()));
+
             y -= LINE_H + 2;
             writeLineMixed(cs, LEFT, y--,
                     getLocalized("max_speed") + " : " + safe(train.getMaxSpeed()) + " " + UnitService.SPEED_UNIT);
+
             y -= LINE_H + 2;
             writeLineMixed(cs, LEFT, y,
                     getLocalized("min_speed") + " : " + safe(train.getMinSpeed()) + " " + UnitService.SPEED_UNIT);
@@ -257,8 +351,7 @@ public class PdfCreator {
         }
     }
 
-    // ==================== დანარჩენი მეთოდები უცვლელია ====================
-
+    // დანარჩენი მეთოდები უცვლელია
     private String getLocalized(String key) {
         if (key == null || key.isBlank())
             return "";
@@ -303,25 +396,25 @@ public class PdfCreator {
         writeLineMixed(cs, LEFT, y, getLocalized("process_id") + " : " + safe(String.format("%010d", train.getId())));
         y -= LINE_H + 2;
         writeLineMixed(cs, LEFT, y,
-                "---------------------------------------------------------------------------------------------------------");
+                "--------------------------------------------------------------------------------------------------------------------------");
         y -= LINE_H + 2;
         return y;
     }
 
     private float writeTableHeader(PDPageContentStream cs, float y) throws IOException {
-        writeCellMixed(cs, X_NO, y, "No");
-        writeCellMixed(cs, X_VEH, y, "Vehicle");
-        writeCellMixed(cs, X_PROD, y, "Product");
-        writeCellMixed(cs, X_TARE, y, "Tare");
-        writeCellMixed(cs, X_GROSS, y, "Gross");
-        writeCellMixed(cs, X_NETT, y, "Net");
-        writeCellMixed(cs, X_SPEED, y, "Speed");
-        return y - LINE_H + 1;
+        writeCellMixed(cs, X_NO, y, getLocalized("row"));
+        writeCellMixed(cs, X_VEH, y, getLocalized("vehicle"));
+        writeCellMixed(cs, X_PROD, y, getLocalized("product"));
+        writeCellMixed(cs, X_TARE, y, getLocalized("tare"));
+        writeCellMixed(cs, X_GROSS, y, getLocalized("gross"));
+        writeCellMixed(cs, X_NETT, y, getLocalized("net"));
+        writeCellMixed(cs, X_SPEED, y, getLocalized("speed"));
+        return y - LINE_H * 2;
     }
 
     private EnsureResult ensureSpace(PDDocument doc, PDPageContentStream cs, float y, float neededSpace)
             throws IOException {
-        float safeBottom = BOTTOM_MARGIN + 25; // დამატებითი ბუფერი
+        float safeBottom = BOTTOM_MARGIN;
 
         if (y - neededSpace <= safeBottom) {
             try {
@@ -354,7 +447,7 @@ public class PdfCreator {
             text = "    ";
         cs.beginText();
         cs.newLineAtOffset(x, y);
-        writeTextMixed(cs, text, 10);
+        writeTextMixed(cs, text, 11);
         cs.endText();
     }
 
@@ -406,7 +499,7 @@ public class PdfCreator {
     }
 
     private String safeOrXXXX(BigDecimal bd) {
-        return bd != null ? bd.toPlainString() : "    ";
+        return bd != null ? bd.toPlainString() : "XXXX";
     }
 
     private File getLastReportFile(int connId) {

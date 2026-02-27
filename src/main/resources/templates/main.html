@@ -57,13 +57,13 @@
       <div class="dropdown">
         <button class="dropdown-toggle" id="settings" th:text="#{settings}" >Settings <span class="arrow">▼</span></button>
         <div class="dropdown-menu">
-          <button class="drop-btn" id="basic" type="button" formaction="/basic">Basic</button>
-          <button class="drop-btn" id="network" type="button" formaction="/network">Network</button>
-          <button class="drop-btn" id="data" type="button" formaction="/data">Data</button>
-          <button class="drop-btn" id="owner" type="button" formaction="/owner">Owner</button>
-          <button class="drop-btn" id="backuprecovery" type="button" formaction="/backuprecovery">Backup And
+          <button class="drop-btn" id="basic" type="button" formaction="/basic" th:text="#{basic}">Basic</button>
+          <button class="drop-btn" id="network" type="button" formaction="/network" th:text="#{network}">Network</button>
+          <button class="drop-btn" id="data" type="button" formaction="/data" th:text="#{data}">Data</button>
+          <button class="drop-btn" id="owner" type="button" formaction="/owner" th:text="#{owner}">Owner</button>
+          <button class="drop-btn" id="backuprecovery" type="button" formaction="/backuprecovery" th:text="#{backup_and_recovery }">Backup And
             Recovery</button>
-          <button class="drop-btn" id="administrator" type="button" formaction="/administrator">Administrator</button>
+          <button class="drop-btn" id="administrator" type="button" formaction="/administrator" th:text="#{administrator}">Administrator</button>
           <button class="drop-btn" id="superadmin" type="button" formaction="/superadmin">Super Admin</button>
         </div>
       </div>
@@ -75,7 +75,6 @@
           <button class="drop-btn" id="units" type="button" formaction="/units">Units</button>
           <button class="drop-btn" id="comport" type="button" formaction="/comport">Com Scales</button>
           <button class="drop-btn" id="tcp" type="button" formaction="/tcp">Tcp Scales </button>
-          <button class="drop-btn" id="udp" type="button" formaction="/udp">Udp Scales</button>
         </div>
       </div>
       <div class="dropdown">
