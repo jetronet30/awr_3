@@ -39,5 +39,7 @@ public interface TrainJpa extends JpaRepository<TrainMod, Long> {
             @Param("dateFrom") String dateFrom,
             @Param("dateTo") String dateTo);
 
-    List<TrainMod> findAllByMatchedFalseOrderByWeighingStopDateTimeDesc();
+    List<TrainMod> findAllByMatchedFalseAndTareOnlyFalseOrderByWeighingStopDateTimeDesc();
+
+    List<TrainMod> findAllByMatchedFalseAndAllwagonsNumberedTrueAndOpenFalse();
 }

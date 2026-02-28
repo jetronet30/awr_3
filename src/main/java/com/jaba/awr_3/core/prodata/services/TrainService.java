@@ -1,6 +1,7 @@
 package com.jaba.awr_3.core.prodata.services;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -172,16 +173,8 @@ public class TrainService {
         wagon.setProduct(product);
 
         BigDecimal weight = wagon.getWeight();
-        if (weight != null && weight.signum() > 0 && weight.compareTo(UnitService.TARE_LIMIT) < 0) {
-            wagon.setTare(weight);
-            String num = wagon.getWagonNumber();
-            if (num != null && !num.isEmpty() && updateTare) {
-                wtareService.addOrUpdateWtare(weight.toString(), num);
-            }
-        } else {
-            String num = wagon.getWagonNumber();
-            wagon.setTare(num != null && !num.isEmpty() ? wtareService.getTareByNumber(num) : null);
-        }
+
+        applyWeightAndTare(wagon, weight, updateTare);
 
         wagonJpa.save(wagon);
         recalculateTrainTotals(wagon.getTrain());
@@ -226,7 +219,7 @@ public class TrainService {
         }
         if (train.isDone()) {
             train.setOpen(false);
-            
+
             recalculateTrainTotals(train);
             updateValidationFlags(train);
             trainJpa.save(train);
@@ -260,7 +253,7 @@ public class TrainService {
         updateValidationFlags(train);
         trainJpa.save(train);
         LOGGER.info("Train conId {} updated (processId, speeds)", conId);
-        
+
     }
 
     @Transactional
@@ -372,7 +365,8 @@ public class TrainService {
 
         train.setMatched(
                 train.getWagons().stream()
-                        .allMatch(w -> w.getNeto() != null && w.getNeto().compareTo(BigDecimal.ZERO) > 0));
+                        .allMatch(w -> w.getNeto() != null && w.getNeto().compareTo(BigDecimal.ZERO) > 0)
+                        || train.isTareOnly());
 
         train.setBlocked(
                 train.isAllwagonsNumbered());
@@ -392,10 +386,31 @@ public class TrainService {
             String num = wagon.getWagonNumber();
             if (num != null && !num.isEmpty()) {
                 wtareService.addOrUpdateWtare(weight.toString(), num);
+                updateNoMactedTrains(num, weight);
             }
         } else {
             String num = wagon.getWagonNumber();
             wagon.setTare(num != null && !num.isEmpty() ? wtareService.getTareByNumber(num) : null);
+        }
+    }
+
+    private void updateNoMactedTrains(String wagonNumber, BigDecimal tare) {
+        List<TrainMod> trainsToCheck = trainJpa.findAllByMatchedFalseAndAllwagonsNumberedTrueAndOpenFalse();
+
+        for (TrainMod train : trainsToCheck) {
+            // აქ იყენებთ კოპიას → უსაფრთხოა თუნდაც შიგნით მოხდეს add/remove
+            List<WagonMod> wagons = new ArrayList<>(train.getWagons());
+
+            for (WagonMod wagon : wagons) {
+                if (wagon.getWagonNumber().equals(wagonNumber)) {
+                    wagon.setTare(tare);
+                    wagonJpa.save(wagon);
+                    recalculateTrainTotals(train);
+                    updateValidationFlags(train);
+                    trainJpa.save(train);
+                    LOGGER.info("Train with Id {} UPDATED successfully", train.getId());
+                }
+            }
         }
     }
 
@@ -436,7 +451,7 @@ public class TrainService {
             BigDecimal weight = w.getWeight() != null ? w.getWeight() : BigDecimal.ZERO;
             BigDecimal wagonTare = w.getTare();
             if (wagonTare != null && wagonTare.compareTo(BigDecimal.ZERO) > 0) {
-                w.setNeto(weight.subtract(wagonTare));
+                w.setNeto(weight.subtract(wagonTare).max(BigDecimal.ZERO));
             } else {
                 w.setNeto(null);
             }

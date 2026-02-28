@@ -44,7 +44,7 @@ public class ArchiveService {
     }
 
     public List<TrainMod> getTrainsWithoutMatched() {
-        return trainJpa.findAllByMatchedFalseOrderByWeighingStopDateTimeDesc();
+        return trainJpa.findAllByMatchedFalseAndTareOnlyFalseOrderByWeighingStopDateTimeDesc();
     }
 
     public List<TrainMod> getTrainsFiltered(String scaleName, String dateFrom, String dateTo) {

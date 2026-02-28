@@ -121,6 +121,12 @@
     width: 20%;
 }
 
+.archiv-train-btn:hover{
+  background-color: #254626;
+
+}
+
+
 .archiv-train-status-red {
     padding: 5px;
     width: 18ch;
@@ -141,6 +147,39 @@
     cursor: default;
 }
 
+.archiv-train-status-tare-blue{
+    padding: 5px;
+    width: 18ch;
+    border: 1px solid #140606;
+    background: none;
+    text-align: center;
+    color: blue;
+    cursor: default;
+}
+
+.archiv-train-status-tare-yellow{
+    padding: 5px;
+    width: 18ch;
+    border: 1px solid #140606;
+    background: none;
+    text-align: center;
+    color: rgb(255, 123, 0);
+    cursor: default;
+}
+
+.archiv-report-btn{
+    padding: 5px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 10%;
+}
+
+.archiv-report-btn:hover{
+  background-color: #254626;
+
+}
 
 /* Train   sector */
 
