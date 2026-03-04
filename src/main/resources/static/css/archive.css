@@ -19,6 +19,10 @@
     border-radius: 50px;
     background-color: aliceblue;
 }
+#archive-actions-shower-hidden{
+    display: flex;
+    gap: 10px;
+}
 
 #archive-filters-container {
     display: flex;

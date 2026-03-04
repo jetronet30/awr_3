@@ -297,6 +297,7 @@ function bindArchiveFiltersAndButtons(container, updateIndicator) {
     }
 
     const clearForm = container.querySelector('form.archive-clear-form');
+
     if (clearForm) {
         const clearBtn = clearForm.querySelector('#archive-clear-btn');
         if (clearBtn) {
@@ -326,6 +327,7 @@ function bindArchiveFiltersAndButtons(container, updateIndicator) {
     }
 
     const fastButtons = container.querySelectorAll('#archive-fast-buttons-container form, #archive-container form[action="/archive/showTrains"]');
+    const divA = document.getElementById("archive-actions-shower-hidden")
     fastButtons.forEach(form => {
         const btn = form.querySelector('input[type="button"]');
         if (!btn) return;
@@ -338,6 +340,7 @@ function bindArchiveFiltersAndButtons(container, updateIndicator) {
 
             try {
                 const response = await fetch(form.action, { method: "POST" });
+                divA.style.display = "flex";
                 if (!response.ok) throw new Error(`Action failed: ${response.status}`);
 
                 const html = await response.text();
@@ -357,6 +360,7 @@ function bindArchiveTrainForms(container, updateIndicator) {
     if (!container) return;
 
     const forms = container.querySelectorAll('#train-data-container .archiv-train-from');
+    const divA = document.getElementById("archive-actions-shower-hidden");
 
     forms.forEach(form => {
         const mainBtn = form.querySelector('.archiv-train-btn');
@@ -374,7 +378,7 @@ function bindArchiveTrainForms(container, updateIndicator) {
                 if (!target) return;
 
                 try {
-                    target.innerHTML = '<div style="padding:3rem;text-align:center;color:#666;">იტვირთება...</div>';
+                    target.innerHTML = '<div style="padding:3rem;text-align:center;color:#767;">იტვირთება...</div>';
 
                     const response = await fetch(form.action, {
                         method: 'POST',
@@ -389,6 +393,7 @@ function bindArchiveTrainForms(container, updateIndicator) {
                     updateIndicator?.(true);
                     bindArchiveTrainForms(container, updateIndicator);
                     bindEditWagonForm(container, updateIndicator);
+                    divA.style.display = "none";
 
                 } catch (err) {
                     target.innerHTML = `
@@ -416,7 +421,7 @@ function bindArchiveTrainForms(container, updateIndicator) {
                 if (!target) return;
 
                 try {
-                    target.innerHTML = '<div style="padding:3rem;text-align:center;color:#666;">PDF იტვირთება...</div>';
+                    target.innerHTML = '<div style="padding:3rem;text-align:center;color:#767;">PDF იტვირთება...</div>';
 
                     let pdfUrl = reportBtn.formAction;
                     if (!pdfUrl) {
