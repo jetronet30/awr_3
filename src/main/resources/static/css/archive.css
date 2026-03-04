@@ -63,6 +63,7 @@
 
 
 #archive-fast-buttons-container {
+    padding-left: 20px;
     display: flex;
     gap: 10px;
 }
@@ -78,8 +79,8 @@
 }
 
 #archive-nonumberd-btn:hover {
-    background: linear-gradient(45deg, #ff7043, #ff5722);
-    box-shadow: 0 0 15px rgba(255, 87, 34, 0.6);
+    background: linear-gradient(45deg, #ff3c00, #ff3c00);
+    box-shadow: 0 0 15px rgba(255, 60, 0, 0.6);
 }
 
 #archive-nomatched-btn {
@@ -93,8 +94,23 @@
 }
 
 #archive-nomatched-btn:hover {
-    background: linear-gradient(45deg, #ff7043, #ff5722);
-    box-shadow: 0 0 15px rgba(255, 87, 34, 0.6);
+    background: linear-gradient(45deg, #ff3c00, #ff3c01);
+    box-shadow: 0 0 15px rgba(255, 61, 2, 0.6);
+}
+
+#archive-close-btn{
+    background-color: #fa9703;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+#archive-close-btn:hover {
+    background: linear-gradient(45deg, #ff3c00, #ff3c01);
+    box-shadow: 0 0 15px rgba(255, 61, 2, 0.6);
 }
 
 #archive-vi-container {
@@ -109,12 +125,16 @@
 .archiv-train-from {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 5px;
     width: 100%;
-    background-color: aliceblue;
-    padding: 2px;
+    background-color: rgba(240, 248, 255, 0);
     cursor: default;
 }
+
+.archiv-train-from:hover{
+    background-color: rgba(240, 248, 255, 0.514);
+}
+
 
 .archiv-train-btn {
     padding: 5px;
@@ -134,8 +154,9 @@
 .archiv-train-status-red {
     padding: 5px;
     width: 18ch;
-    border: 1px solid #140606;
+    border: none;
     background: none;
+    font-weight: 600;
     text-align: center;
     color: red;
     cursor: default;
@@ -144,8 +165,9 @@
 .archiv-train-status-green {
     padding: 5px;
     width: 18ch;
-    border: 1px solid #140606;
+    border: none;
     background: none;
+    font-weight: 600;
     text-align: center;
     color: green;
     cursor: default;
@@ -155,7 +177,9 @@
     padding: 5px;
     width: 18ch;
     border: 1px solid #140606;
+    border: none;
     background: none;
+    font-weight: 600;
     text-align: center;
     color: blue;
     cursor: default;
@@ -165,9 +189,11 @@
     padding: 5px;
     width: 18ch;
     border: 1px solid #140606;
+    border: none;
     background: none;
+    font-weight: 600;
     text-align: center;
-    color: rgb(255, 123, 0);
+    color: rgb(255, 60, 0);
     cursor: default;
 }
 

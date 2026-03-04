@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -349,6 +350,163 @@ public class PdfCreator {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void createFragmentPdf(TrainMod train, List<Long> wId) {
+        if (train == null || train.getWagons() == null || train.getWagons().isEmpty())
+            return;
+
+        String connId = train.getConId();
+        try (PDDocument doc = new PDDocument()) {
+            fontManager = new FontManager(doc);
+            currentPageNumber = 1; 
+
+            PDPage page = addPage(doc);
+            PDPageContentStream cs = new PDPageContentStream(doc, page);
+            drawPageNumber(cs, page);
+
+            float y = TOP;
+
+            writeLineMixed(cs, LEFT, y--, getLocalized("report_composition"));
+            y -= LINE_H * 2;
+
+            y = writeMainInfo(cs, y, train);
+            y = writeTableHeader(cs, y);
+
+            List<WagonMod> wagons = new ArrayList<>();
+            BigDecimal fragmentTare = BigDecimal.ZERO;
+            BigDecimal fragmentNeto = BigDecimal.ZERO;
+            BigDecimal fragmentGross = BigDecimal.ZERO;
+            wagons.clear();
+            for (WagonMod wm : train.getWagons()) {
+                if (wId.contains(wm.getId())) {
+                    wagons.add(wm);
+                    if (wm.getNeto() != null)
+                        fragmentNeto = fragmentNeto.add(wm.getNeto());
+                    if (wm.getWeight()!=null) fragmentGross = fragmentGross.add(wm.getWeight());
+                    if (wm.getTare()!=null) fragmentTare = fragmentTare.add(wm.getTare());
+                }
+            }
+            wagons.sort(Comparator.comparingInt(WagonMod::getRowNum));
+            int rowNumber = 1;
+            int wagonCount = wagons.size();
+            int i = 0;
+
+            while (i < wagonCount) {
+                boolean isNearEnd = (wagonCount - i) <= KEEP_TOGETHER_WAGONS;
+
+                float neededForBlock;
+                if (isNearEnd) {
+                    int remaining = wagonCount - i;
+                    neededForBlock = remaining * LINE_H + 6 * LINE_H + 6; // მინიმალური ბუფერი
+                    if (!train.isNormalSpeed() || !train.isNormalWeight()) {
+                        neededForBlock += 12;
+                    }
+                } else {
+                    neededForBlock = LINE_H + 1;
+                }
+
+                EnsureResult er = ensureSpace(doc, cs, y, neededForBlock);
+
+                if (er.newPageCreated) {
+                    page = er.newPage;
+                    cs.close();
+                    cs = new PDPageContentStream(doc, page);
+                    currentPageNumber++;
+                    drawPageNumber(cs, page);
+                    y = writeTableHeader(cs, TOP);
+                } else {
+                    cs = er.cs;
+                    y = er.y;
+                }
+
+                int toWrite = isNearEnd ? (wagonCount - i) : 1;
+                for (int k = 0; k < toWrite && i < wagonCount; k++) {
+                    WagonMod w = wagons.get(i);
+                    writeCellMixed(cs, X_NO, y, String.format("%03d", rowNumber++));
+                    writeCellMixed(cs, X_VEH, y, safe(w.getWagonNumber()));
+                    writeCellMixed(cs, X_PROD, y, safe(w.getProduct()));
+                    writeCellMixed(cs, X_TARE, y, safe(w.getTare()) + " " + UnitService.WEIGHT_UNIT);
+                    writeCellMixed(cs, X_GROSS, y, safe(w.getWeight()) + " " + UnitService.WEIGHT_UNIT);
+                    writeCellMixed(cs, X_NETT, y, safe(w.getNeto()) + " " + UnitService.WEIGHT_UNIT);
+                    writeCellMixed(cs, X_SPEED, y, safe(w.getSpeed()) + " " + UnitService.SPEED_UNIT);
+                    y -= LINE_H + 1;
+                    i++;
+                }
+            }
+
+            // ფუტერი
+            float footerStartY = y;
+
+            int footerLines = 6;
+            if (!train.isNormalSpeed() || !train.isNormalWeight()) {
+                footerLines += 2;
+            }
+            float neededFooter = footerLines * LINE_H + 6;
+
+            EnsureResult erFooter = ensureSpace(doc, cs, footerStartY, neededFooter);
+            cs = erFooter.cs;
+
+            if (erFooter.newPageCreated) {
+                page = erFooter.newPage;
+                currentPageNumber++;
+                drawPageNumber(cs, page);
+                y = TOP - 40; // თითქმის თავიდან იწყება
+            } else {
+                y = erFooter.y;
+            }
+
+            writeLineMixed(cs, LEFT, y--,
+                    "----------------------------------------------------------------------------------------------------------------------");
+
+            y -= LINE_H + 2;
+            writeCellMixed(cs, X_NO, y, "TOTAL TRAIN WEIGHT");
+            writeCellMixed(cs, X_VEH, y, "");
+            writeCellMixed(cs, X_PROD, y, safe(""));
+            writeCellMixed(cs, X_TARE, y, safeOrXXXX(fragmentTare) + " " + UnitService.WEIGHT_UNIT);
+            writeCellMixed(cs, X_GROSS, y, safe(fragmentGross) + " " + UnitService.WEIGHT_UNIT);
+            writeCellMixed(cs, X_NETT, y, safeOrXXXX(fragmentNeto) + " " + UnitService.WEIGHT_UNIT);
+
+            y -= LINE_H + 2;
+            writeLineMixed(cs, LEFT, y--,
+                    "----------------------------------------------------------------------------------------------------------------------");
+
+            y -= LINE_H + 2;
+            writeLineMixed(cs, LEFT, y--, getLocalized("direction") + " : " + getLocalized(train.getDirection()));
+
+            y -= LINE_H + 2;
+            writeLineMixed(cs, LEFT, y--,
+                    getLocalized("max_speed") + " : " + safe(train.getMaxSpeed()) + " " + UnitService.SPEED_UNIT);
+
+            y -= LINE_H + 2;
+            writeLineMixed(cs, LEFT, y,
+                    getLocalized("min_speed") + " : " + safe(train.getMinSpeed()) + " " + UnitService.SPEED_UNIT);
+
+            if (!train.isNormalSpeed() || !train.isNormalWeight()) {
+                y -= LINE_H * 2;
+                writeLineMixed(cs, LEFT, y, getLocalized("validation.not_commercial") + " !!!");
+            }
+
+            cs.close();
+
+            PDDocumentInformation info = doc.getDocumentInformation();
+            info.setCreator(connId);
+            info.setCreationDate(java.util.Calendar.getInstance());
+
+            AccessPermission ap = new AccessPermission();
+            ap.setCanModify(false);
+            StandardProtectionPolicy spp = new StandardProtectionPolicy("MINITELSY", "", ap);
+            spp.setEncryptionKeyLength(128);
+            doc.protect(spp);
+
+            FileUtils.cleanDirectory(RepoInit.PDF_REPOSITOR_FULL);
+            File report = new File(RepoInit.PDF_REPOSITOR_FULL, train.getId() + ".pdf");
+            doc.save(report);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     // დანარჩენი მეთოდები უცვლელია

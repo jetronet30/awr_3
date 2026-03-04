@@ -67,12 +67,90 @@ function updateTrainDataContainer(container, html, updateIndicator) {
     bindEditWagonForm(container, updateIndicator);
     observePrintButton();
     observeVideoArchive();  // ← ვიდეო კონტროლი
+    watchPrintOnlyCheckboxes(); // ← ახალი ლოგიკა printOnly-სთვის
 
     updateIndicator?.(true);
 }
 
 // =============================================================================
-// Observer: Print ღილაკის აღმოჩენა
+// ახალი: printOnly checkbox-ების მონიტორინგი + Download / View PDF / Print ლინკების დინამიური განახლება
+// =============================================================================
+function watchPrintOnlyCheckboxes() {
+    const trainContainer = document.querySelector("#train-data-container");
+    if (!trainContainer) return;
+
+    // თავიდან გაწმენდა დუბლირების თავიდან ასაცილებლად
+    if (trainContainer._printOnlyChangeHandler) {
+        trainContainer.removeEventListener('change', trainContainer._printOnlyChangeHandler);
+    }
+
+    const handler = (e) => {
+        if (e.target.name !== 'printOnly') return;
+
+        const printBtn = document.getElementById("train-print-btn");
+        const downloadLink = document.querySelector('#train-done-info a[download]');
+        const viewLink = document.querySelector('#train-done-info a[target="_blank"]');
+
+        const checkedBoxes = trainContainer.querySelectorAll('input[name="printOnly"]:checked');
+        const anyChecked = checkedBoxes.length > 0;
+
+        // ვაგროვებთ მონიშნული ვაგონების id-ებს
+        let selectedIds = [];
+        if (anyChecked) {
+            document.querySelectorAll('#train-data-container form.train-wagons-set-from').forEach(form => {
+                const chk = form.querySelector('input[name="printOnly"]');
+                if (chk && chk.checked) {
+                    const idInput = form.querySelector('input[name="id"][hidden]');
+                    if (idInput && idInput.value) selectedIds.push(idInput.value);
+                }
+            });
+        }
+
+        const trainId = printBtn ? printBtn.dataset.trainId : null;
+
+        if (anyChecked && trainId) {
+            // === ALTERNATIVE ლოგიკა (ერთი მაინც მონიშნულია) ===
+            const idsParam = selectedIds.join(',');
+
+            // Print ღილაკი (მხოლოდ ვიზუალური მინიშნება)
+            if (printBtn) {
+                printBtn.textContent = `Print (${checkedBoxes.length})`;
+                printBtn.title = "ბეჭდვა მხოლოდ მონიშნული ვაგონებით";
+                printBtn.style.backgroundColor = "#ff9800";
+                printBtn.style.color = "#fff";
+            }
+
+            // Download ლინკი → alternative (POST-ის იმიტაცია query პარამეტრით)
+            if (downloadLink) {
+                downloadLink.href = `/archive/showPDF/${trainId}?printOnlyIds=${idsParam}`;
+            }
+
+            // View PDF ლინკი → alternative
+            if (viewLink) {
+                viewLink.href = `/archive/showPDF/${trainId}?printOnlyIds=${idsParam}&view=1`;
+            }
+        } else {
+            // === ძველი ლოგიკა (არაფერია მონიშნული) ===
+            if (printBtn) {
+                printBtn.textContent = "Print";
+                printBtn.title = "";
+                printBtn.style.backgroundColor = "";
+                printBtn.style.color = "";
+            }
+            if (downloadLink && trainId) {
+                downloadLink.href = `/archive/showPDF/${trainId}`;
+            }
+            if (viewLink && trainId) {
+                viewLink.href = `/archipdf/${trainId}.pdf`;
+            }
+        }
+    };
+
+    trainContainer.addEventListener('change', handler);
+    trainContainer._printOnlyChangeHandler = handler;
+}
+// =============================================================================
+// Observer: Print ღილაკის აღმოჩენა + ALTERNATIVE POST ლოგიკა (ახლა ორივე iframe-ში)
 // =============================================================================
 function observePrintButton() {
     if (printObserver) printObserver.disconnect();
@@ -84,18 +162,13 @@ function observePrintButton() {
 
             printBtn.dataset.listenerAdded = "true";
 
-            printBtn.addEventListener("click", () => {
-                const trainId = printBtn.dataset.trainId;
-
-                if (!trainId) {
-                    alert("ვერ მოიძებნა Train ID");
-                    return;
-                }
-
-                console.log(`Print requested for train ID: ${trainId}`);
-
-                const iframe = document.createElement("iframe");
-                iframe.style.cssText = `
+            // ერთჯერადი iframe-ის შექმნა (თუ არ არსებობს)
+            let printIframe = document.getElementById("hidden-print-iframe");
+            if (!printIframe) {
+                printIframe = document.createElement("iframe");
+                printIframe.id = "hidden-print-iframe";
+                printIframe.name = "hidden-print-iframe";
+                printIframe.style.cssText = `
                     position: fixed;
                     right:   -9999px;
                     bottom:  -9999px;
@@ -104,31 +177,72 @@ function observePrintButton() {
                     border:   none;
                     visibility: hidden;
                 `;
+                document.body.appendChild(printIframe);
+            }
 
-                iframe.src = `/archive/showPDF/${trainId}?t=${Date.now()}`;
+            printBtn.addEventListener("click", () => {
+                const trainId = printBtn.dataset.trainId;
+                if (!trainId) {
+                    alert("ვერ მოიძებნა Train ID");
+                    return;
+                }
 
-                document.body.appendChild(iframe);
+                // ვაგროვებთ მონიშნულ id-ებს
+                const selectedIds = [];
+                document.querySelectorAll('#train-data-container form.train-wagons-set-from').forEach(form => {
+                    const chk = form.querySelector('input[name="printOnly"]');
+                    if (chk?.checked) {
+                        const idInput = form.querySelector('input[name="id"][hidden]');
+                        if (idInput?.value) selectedIds.push(idInput.value);
+                    }
+                });
 
-                iframe.onload = () => {
-                    console.log("PDF iframe ჩაიტვირთა");
+                const useAlternative = selectedIds.length > 0;
+                console.log(`Print requested for train ${trainId} — alternative: ${useAlternative} | ids: ${selectedIds}`);
+
+                if (useAlternative) {
+                    // POST მოთხოვნა იმავე iframe-ში
+                    const tempForm = document.createElement('form');
+                    tempForm.method = 'POST';
+                    tempForm.action = `/archive/showPDF/${trainId}`;
+                    tempForm.target = printIframe.name;  // იგივე სახელი, რაც iframe-ს
+
+                    const idsInput = document.createElement('input');
+                    idsInput.type = 'hidden';
+                    idsInput.name = 'printOnlyIds';
+                    idsInput.value = selectedIds.join(',');
+                    tempForm.appendChild(idsInput);
+
+                    document.body.appendChild(tempForm);
+                    tempForm.submit();
+                    document.body.removeChild(tempForm);
+                } else {
+                    // ძველი GET — პირდაპირ src-ში
+                    printIframe.src = `/archive/showPDF/${trainId}?t=${Date.now()}`;
+                }
+
+                // onload ლოგიკა (იგივე ორივე შემთხვევაში)
+                const onLoadHandler = () => {
+                    console.log("PDF iframe ჩაიტვირთა", useAlternative ? "(ალტერნატიული POST)" : "(GET)");
                     setTimeout(() => {
-                        const win = iframe.contentWindow || iframe.contentDocument?.defaultView;
+                        const win = printIframe.contentWindow || printIframe.contentDocument?.defaultView;
                         if (win) {
                             win.focus();
                             win.print();
                             console.log("print() გამოძახებულია");
                         }
-                    }, 1500);
+                    }, useAlternative ? 2200 : 1500);
 
-                    setTimeout(() => {
-                        if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
-                    }, 20000);
+                    // გაწმენდა onload-ის შემდეგ (რომ არ განმეორდეს)
+                    printIframe.removeEventListener('load', onLoadHandler);
                 };
 
-                iframe.onerror = () => {
+                printIframe.addEventListener('load', onLoadHandler);
+
+                // შეცდომის დამუშავება
+                printIframe.onerror = () => {
                     console.error("iframe load error");
                     alert("PDF ვერ ჩაიტვირთა");
-                    if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
                 };
             });
         }
@@ -195,15 +309,15 @@ function initSyncedVideoControls() {
     });
 
     vid1.addEventListener('seeking', syncVideos);
-    vid1.addEventListener('play', () => { 
-        if (vid2) vid2.play().catch(() => {});
-        isPlaying = true; 
-        playPauseBtn.textContent = '⏸ Pause'; 
+    vid1.addEventListener('play', () => {
+        if (vid2) vid2.play().catch(() => { });
+        isPlaying = true;
+        playPauseBtn.textContent = '⏸ Pause';
     });
-    vid1.addEventListener('pause', () => { 
+    vid1.addEventListener('pause', () => {
         if (vid2) vid2.pause();
-        isPlaying = false; 
-        playPauseBtn.textContent = '▶ Play'; 
+        isPlaying = false;
+        playPauseBtn.textContent = '▶ Play';
     });
 
     // პროგრესის სლაიდერი (seek)
@@ -315,9 +429,9 @@ function bindArchiveFiltersAndButtons(container, updateIndicator) {
                     updateTrainDataContainer(container, html, updateIndicator);
 
                     const dateFrom = container.querySelector('input[name="dateFrom"]');
-                    const dateTo   = container.querySelector('input[name="dateTo"]');
+                    const dateTo = container.querySelector('input[name="dateTo"]');
                     if (dateFrom) dateFrom.value = '';
-                    if (dateTo)   dateTo.value   = '';
+                    if (dateTo) dateTo.value = '';
                 } catch (err) {
                     updateTrainDataContainer(container, `<p style="color:red;">გასუფთავება ვერ მოხერხდა: ${err.message}</p>`, updateIndicator);
                     updateIndicator(false);
@@ -554,8 +668,8 @@ export function initArchiveModule() {
     // ბაინდინგი
     setTimeout(() => {
         bindArchiveFiltersAndButtons(container, updateArchiveIndicator);
-        bindArchiveTrainForms(container, updateArchiveIndicator);
-        bindEditWagonForm(container, updateArchiveIndicator);
+        bindArchiveTrainForms(container, updateIndicator);
+        bindEditWagonForm(container, updateIndicator);
         console.log("All bindings initialized");
     }, 500);
 

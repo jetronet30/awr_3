@@ -1,7 +1,13 @@
 package com.jaba.awr_3.controllers.scalescontrollers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -15,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.jaba.awr_3.core.archive.ArchiveService;
+import com.jaba.awr_3.core.prodata.jparepo.TrainJpa;
+import com.jaba.awr_3.core.prodata.mod.TrainMod;
+import com.jaba.awr_3.core.prodata.mod.WagonMod;
 import com.jaba.awr_3.core.units.UnitService;
 import com.jaba.awr_3.inits.repo.RepoInit;
 
@@ -23,7 +32,9 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 public class ArchivCon {
+
     private final ArchiveService archiveService;
+    private final TrainJpa trainJpa;
 
     @PostMapping("/archive")
     public String postArchive(Model m) {
@@ -65,7 +76,6 @@ public class ArchivCon {
         m.addAttribute("video_1_exists", RepoInit.VIDEO_ARCHIVE + "/1_" + id + ".mp4");
         m.addAttribute("video_2_exists", RepoInit.VIDEO_ARCHIVE + "/2_" + id + ".mp4");
         m.addAttribute("id", id);
-        System.out.println(id);
         return "proces/archive/trainpage";
     }
 
@@ -75,9 +85,138 @@ public class ArchivCon {
             @RequestParam("id") Long id,
             @RequestParam("product") String product,
             @RequestParam("wagonNumber") String wagonNum) {
-
         return archiveService.setWagonNumber(id, wagonNum, product);
     }
+
+    @PostMapping(value = "/archive/showPDF/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<Resource> postPdf(
+            @PathVariable Long id,
+            @RequestParam(value = "printOnlyIds", required = false) String printOnlyIdsStr,
+            @RequestParam(value = "t", required = false) String timestamp) {
+
+        // 1. ვპოულობთ ტრეინს
+        TrainMod train = trainJpa.findById(id).orElse(null);
+        if (train == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Set<Long> selectedWagonIds = null;
+
+        // თუ printOnlyIds მოდის და არ არის ცარიელი → ვქმნით id-ების სეტს
+        if (StringUtils.isNotBlank(printOnlyIdsStr)) {
+            try {
+                selectedWagonIds = Stream.of(printOnlyIdsStr.split(","))
+                        .map(String::trim)
+                        .filter(StringUtils::isNotBlank)
+                        .map(Long::parseLong)
+                        .collect(Collectors.toSet());
+            } catch (NumberFormatException e) {
+                // თუ id-ები არასწორია → fallback-ად ყველა ვაგონი
+                selectedWagonIds = null;
+            }
+        }
+
+        // 2. ვაგონების ფილტრაცია
+        List<WagonMod> wagons = new ArrayList<>();
+
+        // თუ selectedWagonIds არსებობს და არ არის ცარიელი → მხოლოდ მონიშნულები
+        if (selectedWagonIds != null && !selectedWagonIds.isEmpty()) {
+            for (WagonMod wagon : train.getWagons()) {
+                if (wagon.getId() != null && selectedWagonIds.contains(wagon.getId())) {
+                    wagons.add(wagon);
+                }
+            }
+        }
+        // თუ printOnlyIds არ მოვიდა ან ცარიელია → ყველა ვაგონი
+        else {
+            wagons.addAll(train.getWagons());
+        }
+
+        // თუ საბოლოოდ არც ერთი ვაგონი არ არის → 404
+        if (wagons.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        List<Long> wIds = new ArrayList<>();
+        wIds.clear();
+        for (WagonMod wm : wagons) {
+            wIds.add(wm.getId());
+        }
+
+        // 3. PDF-ის გენერაცია
+        archiveService.createFragmentPdfForArchive(id, wIds);
+        for (WagonMod wm : wagons) {
+            System.out.println(wm.getId() + " +++++++++>>>>>>>>>>>>>>");
+        }
+
+        FileSystemResource file = new FileSystemResource(RepoInit.PDF_REPOSITOR_FULL + "/" + id + ".pdf");
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(file);
+    }
+
+    @GetMapping(value = "/archive/showPDF/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<Resource> getPdf(
+            @PathVariable Long id,
+            @RequestParam(value = "printOnlyIds", required = false) String printOnlyIdsStr,
+            @RequestParam(value = "t", required = false) String timestamp) {
+
+        // 1. ვპოულობთ ტრეინს
+        TrainMod train = trainJpa.findById(id).orElse(null);
+        if (train == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Set<Long> selectedWagonIds = null;
+
+        // თუ printOnlyIds მოდის და არ არის ცარიელი → ვქმნით id-ების სეტს
+        if (StringUtils.isNotBlank(printOnlyIdsStr)) {
+            try {
+                selectedWagonIds = Stream.of(printOnlyIdsStr.split(","))
+                        .map(String::trim)
+                        .filter(StringUtils::isNotBlank)
+                        .map(Long::parseLong)
+                        .collect(Collectors.toSet());
+            } catch (NumberFormatException e) {
+                // თუ id-ები არასწორია → fallback-ად ყველა ვაგონი
+                selectedWagonIds = null;
+            }
+        }
+
+        // 2. ვაგონების ფილტრაცია
+        List<WagonMod> wagons = new ArrayList<>();
+
+        // თუ selectedWagonIds არსებობს და არ არის ცარიელი → მხოლოდ მონიშნულები
+        if (selectedWagonIds != null && !selectedWagonIds.isEmpty()) {
+            for (WagonMod wagon : train.getWagons()) {
+                if (wagon.getId() != null && selectedWagonIds.contains(wagon.getId())) {
+                    wagons.add(wagon);
+                }
+            }
+        }
+        // თუ printOnlyIds არ მოვიდა ან ცარიელია → ყველა ვაგონი
+        else {
+            wagons.addAll(train.getWagons());
+        }
+
+        // თუ საბოლოოდ არც ერთი ვაგონი არ არის → 404
+        if (wagons.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // 3. PDF-ის გენერაცია
+        archiveService.createPdfForArChiv(id);
+        for (WagonMod wm : wagons) {
+            System.out.println(wm.getId() + " ++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        }
+
+        FileSystemResource file = new FileSystemResource(RepoInit.PDF_REPOSITOR_FULL + "/" + id + ".pdf");
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(file);
+    }
+
 
     //////////////////////////////////////////////////////////////////////////////
     /// 
@@ -99,7 +238,6 @@ public class ArchivCon {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(file);
     }
-    ///////////////////////////////////////////////////////////////////////////////
-    /// 
+    ////
 
 }

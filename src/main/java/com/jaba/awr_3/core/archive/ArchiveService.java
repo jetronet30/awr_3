@@ -116,4 +116,14 @@ public class ArchiveService {
         LOGGER.info("PDF created for train with id: {}", id);
     }
 
+    public void createFragmentPdfForArchive(Long id, List<Long> wagonIds){
+        TrainMod train = trainJpa.findById(id).orElse(null);
+         if (train == null) {
+            LOGGER.warn("No train found for id: {}", id);
+            return;
+        }
+        pdfCreator.createFragmentPdf(train, wagonIds);
+        LOGGER.info("PDF created for train with id: {}", id);
+    }
+
 }
