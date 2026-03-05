@@ -243,9 +243,10 @@
 
 .train-done-info {
     width: 100%;
-    text-align: center;
-    padding: 15px 0 10px;
-    flex-shrink: 0;
+    display: flex;
+    justify-content: center; /* ჰორიზონტალურად ცენტრში */
+    align-items: center;     /* ვერტიკალურად ერთ დონეზე */
+    gap: 10px;               /* ელემენტებს შორის დაშორება */
 }
 
 .train-done-info a {

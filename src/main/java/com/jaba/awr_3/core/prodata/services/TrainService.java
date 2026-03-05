@@ -178,7 +178,6 @@ public class TrainService {
 
         wagonJpa.save(wagon);
         recalculateTrainTotals(wagon.getTrain());
-        updateValidationFlags(wagon.getTrain());
         trainJpa.save(wagon.getTrain());
         pdfCreator.createPdf(wagon.getTrain());
 
@@ -208,6 +207,30 @@ public class TrainService {
         pdfCreator.createPdf(train);
         LOGGER.info("Train conId {} closed successfully", conId);
     }
+
+    public Map<String, Object> saveAndSetBlocked(Long id) {
+        
+        Map<String, Object> response = new HashMap<>();
+
+        TrainMod train = trainJpa.findById(id).orElse(null);
+        if (train == null) {
+            response.put("success", false);
+            response.put("message", "train not found with id: " + id);
+            LOGGER.warn("tarin not found with id: {}", id);
+            return response;
+        }
+        recalculateTrainTotals(train);
+        updateValidationFlags(train);
+        train.setOpen(false);
+        train.setWeighingStopDateTime(ServerManager.getSystemDateTime());
+        trainJpa.save(train);
+        LOGGER.info("train conId {} closed successfully", id);
+
+        response.put("success", true);
+        response.put("message", "train closed successfully");
+        return response;
+
+    } 
 
     @Transactional
     public void closeTrainAndOpenNewTrain(String conId, String scaleName, int scaleIndex) {
@@ -369,7 +392,7 @@ public class TrainService {
                         || train.isTareOnly());
 
         train.setBlocked(
-                train.isAllwagonsNumbered());
+               train.isAllwagonsNumbered() && train.isMatched() );
     }
 
     private void applyWeightAndTare(WagonMod wagon, BigDecimal weight, boolean updateTare) {

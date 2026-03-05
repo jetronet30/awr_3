@@ -18,8 +18,11 @@
 
         <div class="train-done-info">
             <button id="train-print-btn" th:data-train-id="${id}">Print</button>
-            <a th:href="@{/archive/showPDF/{id}(id=${id})}" download>Download</a>
-            <a th:href="@{'/archipdf/' + ${id} + '.pdf'}" target="_blank">View PDF</a>
+            <a th:href="@{/archive/showPDF/{id}(id=${id})}" download style="display:none;">Download</a>
+            <a th:href="@{'/archipdf/' + ${id} + '.pdf'}" target="_blank" hidden style="display:none;">View PDF</a>
+            <form  th:action="@{/archive/saveTrain/{id}(id=${id})}" method="post">
+                <input  type="button" value="Save">
+            </form>
         </div>
     </div>
     <div id="train-wagons-container">
@@ -37,5 +40,6 @@
                 <input type="button" value="EDIT" class="train-wagons-set-btn">
             </form>
         </div>
+        
     </div>
 </div>

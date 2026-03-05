@@ -24,6 +24,7 @@ import com.jaba.awr_3.core.archive.ArchiveService;
 import com.jaba.awr_3.core.prodata.jparepo.TrainJpa;
 import com.jaba.awr_3.core.prodata.mod.TrainMod;
 import com.jaba.awr_3.core.prodata.mod.WagonMod;
+import com.jaba.awr_3.core.prodata.services.TrainService;
 import com.jaba.awr_3.core.units.UnitService;
 import com.jaba.awr_3.inits.repo.RepoInit;
 
@@ -34,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 public class ArchivCon {
 
     private final ArchiveService archiveService;
+    private final TrainService trainService;
     private final TrainJpa trainJpa;
 
     @PostMapping("/archive")
@@ -86,6 +88,12 @@ public class ArchivCon {
             @RequestParam("product") String product,
             @RequestParam("wagonNumber") String wagonNum) {
         return archiveService.setWagonNumber(id, wagonNum, product);
+    }
+
+    @PostMapping("/archive/saveTrain/{id}")
+    @ResponseBody
+    public Map<String, Object> saveTrain( @PathVariable Long id) {
+        return trainService.saveAndSetBlocked(id);
     }
 
     @PostMapping(value = "/archive/showPDF/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
@@ -217,14 +225,13 @@ public class ArchivCon {
                 .body(file);
     }
 
-
     //////////////////////////////////////////////////////////////////////////////
     /// 
     @GetMapping("/archive/showPDF/{id}")
     public ResponseEntity<Resource> getPdf0(@PathVariable Long id) {
         archiveService.createPdfForArChiv(id);
         FileSystemResource file = new FileSystemResource(RepoInit.PDF_REPOSITOR_FULL + "/" + id + ".pdf");
-        System.out.println(" test    test     "+ id);
+        System.out.println(" test    test     " + id);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(file);
@@ -238,6 +245,6 @@ public class ArchivCon {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(file);
     }
-    ////
+    ///
 
 }
