@@ -20,8 +20,8 @@
             <button id="train-print-btn" th:data-train-id="${id}">Print</button>
             <a th:href="@{/archive/showPDF/{id}(id=${id})}" download style="display:none;">Download</a>
             <a th:href="@{'/archipdf/' + ${id} + '.pdf'}" target="_blank" hidden style="display:none;">View PDF</a>
-            <form  th:action="@{/archive/saveTrain/{id}(id=${id})}" method="post">
-                <input  type="button" value="Save">
+            <form th:if="${!train.blocked}" th:action="@{/archive/saveTrain/{id}(id=${id})}" method="post">
+                <input  type="button" id="train-save-btn" value="Save">
             </form>
         </div>
     </div>

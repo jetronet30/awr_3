@@ -102,8 +102,12 @@ public class ArchiveService {
         return response;
     }
 
-    public void setTrainBlocked(Long id) {
+    public Map<String, Object> saveTrain(Long id) {
+        return trainService.saveAndSetBlocked(id);
+    }
 
+    public TrainMod getTrain(Long id) {
+        return trainJpa.findById(id).orElse(null);
     }
 
     public void createPdfForArChiv(Long id) {
@@ -115,6 +119,7 @@ public class ArchiveService {
         pdfCreator.createPdfWeb(train);
         LOGGER.info("PDF created for train with id: {}", id);
     }
+
 
     public void createFragmentPdfForArchive(Long id, List<Long> wagonIds){
         TrainMod train = trainJpa.findById(id).orElse(null);

@@ -387,7 +387,7 @@ public class TrainService {
 
         train.setAllwagonsNumbered(
                 train.getWagons().stream().allMatch(
-                        w -> w.getWagonNumber() != null && w.getWagonNumber().length() >= UnitService.W_NUM_LEN));
+                        w -> w.getWagonNumber() != null && w.getWagonNumber().length() == UnitService.W_NUM_LEN));
 
         train.setTareOnly(
                 train.getWagons().stream()
@@ -399,7 +399,7 @@ public class TrainService {
                         || train.isTareOnly());
 
         train.setBlocked(
-                train.isAllwagonsNumbered() && train.isMatched());
+                train.isAllwagonsNumbered());
     }
 
     private void applyWeightAndTare(WagonMod wagon, BigDecimal weight, boolean updateTare) {

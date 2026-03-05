@@ -1,5 +1,5 @@
 <div th:each=" train : ${trains}" id="archive-vi-container">
-  <form th:action="@{/archive/edit/{id}(id=${train.id})}" method="post" class="archiv-train-from">
+  <form th:if ="${train.done}" th:action="@{/archive/edit/{id}(id=${train.id})}" method="post" class="archiv-train-from">
     <button type="button" class="archiv-train-btn"
       th:text="${train.scaleName} + ' >>>  ' + ${train.weighingStopDateTime}">Train Name</button>
     <input type="text" th:class="${train.normalWeight} 

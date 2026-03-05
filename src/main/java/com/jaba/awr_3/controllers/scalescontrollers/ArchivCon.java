@@ -24,7 +24,6 @@ import com.jaba.awr_3.core.archive.ArchiveService;
 import com.jaba.awr_3.core.prodata.jparepo.TrainJpa;
 import com.jaba.awr_3.core.prodata.mod.TrainMod;
 import com.jaba.awr_3.core.prodata.mod.WagonMod;
-import com.jaba.awr_3.core.prodata.services.TrainService;
 import com.jaba.awr_3.core.units.UnitService;
 import com.jaba.awr_3.inits.repo.RepoInit;
 
@@ -35,7 +34,6 @@ import lombok.RequiredArgsConstructor;
 public class ArchivCon {
 
     private final ArchiveService archiveService;
-    private final TrainService trainService;
     private final TrainJpa trainJpa;
 
     @PostMapping("/archive")
@@ -78,6 +76,7 @@ public class ArchivCon {
         m.addAttribute("video_1_exists", RepoInit.VIDEO_ARCHIVE + "/1_" + id + ".mp4");
         m.addAttribute("video_2_exists", RepoInit.VIDEO_ARCHIVE + "/2_" + id + ".mp4");
         m.addAttribute("id", id);
+        m.addAttribute("train", archiveService.getTrain(id));
         return "proces/archive/trainpage";
     }
 
@@ -93,7 +92,7 @@ public class ArchivCon {
     @PostMapping("/archive/saveTrain/{id}")
     @ResponseBody
     public Map<String, Object> saveTrain( @PathVariable Long id) {
-        return trainService.saveAndSetBlocked(id);
+        return archiveService.saveTrain(id);
     }
 
     @PostMapping(value = "/archive/showPDF/{id}", produces = MediaType.APPLICATION_PDF_VALUE)

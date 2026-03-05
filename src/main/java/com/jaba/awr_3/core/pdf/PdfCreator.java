@@ -388,7 +388,7 @@ public class PdfCreator {
                 }
             }
             wagons.sort(Comparator.comparingInt(WagonMod::getRowNum));
-            int rowNumber = 1;
+
             int wagonCount = wagons.size();
             int i = 0;
 
@@ -423,7 +423,7 @@ public class PdfCreator {
                 int toWrite = isNearEnd ? (wagonCount - i) : 1;
                 for (int k = 0; k < toWrite && i < wagonCount; k++) {
                     WagonMod w = wagons.get(i);
-                    writeCellMixed(cs, X_NO, y, String.format("%03d", rowNumber++));
+                    writeCellMixed(cs, X_NO, y, String.format("%03d", w.getRowNum()));
                     writeCellMixed(cs, X_VEH, y, safe(w.getWagonNumber()));
                     writeCellMixed(cs, X_PROD, y, safe(w.getProduct()));
                     writeCellMixed(cs, X_TARE, y, safe(w.getTare()) + " " + UnitService.WEIGHT_UNIT);
@@ -457,7 +457,7 @@ public class PdfCreator {
             }
 
             writeLineMixed(cs, LEFT, y--,
-                    "----------------------------------------------------------------------------------------------------------------------");
+                    "-------------------------------------------------------------------------------------------------------------------------");
 
             y -= LINE_H + 2;
             writeCellMixed(cs, X_NO, y, "TOTAL TRAIN WEIGHT");
@@ -469,7 +469,7 @@ public class PdfCreator {
 
             y -= LINE_H + 2;
             writeLineMixed(cs, LEFT, y--,
-                    "----------------------------------------------------------------------------------------------------------------------");
+                    "-------------------------------------------------------------------------------------------------------------------------");
 
             y -= LINE_H + 2;
             writeLineMixed(cs, LEFT, y--, getLocalized("direction") + " : " + getLocalized(train.getDirection()));

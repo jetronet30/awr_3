@@ -75,7 +75,9 @@ function updateTrainDataContainer(container, html, updateIndicator) {
 
 
 
-// ახალი Observer Save ღილაკის დინამიური ბაინდინგისთვის
+// =============================================================================
+// SAVE BUTTON init
+// =============================================================================
 let saveObserver = null;
 
 function observeSaveButton() {
@@ -114,7 +116,7 @@ function observeSaveButton() {
 
                     saveBtn.style.backgroundColor = "#4caf50";
                     saveBtn.style.color = "white";
-                    saveBtn.value = "შენახულია!";
+                    saveBtn.value = "SAVED";
 
                     setTimeout(() => {
                         saveBtn.style.backgroundColor = "";
