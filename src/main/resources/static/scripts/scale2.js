@@ -229,12 +229,14 @@ function initVideoScale2() {
 
     if (Hls.isSupported()) {
         hlsInstanceScale2 = new Hls({
-            maxBufferLength: 15,
-            maxMaxBufferLength: 20,
-            maxBufferSize: 20 * 1000 * 1000,
-            liveSyncDurationCount: 3,
-            liveMaxLatencyDurationCount: 8,
-            xhrSetup: (xhr) => { xhr.timeout = 10000; },
+            maxBufferLength: 2,           // 2 წამი
+            maxMaxBufferLength: 3,        // 3 წამი
+            maxBufferSize: 3 * 1000 * 1000, // 3MB
+            liveSyncDurationCount: 2,     // 2 სეგმენტი
+            liveMaxLatencyDurationCount: 3, // 3 სეგმენტი
+            lowLatencyMode: true,
+            backBufferLength: 0.2,       // 0.2 წამი
+            xhrSetup: (xhr) => { xhr.timeout = 2500; },
         });
 
         hlsInstanceScale2.loadSource(video.getAttribute('data-hls-src'));

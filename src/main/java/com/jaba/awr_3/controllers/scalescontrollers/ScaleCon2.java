@@ -34,7 +34,7 @@ public class ScaleCon2 {
 
     @PostMapping("/scale2")
     public String postSacale2(Model m) {
-        m.addAttribute("cam2Enabled", false);
+        m.addAttribute("cam2Enabled", true);
         m.addAttribute("magonNumLeght_2", UnitService.W_NUM_LEN);
         m.addAttribute("conId_2", comService.getPortByIndex(2).getComName());
         return "proces/scale2";
@@ -42,7 +42,7 @@ public class ScaleCon2 {
 
     @PostMapping("/startWeighing_2")
     public String startWeighing2(Model m) {
-        m.addAttribute("cam2Enabled", false);
+        m.addAttribute("cam2Enabled", true);
         m.addAttribute("magonNumLeght_2", UnitService.W_NUM_LEN);
         m.addAttribute("conId_2", comService.getPortByIndex(2).getComName());
         if (!trainService.isWorkInProgress(comService.getPortByIndex(2).getComName())) {
@@ -53,7 +53,7 @@ public class ScaleCon2 {
 
     @PostMapping("/doneWeighing_2")
     public String doneWeighing2(Model m) {
-        m.addAttribute("cam2Enabled", false);
+        m.addAttribute("cam2Enabled", true);
         m.addAttribute("magonNumLeght_2", UnitService.W_NUM_LEN);
         m.addAttribute("conId_2", comService.getPortByIndex(2).getComName());
         trainService.closeTrain(comService.getPortByIndex(2).getComName());
@@ -62,7 +62,7 @@ public class ScaleCon2 {
 
     @PostMapping("/abortWeighing_2")
     public String abortWeighing2(Model m) {
-        m.addAttribute("cam2Enabled", false);
+        m.addAttribute("cam2Enabled", true);
         m.addAttribute("magonNumLeght_2", UnitService.W_NUM_LEN);
         m.addAttribute("conId_2", comService.getPortByIndex(2).getComName());
         trainService.deleteTrainByConId(comService.getPortByIndex(2).getComName());
