@@ -44,6 +44,7 @@ public class RepoInit {
     public static final File PDF_REPOSITOR_LAST_7 = new File(MAIN_REPO, "pdf/last/7");
     public static final File PDF_REPOSITOR_LAST_8 = new File(MAIN_REPO, "pdf/last/8");
     public static final File PDF_REPOSITOR_LAST_9 = new File(MAIN_REPO, "pdf/last/9");
+    public static final File YOLO_AND_TROCR = new File(MAIN_REPO, "yolo-and-trocr");
 
     public static void initRepos() {
         createDirectory(MAIN_REPO);
@@ -67,6 +68,7 @@ public class RepoInit {
         createDirectory(PDF_REPOSITOR_LAST_7);
         createDirectory(PDF_REPOSITOR_LAST_8);
         createDirectory(PDF_REPOSITOR_LAST_9);
+        
 
         useRam();
 
@@ -80,6 +82,8 @@ public class RepoInit {
         createDirectory(CAM_7_REPO);
         createDirectory(CAM_8_REPO);
         createDirectory(CAM_9_REPO);
+
+        createDirectory(YOLO_AND_TROCR);
 
     }
 

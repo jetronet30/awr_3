@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.jaba.awr_3.core.numberdetection.ocr.OcrService;
 import com.jaba.awr_3.servermanager.ServerManager;
@@ -25,8 +26,7 @@ public class OcrCon {
     @PostMapping("/ocr")
     public String postOcr(Model model) {
         model.addAttribute("ocrModels", ocrService.listOcrModels());
-
-        return "numberdetection/ocr"; // → შენი Thymeleaf/HTML შაბლონის სახელი
+        return "numberdetection/ocr"; 
     }
 
     /**
@@ -61,27 +61,22 @@ public class OcrCon {
                 activeDetection, activeStream);
     }
 
-    /**
-     * მხოლოდ Detection-ის ჩართვა/გამორთვა
-     */
-    @PostMapping("/ocr/setDetectionActive")
-    @ResponseBody
-    public Map<String, Object> setDetectionActive(
-            @RequestParam("index") int index,
-            @RequestParam("active") boolean active) {
-        return ocrService.setActiveDetection(index, active);
+    @PostMapping("/yoloupload")
+    public String uploadYoloModel(@RequestParam("yolo") MultipartFile file, Model m) {
+        ocrService.uploadYoloModel(file);
+        m.addAttribute("ocrModels", ocrService.listOcrModels());
+        return "numberdetection/ocr"; 
     }
 
-    /**
-     * მხოლოდ Stream-ის ჩართვა/გამორთვა
-     */
-    @PostMapping("/ocr/setStreamActive")
-    @ResponseBody
-    public Map<String, Object> setStreamActive(
-            @RequestParam("index") int index,
-            @RequestParam("active") boolean active) {
-        return ocrService.setActiveStream(index, active);
+    @PostMapping("/trocrupload")
+    public String uploadTrocrModel(@RequestParam("trocr") MultipartFile file, Model m) {
+        ocrService.uploadTrocrModel(file);
+        m.addAttribute("ocrModels", ocrService.listOcrModels());
+        return "numberdetection/ocr"; 
     }
+
+
+
 
     /**
      * სერვერის გადატვირთვა (ანალოგიურად TcpCon-ში)
@@ -92,9 +87,5 @@ public class OcrCon {
         return "settings/reboot"; // იგივე გვერდი, რაც TCP-ში
     }
 
-    // თუ გჭირდება GET მეთოდი ფორმის ჩასატვირთად (რეკომენდებულია)
-    // @GetMapping("/ocr")
-    // public String getOcr(Model model) {
-    // return postOcr(model); // ან განსხვავებული ლოგიკა
-    // }
+   
 }

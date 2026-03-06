@@ -21,6 +21,15 @@ public class OcrMod {
     private double roiY1;
     private double roiX2;
     private double roiY2;
+    private double confidenceSave;
+    private double confidenceDisplay;
+    private int minObJecWidth;
+    private int minobJecHeight;
+    private String hlsRepo;
+    private String videoArChive;
+    private String YoloModel;
+    private String TROCModel;
+    private int wagonNumberLength;
     private boolean activeDetection;
     private boolean activeStream;
 

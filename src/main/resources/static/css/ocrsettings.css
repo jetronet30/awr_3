@@ -81,3 +81,54 @@
 .ocr-settings-btn:hover {
     background-color: #0550a0;
 }
+
+
+
+
+#yolo-upload-container{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#yolo-update-progressBar{
+    height: 30px;
+    border: none;
+    background: none;
+}
+
+#trocr-upload-container{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#trocr-update-progressBar{
+    height: 30px;
+    border: none;
+    background: none;
+}
+
+.ocr-upload-btn {
+    background-color: #0078ff;
+    color: white;
+    border: none;
+    border-radius: 1px;
+    padding: 5px ;
+    cursor: pointer;
+}
+
+.ocr-upload-btn:hover {
+    background: linear-gradient(45deg, #00b7eb, #007bff);
+    box-shadow: 0 0 15px rgba(0, 183, 255, 0.6);
+}
+
+.ocr-upload-input {
+    text-align: center;
+    padding: 5px;
+    color: #ffffff;
+    border-radius: 1px;
+    background: linear-gradient(45deg, #00b7eb, #007bff);
+}
