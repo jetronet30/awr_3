@@ -11,7 +11,6 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -363,8 +362,8 @@ public class OcrService {
             // შეგიძლია შეცვალო სახელი, მაგ. "trocr-model" ან "trocr-v2024"
             
 
-            
-             Files.walk(baseDir).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+               // გადაწერა
+            // Files.walk(baseDir).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
             
 
             if (!Files.exists(baseDir)) {

@@ -140,7 +140,7 @@ public class ServerManager {
      *
      * @return ფორმატირებული დრო "yyyy-MM-dd HH:mm:ss".
      */
-    public static String getSystemDateTime() {
+    public static String getSystemDateTimeა() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
     }
 

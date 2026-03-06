@@ -26,8 +26,8 @@ public class BasicService {
     private static final File BASIC_SETTINGS_JSON = new File(RepoInit.SERVER_SETTINGS_REPO, "basicsettings.json");
     private static final ObjectMapper MAPPER = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     private static final DateTimeFormatter FORMATTER_FOR_FILE_NAME = DateTimeFormatter.ofPattern("_yyyy_MM_dd_HH_mm");
-    private static final DateTimeFormatter FORMATTER_DATE = DateTimeFormatter.ofPattern(" yyyy/MM/dd");
-    private static final DateTimeFormatter FORMATTER_DATE_TIME = DateTimeFormatter.ofPattern(" yyyy/MM/dd HH:mm:ss");
+    private static final DateTimeFormatter FORMATTER_DATE = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+    private static final DateTimeFormatter FORMATTER_DATE_TIME = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 
     public static String LANGUAGE;
     public static String DOCLANGUAGE;

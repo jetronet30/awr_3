@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +23,7 @@ import com.jaba.awr_3.core.prodata.mod.TrainMod;
 import com.jaba.awr_3.core.prodata.mod.WagonMod;
 import com.jaba.awr_3.core.tare.WtareService;
 import com.jaba.awr_3.core.units.UnitService;
-import com.jaba.awr_3.servermanager.ServerManager;
+import com.jaba.awr_3.seversettings.basic.BasicService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,7 +41,7 @@ public class TrainService {
     private void addTrain(String conId, String scaleName, int scaleIndex) {
         TrainMod train = new TrainMod();
         train.setConId(conId);
-        train.setWeighingStartDateTime(ServerManager.getSystemDateTime());
+        train.setWeighingStartDateTime(BasicService.getDateTime());
         train.setOpen(true);
         train.setDone(false);
         train.setCount(0);
@@ -202,7 +206,7 @@ public class TrainService {
         recalculateTrainTotals(train);
         updateValidationFlags(train);
         train.setOpen(false);
-        train.setWeighingStopDateTime(ServerManager.getSystemDateTime());
+        train.setWeighingStopDateTime(BasicService.getDateTime());
         trainJpa.save(train);
         pdfCreator.createPdf(train);
         LOGGER.info("Train conId {} closed successfully", conId);
@@ -229,7 +233,6 @@ public class TrainService {
 
         recalculateTrainTotals(train);
         updateValidationFlags(train);
-        train.setWeighingStopDateTime(ServerManager.getSystemDateTime());
         trainJpa.save(train);
         LOGGER.info("train conId {} closed successfully", id);
 
@@ -296,7 +299,7 @@ public class TrainService {
 
         train.setDirection(direction);
         train.setWeighingMethod(wighingMethod);
-        train.setWeighingStopDateTime(ServerManager.getSystemDateTime());
+        train.setWeighingStopDateTime(BasicService.getDateTime());
         recalculateTrainTotals(train);
         updateValidationFlags(train);
         train.setDone(true);
@@ -416,7 +419,7 @@ public class TrainService {
             String num = wagon.getWagonNumber();
             if (num != null && !num.isEmpty()) {
                 wtareService.addOrUpdateWtare(weight.toString(), num);
-                updateNoMactedTrains(num, weight);
+                updateLast30DaysTrains(num, weight);
             }
         } else {
             String num = wagon.getWagonNumber();
@@ -424,21 +427,21 @@ public class TrainService {
         }
     }
 
-    private void updateNoMactedTrains(String wagonNumber, BigDecimal tare) {
-        List<TrainMod> trainsToCheck = trainJpa.findAllByMatchedFalseAndAllwagonsNumberedTrueAndOpenFalse();
+    private void updateLast30DaysTrains(String wagonNumber, BigDecimal tare) {
+        List<TrainMod> trainsToCheck = trainJpa.findAllByTareOnlyFalseAndAllwagonsNumberedTrueAndOpenFalse();
 
         for (TrainMod train : trainsToCheck) {
-            // აქ იყენებთ კოპიას → უსაფრთხოა თუნდაც შიგნით მოხდეს add/remove
-            List<WagonMod> wagons = new ArrayList<>(train.getWagons());
-
-            for (WagonMod wagon : wagons) {
-                if (wagon.getWagonNumber().equals(wagonNumber)) {
-                    wagon.setTare(tare);
-                    wagonJpa.save(wagon);
-                    recalculateTrainTotals(train);
-                    updateValidationFlags(train);
-                    trainJpa.save(train);
-                    LOGGER.info("Train with Id {} UPDATED successfully", train.getId());
+            if (isWeighingWithinLast30Days(train.getWeighingStopDateTime())) {
+                List<WagonMod> wagons = new ArrayList<>(train.getWagons());
+                for (WagonMod wagon : wagons) {
+                    if (wagon.getWagonNumber().equals(wagonNumber)) {
+                        wagon.setTare(tare);
+                        wagonJpa.save(wagon);
+                        recalculateTrainTotals(train);
+                        updateValidationFlags(train);
+                        trainJpa.save(train);
+                        LOGGER.info("Train with Id {} UPDATED successfully", train.getId());
+                    }
                 }
             }
         }
@@ -497,6 +500,41 @@ public class TrainService {
         } catch (NumberFormatException e) {
             LOGGER.debug("Invalid weight string: '{}'", value, e);
             return BigDecimal.ZERO;
+        }
+    }
+
+    /**
+     * ამოწმებს, არის თუ არა აწონვის დრო ბოლო 30 დღის განმავლობაში
+     * 
+     * @param systemDateTime   სისტემის მიმდინარე დრო (String) მაგ:
+     *                         BasicService.getDateTime()
+     * @param weighingDateTime მატარებლის აწონვის დრო (String) მაგ:
+     *                         train.getWeighingStopDateTime()
+     * @return true თუ აწონვა მოხდა ბოლო 30 დღის (ან ნაკლები) განმავლობაში
+     *         false თუ 30+ დღეა გასული ან თუ თარიღები არასწორია
+     */
+    private boolean isWeighingWithinLast30Days(String weighingDateTime) {
+        DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        try {
+            LocalDateTime now = LocalDateTime.parse(BasicService.getDateTime(), FORMATTER);
+            LocalDateTime weighing = LocalDateTime.parse(weighingDateTime, FORMATTER);
+
+            // თუ აწონვის დრო მომავალშია → ჩვეულებრივ false (შეგიძლია შეცვალო ლოგიკა)
+            if (weighing.isAfter(now)) {
+                return false;
+            }
+
+            // დღეების სხვაობა (ჩათვლით)
+            long daysBetween = ChronoUnit.DAYS.between(weighing, now);
+
+            // 30 დღე = 30 დღე + დღევანდელი დღე → daysBetween <= 30
+            return daysBetween <= 30;
+
+        } catch (Exception e) {
+            // თუ ფორმატი არასწორია ან სხვა პრობლემა
+            // შეგიძლია log-ზე გადააგდო ან განსხვავებული ლოგიკა გამოიყენო
+            LOGGER.error("Failed to check if weighing is within last 30 days", e);
+            return false;
         }
     }
 }

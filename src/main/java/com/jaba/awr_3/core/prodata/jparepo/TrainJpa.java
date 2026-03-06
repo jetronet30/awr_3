@@ -42,4 +42,6 @@ public interface TrainJpa extends JpaRepository<TrainMod, Long> {
     List<TrainMod> findAllByMatchedFalseAndTareOnlyFalseOrderByWeighingStopDateTimeDesc();
 
     List<TrainMod> findAllByMatchedFalseAndAllwagonsNumberedTrueAndOpenFalse();
+
+    List<TrainMod> findAllByTareOnlyFalseAndAllwagonsNumberedTrueAndOpenFalse();
 }
