@@ -1,5 +1,7 @@
 package com.jaba.awr_3.controllers.scalescontrollers;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -72,9 +74,12 @@ public class ArchivCon {
 
     @PostMapping("/archive/edit/{id}")
     public String getTrainArchiv(@PathVariable Long id, Model m) {
+        Path video1 = Path.of(RepoInit.VIDEO_ARCHIVE.getAbsolutePath(), "1_" + id + ".mp4");
+        Path video2 = Path.of(RepoInit.VIDEO_ARCHIVE.getAbsolutePath(), "2_" + id + ".mp4");
+
         m.addAttribute("wagons", archiveService.getWagonsByTrainId(id));
-        m.addAttribute("video_1_exists", RepoInit.VIDEO_ARCHIVE + "/1_" + id + ".mp4");
-        m.addAttribute("video_2_exists", RepoInit.VIDEO_ARCHIVE + "/2_" + id + ".mp4");
+        m.addAttribute("video_1_exists", Files.exists(video1));
+        m.addAttribute("video_2_exists", Files.exists(video2));
         m.addAttribute("id", id);
         m.addAttribute("train", archiveService.getTrain(id));
         return "proces/archive/trainpage";
@@ -91,7 +96,7 @@ public class ArchivCon {
 
     @PostMapping("/archive/saveTrain/{id}")
     @ResponseBody
-    public Map<String, Object> saveTrain( @PathVariable Long id) {
+    public Map<String, Object> saveTrain(@PathVariable Long id) {
         return archiveService.saveTrain(id);
     }
 
@@ -244,6 +249,6 @@ public class ArchivCon {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(file);
     }
-    ///
+    //
 
 }
