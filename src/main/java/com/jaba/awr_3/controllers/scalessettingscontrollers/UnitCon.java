@@ -26,12 +26,13 @@ public class UnitCon {
     @PostMapping("/setunits")
     @ResponseBody
     public Map<String, Object> setBasicSettings(@RequestParam("speedUnit") String speedUnit,
-                                                 @RequestParam("weightUnit") String weightUnit,
-                                                 @RequestParam("wagonLenUnit") int len,
-                                                 @RequestParam("tareLimit")String tareLimit,
-                                                    @RequestParam("weightLimit")String weightLimit,
-                                                 @RequestParam("speedLimit")String speedLimit) {
-        return unitService.updateUnits(speedUnit, weightUnit, len,tareLimit,weightLimit,speedLimit);
+            @RequestParam("weightUnit") String weightUnit,
+            @RequestParam("wagonLenUnit") int len,
+            @RequestParam("tareLimit") String tareLimit,
+            @RequestParam("weightLimit") String weightLimit,
+            @RequestParam("speedLimit") String speedLimit,
+            @RequestParam("updateDaysLimit") int updateDaysLimit) {
+        return unitService.updateUnits(speedUnit, weightUnit, len, tareLimit, weightLimit, speedLimit,updateDaysLimit);
     }
 
 }

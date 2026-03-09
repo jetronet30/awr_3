@@ -528,7 +528,7 @@ public class TrainService {
             long daysBetween = ChronoUnit.DAYS.between(weighing, now);
 
             // 30 დღე = 30 დღე + დღევანდელი დღე → daysBetween <= 30
-            return daysBetween <= 30;
+            return daysBetween <= UnitService.UPDATE_DAYS_LIMIT;
 
         } catch (Exception e) {
             // თუ ფორმატი არასწორია ან სხვა პრობლემა

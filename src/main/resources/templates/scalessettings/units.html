@@ -46,6 +46,9 @@
             <label for="SpeedLimit" th:text="#{unit.speedlimit}"></label>
             <input type="number" class="units-selector" name="speedLimit" id="SpeedLimit" th:value="${units.speedLimit}" >
 
+            <label for="UpdateDaysLimit" th:text="#{unit.updatedayslimit}"></label>
+            <input type="number" class="units-selector" name="updateDaysLimit" id="UpdateDaysLimit" th:value="${units.updateDaysLimit}" >
+
             <input type="submit" th:value="#{unit.set.button}" id="units-set-btn">
         </form>
     </div>

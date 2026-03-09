@@ -16,5 +16,6 @@ public class UnitMod {
     private BigDecimal tarLimit;
     private BigDecimal weightLimit;
     private BigDecimal speedLimit;
+    private int updateDaysLimit;
 
 }

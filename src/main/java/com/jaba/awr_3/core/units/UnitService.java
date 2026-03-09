@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.jaba.awr_3.inits.repo.RepoInit;
 
-
 @Service
 public class UnitService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UnitService.class);
@@ -25,6 +24,7 @@ public class UnitService {
     public static BigDecimal TARE_LIMIT;
     public static BigDecimal WEIGHT_LIMIT;
     public static BigDecimal SPEED_LIMIT;
+    public static int UPDATE_DAYS_LIMIT;
 
     public static void initUnitS() {
         if (!UNITS_JSON.exists()) {
@@ -43,6 +43,8 @@ public class UnitService {
                 WEIGHT_LIMIT = new BigDecimal("120.0");
                 uMod.setSpeedLimit(new BigDecimal("5.0"));
                 SPEED_LIMIT = new BigDecimal("5.0");
+                uMod.setUpdateDaysLimit(30);
+                UPDATE_DAYS_LIMIT = 30;
                 MAPPER.writeValue(UNITS_JSON, uMod);
                 LOGGER.info(" write UNITS to JSON COMPLECTE ");
             } catch (Exception e) {
@@ -57,6 +59,7 @@ public class UnitService {
                 TARE_LIMIT = uMod.getTarLimit();
                 WEIGHT_LIMIT = uMod.getWeightLimit();
                 SPEED_LIMIT = uMod.getSpeedLimit();
+                UPDATE_DAYS_LIMIT = uMod.getUpdateDaysLimit();
                 LOGGER.info(" read UNITS from JSON COMPLECTE ");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -74,7 +77,8 @@ public class UnitService {
         return uMod;
     }
 
-    public Map<String, Object> updateUnits(String speedUnit, String weightUnit, int wagonLen, String tareLimit, String weightLimit, String speedLimit) {
+    public Map<String, Object> updateUnits(String speedUnit, String weightUnit, int wagonLen, String tareLimit,
+            String weightLimit, String speedLimit, int updateDaysLimit) {
         Map<String, Object> respons = new HashMap<>();
         try {
             UnitMod uMod = new UnitMod();
@@ -90,6 +94,8 @@ public class UnitService {
             WEIGHT_LIMIT = new BigDecimal(weightLimit);
             uMod.setSpeedLimit(new BigDecimal(speedLimit));
             SPEED_LIMIT = new BigDecimal(speedLimit);
+            uMod.setUpdateDaysLimit(updateDaysLimit);
+            UPDATE_DAYS_LIMIT = updateDaysLimit;
             MAPPER.writeValue(UNITS_JSON, uMod);
             respons.put("success", true);
         } catch (Exception e) {
