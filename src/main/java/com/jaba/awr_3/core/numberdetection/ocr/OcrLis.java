@@ -1,8 +1,8 @@
 
 package com.jaba.awr_3.core.numberdetection.ocr;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -22,7 +22,6 @@ import java.util.concurrent.*;
 @Slf4j
 @RequiredArgsConstructor
 public class OcrLis {
-
 
     private static final int PORT = 45000;
 
@@ -56,7 +55,7 @@ public class OcrLis {
     }
 
     public void sendStop(String clientId, Long trainId, int wagonCount) {
-        sendCommand(clientId, clientId + "_STOP/id=" + trainId+"/w_c=" + wagonCount);
+        sendCommand(clientId, clientId + "_STOP/id=" + trainId + "/w_c=" + wagonCount);
     }
 
     private void sendCommand(String clientId, String command) {
@@ -78,6 +77,28 @@ public class OcrLis {
 
             log.error("Command send failed {}", clientId, e);
         }
+    }
+
+    private void broadcastCommand(String command) {
+
+        clients.forEach((clientId, conn) -> {
+
+            if (conn.socket.isClosed()) {
+                return;
+            }
+
+            try {
+
+                conn.writer.println(command);
+                conn.writer.flush();
+
+                log.info("Sent → {} : {}", clientId, command);
+
+            } catch (Exception e) {
+
+                log.error("Send failed for {}", clientId, e);
+            }
+        });
     }
 
     // -----------------------------
@@ -165,7 +186,8 @@ public class OcrLis {
 
                 String trimmed = line.trim();
 
-                if (trimmed.isEmpty()) continue;
+                if (trimmed.isEmpty())
+                    continue;
 
                 if (trimmed.startsWith("[")) {
 
@@ -201,17 +223,17 @@ public class OcrLis {
 
         try {
 
-            List<Map<String, Object>> wagons =
-                    mapper.readValue(jsonText, new TypeReference<>() {});
+            List<Map<String, Object>> wagons = mapper.readValue(jsonText, new TypeReference<>() {
+            });
 
             for (Map<String, Object> wagon : wagons) {
 
                 Integer id = (Integer) wagon.get("id");
                 String number = (String) wagon.get("number");
 
-                if (id == null || number == null) continue;
+                if (id == null || number == null)
+                    continue;
 
-                
             }
 
         } catch (Exception e) {
