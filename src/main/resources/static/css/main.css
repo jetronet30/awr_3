@@ -5,8 +5,8 @@
 }
 
 body {
-  font-family: "Orbitron", sans-serif;
-  background: linear-gradient(45deg, #00b7eb, #00ffff);
+  font-family: "Exo 2", sans-serif;
+  background: linear-gradient(135deg, #c8f7ff, #e6dfff);
   display: flex;
   height: 100vh;
   overflow: hidden;
