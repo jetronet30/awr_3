@@ -360,6 +360,11 @@ public class TrainService {
         }
     }
 
+    @Transactional
+    public Long getIdOpenTrain(String conId){
+        return trainJpa.findByOpenTrueAndConId(conId).map(TrainMod::getId).orElse(null);
+    }
+
     // ────────────────────────────────────────────────
     // დამხმარე მეთოდები
     // ────────────────────────────────────────────────

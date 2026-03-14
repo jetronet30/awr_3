@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.jaba.awr_3.controllers.emitter.EmitterServic;
+import com.jaba.awr_3.core.numberdetection.ocr.OcrLis;
 import com.jaba.awr_3.core.prodata.services.TrainService;
 
 
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 public class Tsr4000Parser {
     private final TrainService trainService;
     private final EmitterServic emitterServic;
+    private final OcrLis ocrLis;
     private static final Logger LOGGER = LoggerFactory.getLogger(Tsr4000Parser.class);
 
     public void parseSectors(String text, String scaleName, String conId, int scaleIndex, boolean automatic,
@@ -73,9 +75,9 @@ public class Tsr4000Parser {
                 }
             } else if (text.toLowerCase().contains("cstart")) {
                 trainService.closeTrainAndOpenNewTrain(conId, scaleName, scaleIndex);
-
                 emitterServic.sendToScale(conId, "update-data-container");
                 emitterServic.sendToScale(conId, "update-data-works-start");
+                ocrLis.sendStart("0", trainService.getIdOpenTrain(conId));
             } else if (text.contains("Trn_Dir:")) {
                 String upper = text.toUpperCase();
                 if (upper.contains(" IN ") || upper.contains(":IN ") || upper.contains("(IN")) {
