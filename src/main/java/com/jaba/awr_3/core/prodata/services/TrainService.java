@@ -365,6 +365,11 @@ public class TrainService {
         return trainJpa.findByOpenTrueAndConId(conId).map(TrainMod::getId).orElse(null);
     }
 
+
+    public TrainMod getTrainById(Long id) {
+        return trainJpa.findById(id).orElse(null);
+    }
+
     // ────────────────────────────────────────────────
     // დამხმარე მეთოდები
     // ────────────────────────────────────────────────

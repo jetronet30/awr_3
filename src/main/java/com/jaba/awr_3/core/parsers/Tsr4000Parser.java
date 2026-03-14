@@ -8,7 +8,6 @@ import com.jaba.awr_3.controllers.emitter.EmitterServic;
 import com.jaba.awr_3.core.numberdetection.ocr.OcrLis;
 import com.jaba.awr_3.core.prodata.services.TrainService;
 
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -42,8 +41,8 @@ public class Tsr4000Parser {
                 // String lastsector8 = text.substring(45);
                 trainService.updateTrain(conId, processId, getWeight(fuulWeight), getDate(weghtingDate),
                         getSpeed(maxSpeed), getSpeed(minSpeed), getRowNum(countsector7));
-
                 emitterServic.sendToScale(conId, "update-data-container");
+                ocrLis.sendStop(scaleIndex, trainService.getIdOpenTrain(conId));
             } else if (first3.contains("V")) {
                 if (text.length() < 45) {
                     LOGGER.warn("V-type data incomplete: {}", text);
@@ -77,20 +76,19 @@ public class Tsr4000Parser {
                 trainService.closeTrainAndOpenNewTrain(conId, scaleName, scaleIndex);
                 emitterServic.sendToScale(conId, "update-data-container");
                 emitterServic.sendToScale(conId, "update-data-works-start");
-                ocrLis.sendStart("0", trainService.getIdOpenTrain(conId));
+                ocrLis.sendStart(scaleIndex, trainService.getIdOpenTrain(conId));
             } else if (text.contains("Trn_Dir:")) {
                 String upper = text.toUpperCase();
                 if (upper.contains(" IN ") || upper.contains(":IN ") || upper.contains("(IN")) {
-                    trainService.updateTrainAndWagons(conId, "IN","dinamic");
+                    trainService.updateTrainAndWagons(conId, "IN", "dinamic");
                     emitterServic.sendToScale(conId, "update-data-works-stop");
-
                     if (automatic) {
                         emitterServic.sendToScale(conId, "update-data-container");
+
                     }
                 } else if (upper.contains(" OUT ") || upper.contains(":OUT ") || upper.contains("(OUT")) {
-                    trainService.updateTrainAndWagons(conId, "OUT","dinamic");
+                    trainService.updateTrainAndWagons(conId, "OUT", "dinamic");
                     emitterServic.sendToScale(conId, "update-data-works-stop");
-
                     if (automatic) {
                         emitterServic.sendToScale(conId, "update-data-container");
                     }
@@ -139,11 +137,11 @@ public class Tsr4000Parser {
 
     private String getSpeed(String speed) {
         if (speed == null || speed.isEmpty()) {
-            return "0,0" ;
+            return "0,0";
         }
         speed = speed.replaceFirst("^0+", "");
         if (speed.isEmpty()) {
-            return "0,0" ;
+            return "0,0";
         }
         double result = 0;
         try {
@@ -151,7 +149,7 @@ public class Tsr4000Parser {
         } catch (NumberFormatException e) {
             result = 0;
         }
-        return String.valueOf(result) ;
+        return String.valueOf(result);
     }
 
     private int getRowNum(String row) {
