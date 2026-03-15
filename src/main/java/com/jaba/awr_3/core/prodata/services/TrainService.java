@@ -386,7 +386,7 @@ public class TrainService {
         if (!Objects.equals(train.getWagons().size(), totalWagons)) {
             LOGGER.warn("Wagon count mismatch → DB: {}, OCR reports: {}. Processing continues anyway.",
                     train.getWagons().size(), totalWagons);
-            // თუ გინდათ აქ შეწყვიტოთ → დააბრუნეთ return;
+            return;
         }
 
         int updatedCount = 0;
