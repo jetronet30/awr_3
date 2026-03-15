@@ -372,32 +372,43 @@ public class TrainService {
 
     @Transactional
     public void processOcrResult(Long trainId, Integer totalWagons, List<Map<String, Object>> wagonsData) {
+        BigDecimal minQuality = new BigDecimal("50.0"); // უკეთესია String-ით ინიციალიზაცია
+
         TrainMod train = trainJpa.findById(trainId).orElse(null);
         if (train == null) {
-            LOGGER.warn("Train not found: {}", trainId);
+            LOGGER.warn("Train not found for OCR processing: trainId={}", trainId);
             return;
         }
 
-        LOGGER.info("OCR processing started | trainId={}, db wagons count={}, ocr total={}",
+        LOGGER.info("OCR processing started | trainId={}, wagons in DB={}, reported total={}",
                 trainId, train.getWagons().size(), totalWagons);
 
-        // უმჯობესია wagons.size()-ით შევადაროთ და არა count-ით
-        // თუ გინდა count-ის გამოყენება → განაახლე იგი სწორად სხვაგან
         if (!Objects.equals(train.getWagons().size(), totalWagons)) {
-            LOGGER.warn("Total wagons mismatch: db size={}, ocr total={}. Processing anyway.",
+            LOGGER.warn("Wagon count mismatch → DB: {}, OCR reports: {}. Processing continues anyway.",
                     train.getWagons().size(), totalWagons);
-             return; 
+            // თუ გინდათ აქ შეწყვიტოთ → დააბრუნეთ return;
         }
 
         int updatedCount = 0;
+        int skippedDueToQuality = 0;
+        int skippedAlreadyNumbered = 0;
 
         for (Map<String, Object> wagonData : wagonsData) {
             Integer row = (Integer) wagonData.get("row");
             String number = (String) wagonData.get("number");
-            String quality = (String) wagonData.get("quality");
+            String qualityStr = (String) wagonData.get("quality");
 
-            if (row == null || number == null || number.trim().isEmpty()) {
-                LOGGER.warn("Skipping invalid wagon data: row={}", row);
+            if (row == null || number == null || number.trim().isEmpty() || qualityStr == null) {
+                LOGGER.warn("Invalid wagon data skipped | row={}, number='{}', quality='{}'",
+                        row, number, qualityStr);
+                continue;
+            }
+
+            BigDecimal qualityValue;
+            try {
+                qualityValue = new BigDecimal(qualityStr.trim());
+            } catch (NumberFormatException e) {
+                LOGGER.warn("Invalid quality format for row {}: '{}' → skipping", row, qualityStr);
                 continue;
             }
 
@@ -406,42 +417,63 @@ public class TrainService {
                 if (wm.getRowNum() == row.intValue()) {
                     String oldNumber = wm.getWagonNumber();
 
-                    // ძალიან მკაფიო პირობა: თუ ნომერი უკვე არსებობს → არაფერს არ ვაკეთებთ
                     if (oldNumber != null && !oldNumber.trim().isEmpty()) {
-                        LOGGER.debug("Skipping row {} - wagon already has number: {}", row, oldNumber);
+                        LOGGER.debug("Row {} already has wagon number → skipping | number={}", row, oldNumber);
+                        skippedAlreadyNumbered++;
                         found = true;
                         break;
                     }
 
-                    // აქ მხოლოდ მაშინ ვცვლით, თუ ნომერი ცარიელია
                     String newNum = number.trim();
-                    wm.setWagonNumber(newNum);
-                    applyWeightAndTare(wm, wm.getWeight(), true);
-                    wagonJpa.save(wm);
 
-                    LOGGER.info("OCR assigned number to row {}: {} → {} (quality: {})",
-                            row, oldNumber, newNum, quality);
-                    updatedCount++;
+                    if (qualityValue.compareTo(minQuality) >= 0) {
+                        wm.setWagonNumber(newNum);
+                        applyWeightAndTare(wm, wm.getWeight(), true);
+                        wagonJpa.save(wm);
+
+                        LOGGER.info("OCR updated wagon | row={}, old='{}' → new='{}', quality={} (>= {})",
+                                row, oldNumber, newNum, qualityValue, minQuality);
+                        updatedCount++;
+                    } else {
+                        LOGGER.info("Row {} skipped due to low quality | quality={} < min={}",
+                                row, qualityValue, minQuality);
+                        skippedDueToQuality++;
+                    }
+
                     found = true;
                     break;
                 }
             }
 
             if (!found) {
-                LOGGER.warn("Row {} not found in train {} (available: {})",
-                        row, trainId, train.getWagons().stream().map(WagonMod::getRowNum).toList());
+                LOGGER.warn("Row {} not found in train {} | available rows: {}",
+                        row, trainId, train.getWagons().stream()
+                                .map(WagonMod::getRowNum)
+                                .sorted()
+                                .toList());
             }
         }
+
+        // საბოლოო შედეგის ლოგირება
+        LOGGER.info(
+                "OCR processing completed for train {} | updated: {}, skipped (already numbered): {}, skipped (low quality): {}",
+                trainId, updatedCount, skippedAlreadyNumbered, skippedDueToQuality);
 
         if (updatedCount > 0) {
             recalculateTrainTotals(train);
             updateValidationFlags(train);
             trainJpa.save(train);
-            LOGGER.info("OCR processing finished | updated {} wagons", updatedCount);
+            LOGGER.info("Train {} updated and saved after OCR processing", trainId);
         } else {
-            LOGGER.info("OCR processing finished | no wagons updated");
+            LOGGER.info("No changes applied after OCR processing for train {}", trainId);
         }
-        emitterServic.sendToScale(train.getConId(), "update-data-container");
+
+        try {
+            emitterServic.sendToScale(train.getConId(), "update-data-container");
+            LOGGER.debug("Update signal sent to scale for conId={}", train.getConId());
+        } catch (Exception e) {
+            LOGGER.error("Failed to send update signal to scale for conId={}", train.getConId(), e);
+        }
     }
     // ────────────────────────────────────────────────
     // დამხმარე მეთოდები
