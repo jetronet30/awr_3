@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Objects;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -361,15 +361,86 @@ public class TrainService {
     }
 
     @Transactional
-    public Long getIdOpenTrain(String conId){
+    public Long getIdOpenTrain(String conId) {
         return trainJpa.findByOpenTrueAndConId(conId).map(TrainMod::getId).orElse(null);
     }
-
 
     public TrainMod getTrainById(Long id) {
         return trainJpa.findById(id).orElse(null);
     }
 
+    @Transactional
+    public void processOcrResult(Long trainId, Integer totalWagons, List<Map<String, Object>> wagonsData) {
+        TrainMod train = trainJpa.findById(trainId).orElse(null);
+        if (train == null) {
+            LOGGER.warn("Train not found: {}", trainId);
+            return;
+        }
+
+        LOGGER.info("OCR processing started | trainId={}, db wagons count={}, ocr total={}",
+                trainId, train.getWagons().size(), totalWagons);
+
+        // უმჯობესია wagons.size()-ით შევადაროთ და არა count-ით
+        // თუ გინდა count-ის გამოყენება → განაახლე იგი სწორად სხვაგან
+        if (!Objects.equals(train.getWagons().size(), totalWagons)) {
+            LOGGER.warn("Total wagons mismatch: db size={}, ocr total={}. Processing anyway.",
+                    train.getWagons().size(), totalWagons);
+             return; 
+        }
+
+        int updatedCount = 0;
+
+        for (Map<String, Object> wagonData : wagonsData) {
+            Integer row = (Integer) wagonData.get("row");
+            String number = (String) wagonData.get("number");
+            String quality = (String) wagonData.get("quality");
+
+            if (row == null || number == null || number.trim().isEmpty()) {
+                LOGGER.warn("Skipping invalid wagon data: row={}", row);
+                continue;
+            }
+
+            boolean found = false;
+            for (WagonMod wm : train.getWagons()) {
+                if (wm.getRowNum() == row.intValue()) {
+                    String oldNumber = wm.getWagonNumber();
+
+                    // ძალიან მკაფიო პირობა: თუ ნომერი უკვე არსებობს → არაფერს არ ვაკეთებთ
+                    if (oldNumber != null && !oldNumber.trim().isEmpty()) {
+                        LOGGER.debug("Skipping row {} - wagon already has number: {}", row, oldNumber);
+                        found = true;
+                        break;
+                    }
+
+                    // აქ მხოლოდ მაშინ ვცვლით, თუ ნომერი ცარიელია
+                    String newNum = number.trim();
+                    wm.setWagonNumber(newNum);
+                    applyWeightAndTare(wm, wm.getWeight(), true);
+                    wagonJpa.save(wm);
+
+                    LOGGER.info("OCR assigned number to row {}: {} → {} (quality: {})",
+                            row, oldNumber, newNum, quality);
+                    updatedCount++;
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                LOGGER.warn("Row {} not found in train {} (available: {})",
+                        row, trainId, train.getWagons().stream().map(WagonMod::getRowNum).toList());
+            }
+        }
+
+        if (updatedCount > 0) {
+            recalculateTrainTotals(train);
+            updateValidationFlags(train);
+            trainJpa.save(train);
+            LOGGER.info("OCR processing finished | updated {} wagons", updatedCount);
+        } else {
+            LOGGER.info("OCR processing finished | no wagons updated");
+        }
+    }
     // ────────────────────────────────────────────────
     // დამხმარე მეთოდები
     // ────────────────────────────────────────────────
@@ -547,4 +618,5 @@ public class TrainService {
             return false;
         }
     }
+
 }

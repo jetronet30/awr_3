@@ -2,9 +2,7 @@ package com.jaba.awr_3.core.numberdetection.ocr;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jaba.awr_3.core.prodata.jparepo.WagonJpa;
-import com.jaba.awr_3.core.prodata.mod.TrainMod;
-import com.jaba.awr_3.core.prodata.mod.WagonMod;
+
 import com.jaba.awr_3.core.prodata.services.TrainService;
 
 import jakarta.annotation.PostConstruct;
@@ -26,7 +24,7 @@ import java.util.concurrent.*;
 @RequiredArgsConstructor
 public class OcrLis {
     private final TrainService trainService;
-    private final WagonJpa wagonJpa;
+
 
     private static final int PORT = 45000;
 
@@ -234,51 +232,20 @@ public class OcrLis {
             if (pipeIndex == -1) return;
 
             String idPart = message.substring(0, pipeIndex);
-            String id = idPart.replace("ID=", "");
+            Long id = Long.valueOf(idPart.replace("ID=", ""));
 
             String jsonPart = message.substring(pipeIndex + 1).trim();
 
-            Map<String, Object> data =
-                    mapper.readValue(jsonPart, new TypeReference<>() {});
+            Map<String, Object> data =  mapper.readValue(jsonPart, new TypeReference<>() {});
 
             Integer totalWagons = (Integer) data.get("total_wagons");
 
-            List<Map<String, Object>> wagons =
-                    (List<Map<String, Object>>) data.get("wagons");
+            List<Map<String, Object>> wagons = (List<Map<String, Object>>) data.get("wagons");
 
             System.out.println("ID=" + id + "   TOTAL WAGONS=" + totalWagons);
-            TrainMod train = trainService.getTrainById(Long.parseLong(id));
-            if (train == null) {
-                return;
-            }
+            
 
-            if (train.getCount() != totalWagons) {
-                return;
-            }
-
-
-
-            for (Map<String, Object> wagon : wagons) {
-
-                Integer row = (Integer) wagon.get("row");
-                String number = (String) wagon.get("number");
-                String quality = (String) wagon.get("quality");
-                for (WagonMod wm : train.getWagons()) {
-                    if(wm.getRowNum()==row){
-                        if (wm.getWagonNumber().isEmpty()) {
-                            wm.setWagonNumber(number);
-                            
-                            wagonJpa.save(wm);
-                        }
-                    }
-                }
-
-                System.out.println(
-                        "row=" + row +
-                        " , number=" + number +
-                        " , quality=" + quality
-                );
-            }
+           trainService.processOcrResult(id, totalWagons, wagons);
 
 
 

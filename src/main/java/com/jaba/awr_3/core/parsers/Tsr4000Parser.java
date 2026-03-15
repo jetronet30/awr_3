@@ -42,7 +42,10 @@ public class Tsr4000Parser {
                 trainService.updateTrain(conId, processId, getWeight(fuulWeight), getDate(weghtingDate),
                         getSpeed(maxSpeed), getSpeed(minSpeed), getRowNum(countsector7));
                 emitterServic.sendToScale(conId, "update-data-container");
-                ocrLis.sendStop(scaleIndex, trainService.getIdOpenTrain(conId));
+                if (automatic) {
+                    ocrLis.sendStop(scaleIndex, trainService.getIdOpenTrain(conId));
+                }
+                
             } else if (first3.contains("V")) {
                 if (text.length() < 45) {
                     LOGGER.warn("V-type data incomplete: {}", text);
@@ -76,7 +79,10 @@ public class Tsr4000Parser {
                 trainService.closeTrainAndOpenNewTrain(conId, scaleName, scaleIndex);
                 emitterServic.sendToScale(conId, "update-data-container");
                 emitterServic.sendToScale(conId, "update-data-works-start");
-                ocrLis.sendStart(scaleIndex, trainService.getIdOpenTrain(conId));
+                if (automatic) {
+                    ocrLis.sendStart(scaleIndex, trainService.getIdOpenTrain(conId));
+                }
+                
             } else if (text.contains("Trn_Dir:")) {
                 String upper = text.toUpperCase();
                 if (upper.contains(" IN ") || upper.contains(":IN ") || upper.contains("(IN")) {
