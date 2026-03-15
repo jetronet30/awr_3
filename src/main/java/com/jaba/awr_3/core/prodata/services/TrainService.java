@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jaba.awr_3.controllers.emitter.EmitterServic;
 import com.jaba.awr_3.core.pdf.PdfCreator;
 import com.jaba.awr_3.core.prodata.jparepo.TrainJpa;
 import com.jaba.awr_3.core.prodata.jparepo.WagonJpa;
@@ -30,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class TrainService {
-
+    private final EmitterServic emitterServic;
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainService.class);
 
     private final TrainJpa trainJpa;
@@ -440,6 +441,7 @@ public class TrainService {
         } else {
             LOGGER.info("OCR processing finished | no wagons updated");
         }
+        emitterServic.sendToScale(train.getConId(), "update-data-container");
     }
     // ────────────────────────────────────────────────
     // დამხმარე მეთოდები

@@ -2,7 +2,6 @@ package com.jaba.awr_3.core.numberdetection.ocr;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.jaba.awr_3.core.prodata.services.TrainService;
 
 import jakarta.annotation.PostConstruct;
@@ -24,8 +23,7 @@ import java.util.concurrent.*;
 @RequiredArgsConstructor
 public class OcrLis {
     private final TrainService trainService;
-
-
+    
     private static final int PORT = 45000;
 
     private ExecutorService serverExecutor;
@@ -69,7 +67,8 @@ public class OcrLis {
             String id = entry.getKey();
             ClientConnection c = entry.getValue();
 
-            if (c.socket.isClosed()) continue;
+            if (c.socket.isClosed())
+                continue;
 
             try {
 
@@ -109,7 +108,8 @@ public class OcrLis {
 
         } catch (IOException e) {
 
-            if (running) log.error("Server socket error", e);
+            if (running)
+                log.error("Server socket error", e);
 
         }
     }
@@ -151,8 +151,7 @@ public class OcrLis {
 
             conn = new ClientConnection(socket);
 
-            String clientId =
-                    "client_" + remote.replaceAll("[^0-9]", "_") + "_" + System.currentTimeMillis();
+            String clientId = "client_" + remote.replaceAll("[^0-9]", "_") + "_" + System.currentTimeMillis();
 
             conn.clientId = clientId;
 
@@ -177,7 +176,8 @@ public class OcrLis {
 
                 String message = new String(buffer, 0, len, StandardCharsets.UTF_8).trim();
 
-                if (message.isEmpty()) continue;
+                if (message.isEmpty())
+                    continue;
 
                 log.info("RAW RECEIVED from {}: {}", clientId, message);
 
@@ -219,7 +219,8 @@ public class OcrLis {
 
                 socket.close();
 
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
     }
 
@@ -229,25 +230,25 @@ public class OcrLis {
         try {
 
             int pipeIndex = message.indexOf('|');
-            if (pipeIndex == -1) return;
+            if (pipeIndex == -1)
+                return;
 
             String idPart = message.substring(0, pipeIndex);
             Long id = Long.valueOf(idPart.replace("ID=", ""));
 
             String jsonPart = message.substring(pipeIndex + 1).trim();
 
-            Map<String, Object> data =  mapper.readValue(jsonPart, new TypeReference<>() {});
+            Map<String, Object> data = mapper.readValue(jsonPart, new TypeReference<>() {
+            });
 
             Integer totalWagons = (Integer) data.get("total_wagons");
 
             List<Map<String, Object>> wagons = (List<Map<String, Object>>) data.get("wagons");
 
             System.out.println("ID=" + id + "   TOTAL WAGONS=" + totalWagons);
-            
 
-           trainService.processOcrResult(id, totalWagons, wagons);
-
-
+            trainService.processOcrResult(id, totalWagons, wagons);
+           
 
         } catch (Exception e) {
 
@@ -263,9 +264,11 @@ public class OcrLis {
 
         try {
 
-            if (serverSocket != null) serverSocket.close();
+            if (serverSocket != null)
+                serverSocket.close();
 
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
         serverExecutor.shutdownNow();
         clientPool.shutdownNow();
