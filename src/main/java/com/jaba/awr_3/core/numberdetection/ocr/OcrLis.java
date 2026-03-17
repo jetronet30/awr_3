@@ -9,6 +9,9 @@ import jakarta.annotation.PreDestroy;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -23,25 +26,22 @@ import java.util.concurrent.*;
 @RequiredArgsConstructor
 public class OcrLis {
     private final TrainService trainService;
-    
     private static final int PORT = 45000;
-
     private ExecutorService serverExecutor;
     private ExecutorService clientPool;
-
     private ServerSocket serverSocket;
     private volatile boolean running = true;
-
     private final ConcurrentHashMap<String, ClientConnection> clients = new ConcurrentHashMap<>();
-
     private final ObjectMapper mapper = new ObjectMapper();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(OcrLis.class);
 
     @PostConstruct
     public void init() {
         serverExecutor = Executors.newSingleThreadExecutor();
         clientPool = Executors.newCachedThreadPool();
         serverExecutor.submit(this::startTcpServer);
-        log.info("TCP OCR Server started on port {}", PORT);
+        LOGGER.info("TCP OCR Server started on port {}", PORT);
     }
 
     public void sendStart(int conId, Long trainId) {
@@ -55,7 +55,7 @@ public class OcrLis {
     private void broadcast(String message) {
 
         if (clients.isEmpty()) {
-            log.info("No clients connected → broadcast skipped: {}", message);
+            LOGGER.info("No clients connected → broadcast skipped: {}", message);
             return;
         }
 
@@ -80,12 +80,12 @@ public class OcrLis {
 
             } catch (Exception e) {
 
-                log.warn("Send failed to {} → {}", id, e.toString());
+                LOGGER.warn("Send failed to {} → {}", id, e.toString());
 
             }
         }
 
-        log.info("Broadcast '{}' → success: {} / total: {}  sent to: {}",
+        LOGGER.info("Broadcast '{}' → success: {} / total: {}  sent to: {}",
                 message, success, clients.size(), sent);
     }
 
@@ -95,13 +95,13 @@ public class OcrLis {
 
             serverSocket = new ServerSocket(PORT);
 
-            log.info("Listening on 0.0.0.0:{}", PORT);
+            LOGGER.info("Listening on 0.0.0.0:{}", PORT);
 
             while (running) {
 
                 Socket socket = serverSocket.accept();
 
-                log.info("Socket accepted: {}", socket.getRemoteSocketAddress());
+                LOGGER.info("Socket accepted: {}", socket.getRemoteSocketAddress());
 
                 clientPool.submit(() -> handleClient(socket));
             }
@@ -109,7 +109,7 @@ public class OcrLis {
         } catch (IOException e) {
 
             if (running)
-                log.error("Server socket error", e);
+                LOGGER.error("Server socket error", e);
 
         }
     }
@@ -133,7 +133,7 @@ public class OcrLis {
 
             } catch (IOException e) {
 
-                log.warn("Writer failed for {}", s.getRemoteSocketAddress(), e);
+                LOGGER.warn("Writer failed for {}", s.getRemoteSocketAddress(), e);
 
             }
         }
@@ -143,7 +143,7 @@ public class OcrLis {
 
         String remote = socket.getRemoteSocketAddress().toString();
 
-        log.info("handleClient started for {}", remote);
+        LOGGER.info("handleClient started for {}", remote);
 
         ClientConnection conn = null;
 
@@ -157,7 +157,7 @@ public class OcrLis {
 
             clients.put(clientId, conn);
 
-            log.info("Client added: {} | active: {}", clientId, clients.size());
+            LOGGER.info("Client added: {} | active: {}", clientId, clients.size());
 
             InputStream in = socket.getInputStream();
 
@@ -179,7 +179,7 @@ public class OcrLis {
                 if (message.isEmpty())
                     continue;
 
-                log.info("RAW RECEIVED from {}: {}", clientId, message);
+                LOGGER.info("RAW RECEIVED from {}: {}", clientId, message);
 
                 try {
 
@@ -189,13 +189,13 @@ public class OcrLis {
 
                     } else {
 
-                        log.info("TEXT from {} → {}", clientId, message);
+                        LOGGER.info("TEXT from {} → {}", clientId, message);
 
                     }
 
                 } catch (Exception e) {
 
-                    log.error("Message processing error from {}: {}",
+                    LOGGER.error("Message processing error from {}: {}",
                             clientId, e.getMessage(), e);
 
                 }
@@ -203,7 +203,7 @@ public class OcrLis {
 
         } catch (Throwable t) {
 
-            log.error("Critical error for {}: {}", remote, t.toString(), t);
+            LOGGER.error("Critical error for {}: {}", remote, t.toString(), t);
 
         } finally {
 
@@ -211,7 +211,7 @@ public class OcrLis {
 
                 clients.remove(conn.clientId, conn);
 
-                log.info("Client disconnected: {} | remaining: {}",
+                LOGGER.info("Client disconnected: {} | remaining: {}",
                         conn.clientId, clients.size());
             }
 
@@ -252,7 +252,7 @@ public class OcrLis {
 
         } catch (Exception e) {
 
-            log.error("Parse error: {}", e.getMessage(), e);
+            LOGGER.error("Parse error: {}", e.getMessage(), e);
 
         }
     }
@@ -273,6 +273,6 @@ public class OcrLis {
         serverExecutor.shutdownNow();
         clientPool.shutdownNow();
 
-        log.info("TCP server stopped");
+        LOGGER.info("TCP server stopped");
     }
 }
