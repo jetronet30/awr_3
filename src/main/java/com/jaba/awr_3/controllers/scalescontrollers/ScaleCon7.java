@@ -34,7 +34,7 @@ public class ScaleCon7 {
 
     @PostMapping("/scale7")
     public String postSacale7(Model m) {
-        m.addAttribute("cam7Enabled", false);
+        m.addAttribute("cam7Enabled", true);
         m.addAttribute("magonNumLeght_7", UnitService.W_NUM_LEN);
         m.addAttribute("conId_7", tcpService.getTcpByIndex(7).getTcpName());
         return "proces/scale7";
@@ -42,7 +42,7 @@ public class ScaleCon7 {
 
     @PostMapping("/startWeighing_7")
     public String startWeighing7(Model m) {
-        m.addAttribute("cam7Enabled", false);
+        m.addAttribute("cam7Enabled", true);
         m.addAttribute("magonNumLeght_7", UnitService.W_NUM_LEN);
         m.addAttribute("conId_7", tcpService.getTcpByIndex(7).getTcpName());
         if (!trainService.isWorkInProgress(tcpService.getTcpByIndex(7).getTcpName())) {
@@ -53,7 +53,7 @@ public class ScaleCon7 {
 
     @PostMapping("/doneWeighing_7")
     public String doneWeighing7(Model m) {
-        m.addAttribute("cam7Enabled", false);
+        m.addAttribute("cam7Enabled", true);
         m.addAttribute("magonNumLeght_7", UnitService.W_NUM_LEN);
         m.addAttribute("conId_7", tcpService.getTcpByIndex(7).getTcpName());
         trainService.closeTrain(tcpService.getTcpByIndex(7).getTcpName());
@@ -62,7 +62,7 @@ public class ScaleCon7 {
 
     @PostMapping("/abortWeighing_7")
     public String abortWeighing7(Model m) {
-        m.addAttribute("cam7Enabled", false);
+        m.addAttribute("cam7Enabled", true);
         m.addAttribute("magonNumLeght_7", UnitService.W_NUM_LEN);
         m.addAttribute("conId_7", tcpService.getTcpByIndex(7).getTcpName());
         trainService.deleteTrainByConId(tcpService.getTcpByIndex(7).getTcpName());

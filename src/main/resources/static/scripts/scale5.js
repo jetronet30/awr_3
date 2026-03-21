@@ -229,13 +229,23 @@ function initVideoScale5() {
 
     if (Hls.isSupported()) {
         hlsInstanceScale5 = new Hls({
-            maxBufferLength: 15,
-            maxMaxBufferLength: 20,
-            maxBufferSize: 20 * 1000 * 1000,
-            liveSyncDurationCount: 3,
-            liveMaxLatencyDurationCount: 8,
-            xhrSetup: (xhr) => { xhr.timeout = 10000; },
-        });
+            debug: true,
+            enableWorker: true,
+            lowLatencyMode: false,
+            enablePartLoading: false,               // ← გამორთე parts (თუ ჯერ არ გამოგირთავს) → ნაკლები transmux restart
+            backBufferLength: 20,                   // ან 10-15
+            liveBackBufferLength: 20,
+            maxBufferLength: 30,
+            maxMaxBufferLength: 60,
+            liveSyncDurationCount: 4,               // ცოტა მეტი ბუფერი edge-თან
+            liveMaxLatencyDurationCount: 8,         // ტოლერანტობა catch-up-ისთვის
+            maxLiveSyncPlaybackRate: 1.03,          // მაქს 3% აჩქარება (თითქმის შეუმჩნეველი)
+            maxBufferHole: 1.2,                     // ტოლერანტობა მცირე gaps-ზე/overlap-ზე
+            maxFragLookUpTolerance: 0.5,            // უფრო მოქნილი ფრაგმენტის შერჩევა
+            liveDurationInfinity: true,
+            preferManagedMediaSource: true,
+            xhrSetup: (xhr) => { xhr.timeout = 6000; }  // ცოტა მეტი timeout ლოკალურ ქსელში
+        })
 
         hlsInstanceScale5.loadSource(video.getAttribute('data-hls-src'));
         hlsInstanceScale5.attachMedia(video);
@@ -245,7 +255,7 @@ function initVideoScale5() {
             if (data.fatal || data.details === 'levelLoadError') {
                 hlsInstanceScale5.destroy();
                 hlsInstanceScale5 = null;
-                setTimeout(initVideoScale8, 2000);
+                setTimeout(initVideoScale5, 2000);
             }
         });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {

@@ -229,14 +229,22 @@ function initVideoScale2() {
 
     if (Hls.isSupported()) {
         hlsInstanceScale2 = new Hls({
-            maxBufferLength: 2,           // 2 წამი
-            maxMaxBufferLength: 3,        // 3 წამი
-            maxBufferSize: 3 * 1000 * 1000, // 3MB
-            liveSyncDurationCount: 2,     // 2 სეგმენტი
-            liveMaxLatencyDurationCount: 3, // 3 სეგმენტი
-            lowLatencyMode: true,
-            backBufferLength: 0.2,       // 0.2 წამი
-            xhrSetup: (xhr) => { xhr.timeout = 2500; },
+            debug: true,
+            enableWorker: true,
+            lowLatencyMode: false,
+            enablePartLoading: false,               // ← გამორთე parts (თუ ჯერ არ გამოგირთავს) → ნაკლები transmux restart
+            backBufferLength: 20,                   // ან 10-15
+            liveBackBufferLength: 20,
+            maxBufferLength: 30,
+            maxMaxBufferLength: 60,
+            liveSyncDurationCount: 4,               // ცოტა მეტი ბუფერი edge-თან
+            liveMaxLatencyDurationCount: 8,         // ტოლერანტობა catch-up-ისთვის
+            maxLiveSyncPlaybackRate: 1.03,          // მაქს 3% აჩქარება (თითქმის შეუმჩნეველი)
+            maxBufferHole: 1.2,                     // ტოლერანტობა მცირე gaps-ზე/overlap-ზე
+            maxFragLookUpTolerance: 0.5,            // უფრო მოქნილი ფრაგმენტის შერჩევა
+            liveDurationInfinity: true,
+            preferManagedMediaSource: true,
+            xhrSetup: (xhr) => { xhr.timeout = 6000; }  // ცოტა მეტი timeout ლოკალურ ქსელში
         });
 
         hlsInstanceScale2.loadSource(video.getAttribute('data-hls-src'));

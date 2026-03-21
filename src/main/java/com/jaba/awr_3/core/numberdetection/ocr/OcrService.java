@@ -50,67 +50,67 @@ public class OcrService {
 
             List<OcrMod> ocrModels = new ArrayList<>();
 
-            OcrMod mod0 = new OcrMod(0, "admin", "admin", "admin", "admin", 554, 554,
-                    "rtsp://admin:admin@192.168.1.11:554", "rtsp://admin:admin@192.168.1.12:554", 0.1, 0.1, 0.9, 0.9,
-                    0.8, 0.4, 40, 140, RepoInit.CAM_0_REPO.getAbsolutePath(), RepoInit.VIDEO_ARCHIVE.getAbsolutePath(),
+            OcrMod mod0 = new OcrMod(0,
+                    "rtsp://admin:admin@192.168.1.11:554", "rtsp://admin:admin@192.168.1.12:554",
+                    0.4, 350, 70,0.4, 350, 70, RepoInit.CAM_0_REPO.getAbsolutePath(), RepoInit.VIDEO_ARCHIVE.getAbsolutePath(),
                     RepoInit.YOLO_AND_TROCR.getAbsolutePath() + "/best.pt",
                     RepoInit.YOLO_AND_TROCR.getAbsolutePath() + "/trocr-large-printed", UnitService.W_NUM_LEN, true,
                     true);
 
-            OcrMod mod1 = new OcrMod(1, "admin", "admin", "admin", "admin", 554, 554,
-                    "rtsp://admin:admin@192.168.1.11:554", "rtsp://admin:admin@192.168.1.12:554", 0.1, 0.1, 0.9, 0.9,
-                    0.8, 0.4, 40, 140, RepoInit.CAM_1_REPO.getAbsolutePath(), RepoInit.VIDEO_ARCHIVE.getAbsolutePath(),
+            OcrMod mod1 = new OcrMod(1,
+                    "rtsp://admin:admin@192.168.1.11:554", "rtsp://admin:admin@192.168.1.12:554",
+                    0.4, 350, 70,0.4, 350, 70, RepoInit.CAM_1_REPO.getAbsolutePath(), RepoInit.VIDEO_ARCHIVE.getAbsolutePath(),
                     RepoInit.YOLO_AND_TROCR.getAbsolutePath() + "/best.pt",
                     RepoInit.YOLO_AND_TROCR.getAbsolutePath() + "/trocr-large-printed", UnitService.W_NUM_LEN, true,
                     true);
 
-            OcrMod mod2 = new OcrMod(2, "admin", "admin", "admin", "admin", 554, 554,
-                    "rtsp://admin:admin@192.168.1.11:554", "rtsp://admin:admin@192.168.1.12:554", 0.1, 0.1, 0.9, 0.9,
-                    0.8, 0.4, 40, 140, RepoInit.CAM_2_REPO.getAbsolutePath(), RepoInit.VIDEO_ARCHIVE.getAbsolutePath(),
+            OcrMod mod2 = new OcrMod(2,
+                    "rtsp://admin:admin@192.168.1.11:554", "rtsp://admin:admin@192.168.1.12:554",
+                    0.4, 350, 70, 0.4, 350, 70, RepoInit.CAM_2_REPO.getAbsolutePath(), RepoInit.VIDEO_ARCHIVE.getAbsolutePath(),
                     RepoInit.YOLO_AND_TROCR.getAbsolutePath() + "/best.pt",
                     RepoInit.YOLO_AND_TROCR.getAbsolutePath() + "/trocr-large-printed", UnitService.W_NUM_LEN, true,
                     true);
 
-            OcrMod mod3 = new OcrMod(3, "admin", "admin", "admin", "admin", 554, 554,
-                    "rtsp://admin:admin@192.168.1.11:554", "rtsp://admin:admin@192.168.1.12:554", 0.1, 0.1, 0.9, 0.9,
-                    0.8, 0.4, 40, 140, RepoInit.CAM_3_REPO.getAbsolutePath(), RepoInit.VIDEO_ARCHIVE.getAbsolutePath(),
+            OcrMod mod3 = new OcrMod(3,
+                    "rtsp://admin:admin@192.168.1.11:554", "rtsp://admin:admin@192.168.1.12:554",
+                    0.4, 350, 70,0.4, 350, 70, RepoInit.CAM_3_REPO.getAbsolutePath(), RepoInit.VIDEO_ARCHIVE.getAbsolutePath(),
                     RepoInit.YOLO_AND_TROCR.getAbsolutePath() + "/best.pt",
                     RepoInit.YOLO_AND_TROCR.getAbsolutePath() + "/trocr-large-printed", UnitService.W_NUM_LEN, true,
                     true);
 
-            OcrMod mod4 = new OcrMod(4, "admin", "admin", "admin", "admin", 554, 554,
-                    "rtsp://admin:admin@192.168.1.11:554", "rtsp://admin:admin@192.168.1.12:554", 0.1, 0.1, 0.9, 0.9,
-                    0.8, 0.4, 40, 140, RepoInit.CAM_4_REPO.getAbsolutePath(), RepoInit.VIDEO_ARCHIVE.getAbsolutePath(),
+            OcrMod mod4 = new OcrMod(4,
+                    "rtsp://admin:admin@192.168.1.11:554", "rtsp://admin:admin@192.168.1.12:554",
+                    0.4, 350, 70,0.4, 350, 70, RepoInit.CAM_4_REPO.getAbsolutePath(), RepoInit.VIDEO_ARCHIVE.getAbsolutePath(),
                     RepoInit.YOLO_AND_TROCR.getAbsolutePath() + "/best.pt",
                     RepoInit.YOLO_AND_TROCR.getAbsolutePath() + "/trocr-large-printed", UnitService.W_NUM_LEN, true,
                     true);
-            OcrMod mod5 = new OcrMod(5, "admin", "admin", "admin", "admin", 554, 554,
-                    "rtsp://admin:admin@192.168.1.11:554", "rtsp://admin:admin@192.168.1.12:554", 0.1, 0.1, 0.9, 0.9,
-                    0.8, 0.4, 40, 140, RepoInit.CAM_5_REPO.getAbsolutePath(), RepoInit.VIDEO_ARCHIVE.getAbsolutePath(),
+            OcrMod mod5 = new OcrMod(5,
+                    "rtsp://admin:admin@192.168.1.11:554", "rtsp://admin:admin@192.168.1.12:554",
+                    0.4, 350, 70,0.4, 350, 70, RepoInit.CAM_5_REPO.getAbsolutePath(), RepoInit.VIDEO_ARCHIVE.getAbsolutePath(),
                     RepoInit.YOLO_AND_TROCR.getAbsolutePath() + "/best.pt",
                     RepoInit.YOLO_AND_TROCR.getAbsolutePath() + "/trocr-large-printed", UnitService.W_NUM_LEN, true,
                     true);
-            OcrMod mod6 = new OcrMod(6, "admin", "admin", "admin", "admin", 554, 554,
-                    "rtsp://admin:admin@192.168.1.11:554", "rtsp://admin:admin@192.168.1.12:554", 0.1, 0.1, 0.9, 0.9,
-                    0.8, 0.4, 40, 140, RepoInit.CAM_6_REPO.getAbsolutePath(), RepoInit.VIDEO_ARCHIVE.getAbsolutePath(),
+            OcrMod mod6 = new OcrMod(6,
+                    "rtsp://admin:admin@192.168.1.11:554", "rtsp://admin:admin@192.168.1.12:554",
+                    0.4, 350, 70,0.4, 350, 70,RepoInit.CAM_6_REPO.getAbsolutePath(), RepoInit.VIDEO_ARCHIVE.getAbsolutePath(),
                     RepoInit.YOLO_AND_TROCR.getAbsolutePath() + "/best.pt",
                     RepoInit.YOLO_AND_TROCR.getAbsolutePath() + "/trocr-large-printed", UnitService.W_NUM_LEN, true,
                     true);
-            OcrMod mod7 = new OcrMod(7, "admin", "admin", "admin", "admin", 554, 554,
-                    "rtsp://admin:admin@192.168.1.11:554", "rtsp://admin:admin@192.168.1.12:554", 0.1, 0.1, 0.9, 0.9,
-                    0.8, 0.4, 40, 140, RepoInit.CAM_7_REPO.getAbsolutePath(), RepoInit.VIDEO_ARCHIVE.getAbsolutePath(),
+            OcrMod mod7 = new OcrMod(7,
+                    "rtsp://admin:admin@192.168.1.11:554", "rtsp://admin:admin@192.168.1.12:554",
+                    0.4, 350, 70,0.4, 350, 70, RepoInit.CAM_7_REPO.getAbsolutePath(), RepoInit.VIDEO_ARCHIVE.getAbsolutePath(),
                     RepoInit.YOLO_AND_TROCR.getAbsolutePath() + "/best.pt",
                     RepoInit.YOLO_AND_TROCR.getAbsolutePath() + "/trocr-large-printed", UnitService.W_NUM_LEN, true,
                     true);
-            OcrMod mod8 = new OcrMod(8, "admin", "admin", "admin", "admin", 554, 554,
-                    "rtsp://admin:admin@192.168.1.11:554", "rtsp://admin:admin@192.168.1.12:554", 0.1, 0.1, 0.9, 0.9,
-                    0.8, 0.4, 40, 140, RepoInit.CAM_8_REPO.getAbsolutePath(), RepoInit.VIDEO_ARCHIVE.getAbsolutePath(),
+            OcrMod mod8 = new OcrMod(8,
+                    "rtsp://admin:admin@192.168.1.11:554", "rtsp://admin:admin@192.168.1.12:554",
+                    0.4, 350, 70,0.4, 350, 70, RepoInit.CAM_8_REPO.getAbsolutePath(), RepoInit.VIDEO_ARCHIVE.getAbsolutePath(),
                     RepoInit.YOLO_AND_TROCR.getAbsolutePath() + "/best.pt",
                     RepoInit.YOLO_AND_TROCR.getAbsolutePath() + "/trocr-large-printed", UnitService.W_NUM_LEN, true,
                     true);
-            OcrMod mod9 = new OcrMod(9, "admin", "admin", "admin", "admin", 554, 554,
-                    "rtsp://admin:admin@192.168.1.11:554", "rtsp://admin:admin@192.168.1.12:554", 0.1, 0.1, 0.9, 0.9,
-                    0.8, 0.4, 40, 140, RepoInit.CAM_9_REPO.getAbsolutePath(), RepoInit.VIDEO_ARCHIVE.getAbsolutePath(),
+            OcrMod mod9 = new OcrMod(9,
+                    "rtsp://admin:admin@192.168.1.11:554", "rtsp://admin:admin@192.168.1.12:554",
+                    0.5, 350, 70,0.4, 350, 70, RepoInit.CAM_9_REPO.getAbsolutePath(), RepoInit.VIDEO_ARCHIVE.getAbsolutePath(),
                     RepoInit.YOLO_AND_TROCR.getAbsolutePath() + "/best.pt",
                     RepoInit.YOLO_AND_TROCR.getAbsolutePath() + "/trocr-large-printed", UnitService.W_NUM_LEN, true,
                     true);
@@ -180,11 +180,9 @@ public class OcrService {
     // === Full update by index ===
     public Map<String, Object> updateOcrByIndex(
             int index,
-            String cam1Usr, String cam2Usr,
-            String cam1Passwd, String cam2Passwd,
-            int cam1Port, int cam2Port,
             String rtspUrl1, String rtspUrl2,
-            double roiX1, double roiY1, double roiX2, double roiY2,
+            double minCofidence_1, int minObJecWidth_1, int minobJecHeight_1,
+            double minCofidence_2, int minObJecWidth_2, int minobJecHeight_2,
             boolean activeDetection, boolean activeStream) {
 
         Map<String, Object> response = new HashMap<>();
@@ -194,16 +192,6 @@ public class OcrService {
             response.put("error", "Index must be between 0 and 19");
             return response;
         }
-        if (cam1Port < 1 || cam1Port > 65535 || cam2Port < 1 || cam2Port > 65535) {
-            response.put("error", "Invalid port number(s)");
-            return response;
-        }
-        if (roiX1 < 0 || roiX1 > 1 || roiY1 < 0 || roiY1 > 1 ||
-                roiX2 < 0 || roiX2 > 1 || roiY2 < 0 || roiY2 > 1 ||
-                roiX1 >= roiX2 || roiY1 >= roiY2) {
-            response.put("error", "Invalid ROI coordinates");
-            return response;
-        }
 
         try {
             List<OcrMod> models = readOcrModels();
@@ -211,18 +199,14 @@ public class OcrService {
 
             for (OcrMod mod : models) {
                 if (mod.getIndex() == index) {
-                    mod.setCam1Usr(cam1Usr.trim());
-                    mod.setCam2Usr(cam2Usr.trim());
-                    mod.setCam1Passwd(cam1Passwd.trim());
-                    mod.setCam2Passwd(cam2Passwd.trim());
-                    mod.setCam1Port(cam1Port);
-                    mod.setCam2Port(cam2Port);
                     mod.setRtspUrl_1(rtspUrl1.trim());
                     mod.setRtspUrl_2(rtspUrl2.trim());
-                    mod.setRoiX1(roiX1);
-                    mod.setRoiY1(roiY1);
-                    mod.setRoiX2(roiX2);
-                    mod.setRoiY2(roiY2);
+                    mod.setMinConfidence_1(minCofidence_1);
+                    mod.setMinObJecWidth_1(minObJecWidth_1);
+                    mod.setMinobJecHeight_1(minobJecHeight_1);
+                    mod.setMinConfidence_2(minCofidence_2);
+                    mod.setMinObJecWidth_2(minObJecWidth_2);
+                    mod.setMinobJecHeight_2(minobJecHeight_2);
                     mod.setVideoArChive(RepoInit.VIDEO_ARCHIVE.getAbsolutePath());
                     mod.setHlsRepo(getOcrByIndex(index).getHlsRepo());
                     mod.setTROCModel(RepoInit.YOLO_AND_TROCR.getAbsolutePath() + "/trocr-large-printed");
@@ -360,11 +344,9 @@ public class OcrService {
 
             // TROCR-ისთვის ცალკე sub-folder (რომ არ გადაფაროს YOLO)
             // შეგიძლია შეცვალო სახელი, მაგ. "trocr-model" ან "trocr-v2024"
-            
 
-               // გადაწერა
+            // გადაწერა
             // Files.walk(baseDir).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-            
 
             if (!Files.exists(baseDir)) {
                 Files.createDirectories(baseDir);

@@ -26,7 +26,7 @@ public class OcrCon {
     @PostMapping("/ocr")
     public String postOcr(Model model) {
         model.addAttribute("ocrModels", ocrService.listOcrModels());
-        return "numberdetection/ocr"; 
+        return "numberdetection/ocr";
     }
 
     /**
@@ -36,28 +36,22 @@ public class OcrCon {
     @ResponseBody
     public Map<String, Object> updateOcrSettings(
             @RequestParam("index") int index,
-            @RequestParam("cam1Usr") String cam1Usr,
-            @RequestParam("cam2Usr") String cam2Usr,
-            @RequestParam("cam1Passwd") String cam1Passwd,
-            @RequestParam("cam2Passwd") String cam2Passwd,
-            @RequestParam("cam1Port") int cam1Port,
-            @RequestParam("cam2Port") int cam2Port,
             @RequestParam("rtspUrl1") String rtspUrl1,
             @RequestParam("rtspUrl2") String rtspUrl2,
-            @RequestParam("roiX1") double roiX1,
-            @RequestParam("roiY1") double roiY1,
-            @RequestParam("roiX2") double roiX2,
-            @RequestParam("roiY2") double roiY2,
+            @RequestParam("minConfidence_1") double minConfidence_1,
+            @RequestParam("minObJecWidth_1") int minObJecWidth_1,
+            @RequestParam("minobJecHeight_1") int minobJecHeight_1,
+            @RequestParam("minConfidence_2") double minConfidence_2,
+            @RequestParam("minObJecWidth_2") int minObJecWidth_2,
+            @RequestParam("minobJecHeight_2") int minobJecHeight_2,
             @RequestParam("activeDetection") boolean activeDetection,
             @RequestParam("activeStream") boolean activeStream) {
 
         return ocrService.updateOcrByIndex(
                 index,
-                cam1Usr, cam2Usr,
-                cam1Passwd, cam2Passwd,
-                cam1Port, cam2Port,
                 rtspUrl1, rtspUrl2,
-                roiX1, roiY1, roiX2, roiY2,
+                minConfidence_1, minObJecWidth_1, minobJecHeight_1,
+                minConfidence_2, minObJecWidth_2, minobJecHeight_2,
                 activeDetection, activeStream);
     }
 
@@ -65,18 +59,15 @@ public class OcrCon {
     public String uploadYoloModel(@RequestParam("yolo") MultipartFile file, Model m) {
         ocrService.uploadYoloModel(file);
         m.addAttribute("ocrModels", ocrService.listOcrModels());
-        return "numberdetection/ocr"; 
+        return "numberdetection/ocr";
     }
 
     @PostMapping("/trocrupload")
     public String uploadTrocrModel(@RequestParam("trocr") MultipartFile file, Model m) {
         ocrService.uploadTrocrModel(file);
         m.addAttribute("ocrModels", ocrService.listOcrModels());
-        return "numberdetection/ocr"; 
+        return "numberdetection/ocr";
     }
-
-
-
 
     /**
      * სერვერის გადატვირთვა (ანალოგიურად TcpCon-ში)
@@ -87,5 +78,4 @@ public class OcrCon {
         return "settings/reboot"; // იგივე გვერდი, რაც TCP-ში
     }
 
-   
 }

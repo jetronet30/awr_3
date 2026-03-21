@@ -9,22 +9,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OcrMod {
     private int index;
-    private String cam1Passwd;
-    private String cam2Passwd;
-    private String cam1Usr;
-    private String cam2Usr;
-    private int cam1Port;
-    private int cam2Port;
     private String rtspUrl_1;
     private String rtspUrl_2;
-    private double roiX1;
-    private double roiY1;
-    private double roiX2;
-    private double roiY2;
-    private double confidenceSave;
-    private double confidenceDisplay;
-    private int minObJecWidth;
-    private int minobJecHeight;
+    private double minConfidence_1;
+    private int minObJecWidth_1;
+    private int minobJecHeight_1;
+    private double minConfidence_2;
+    private int minObJecWidth_2;
+    private int minobJecHeight_2;
     private String hlsRepo;
     private String videoArChive;
     private String YoloModel;
