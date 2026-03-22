@@ -37,7 +37,7 @@ public class ProcesCom1 {
     private int parity;
     private final int scaleIndex = 1; // ComService-ში პირველი პორტის ინდექსი (მუდმივი 1-ით)
 
-    private static final Logger log = LoggerFactory.getLogger(ProcesCom0.class);
+    private static final Logger log = LoggerFactory.getLogger(ProcesCom1.class);
     private static final int BUFFER_SIZE = 1024;
     
 
