@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import com.jaba.awr_3.controllers.emitter.EmitterServic;
 import com.jaba.awr_3.core.connectors.TcpService;
 import com.jaba.awr_3.core.globalvar.GlobalRight;
+import com.jaba.awr_3.core.numberdetection.ocr.OcrLis;
 import com.jaba.awr_3.core.process.ProcesTcp1;
 import com.jaba.awr_3.core.prodata.services.TrainService;
 import com.jaba.awr_3.core.units.UnitService;
@@ -31,6 +32,7 @@ public class ScaleCon6 {
     private final TcpService tcpService;
     private final EmitterServic emitter;
     private final ProcesTcp1 procesTcp1;
+    private final OcrLis ocrLis;
 
     @PostMapping("/scale6")
     public String postSacale6(Model m) {
@@ -65,6 +67,7 @@ public class ScaleCon6 {
         m.addAttribute("cam6Enabled", true);
         m.addAttribute("magonNumLeght_6", UnitService.W_NUM_LEN);
         m.addAttribute("conId_6", tcpService.getTcpByIndex(6).getTcpName());
+        ocrLis.sendAbort(6, trainService.getIdOpenTrain(tcpService.getTcpByIndex(6).getTcpName()));
         trainService.deleteTrainByConId(tcpService.getTcpByIndex(6).getTcpName());
         procesTcp1.sendDataTSR4000(GlobalRight.getSequenceIdHex_6() + "CABORT933C" + GlobalRight.getSuffixHex_6());
         return "proces/scale6";

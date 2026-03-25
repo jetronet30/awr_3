@@ -52,6 +52,10 @@ public class OcrLis {
         broadcast(conId + "_STOP/id=" + trainId);
     }
 
+    public void sendAbort(int conId, Long trainId) {
+        broadcast(conId + "_ABORT/id=" + trainId);
+    }
+
     private void broadcast(String message) {
 
         if (clients.isEmpty()) {

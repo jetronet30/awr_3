@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import com.jaba.awr_3.controllers.emitter.EmitterServic;
 import com.jaba.awr_3.core.connectors.ComService;
 import com.jaba.awr_3.core.globalvar.GlobalRight;
+import com.jaba.awr_3.core.numberdetection.ocr.OcrLis;
 import com.jaba.awr_3.core.process.ProcesCom2;
 import com.jaba.awr_3.core.prodata.services.TrainService;
 import com.jaba.awr_3.core.units.UnitService;
@@ -31,6 +32,7 @@ public class ScaleCon2 {
     private final ProcesCom2 procesCom2;
     private final EmitterServic emitter;
     private final ComService comService;
+    private final OcrLis ocrLis;
 
     @PostMapping("/scale2")
     public String postSacale2(Model m) {
@@ -65,6 +67,7 @@ public class ScaleCon2 {
         m.addAttribute("cam2Enabled", true);
         m.addAttribute("magonNumLeght_2", UnitService.W_NUM_LEN);
         m.addAttribute("conId_2", comService.getPortByIndex(2).getComName());
+        ocrLis.sendAbort(2, trainService.getIdOpenTrain(comService.getPortByIndex(2).getComName()));
         trainService.deleteTrainByConId(comService.getPortByIndex(2).getComName());
         procesCom2.sendDataTSR4000(GlobalRight.getSequenceIdHex_2() + "CABORT933C" + GlobalRight.getSuffixHex_2());
         return "proces/scale2";
