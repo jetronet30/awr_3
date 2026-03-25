@@ -1,0 +1,42 @@
+[Unit]
+Description=AWR 3  ------------
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/usr/src/javaproj/awr_3/target
+ExecStart=/usr/bin/java -jar /usr/src/javaproj/awr_3/target/awr_3-1.jar
+
+# ❗ ლოგების გამორთვა
+StandardOutput=null
+StandardError=null
+
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////
+
+
+systemctl status awr3
+journalctl -u awr3 -f
+
+
+/////////////////////////////////////////////////////////////////////
+
+sudo systemctl daemon-reload
+sudo systemctl restart awr3
+sudo systemctl status awr3
+
+
+sudo systemctl enable awr3
+sudo systemctl disable awr3
