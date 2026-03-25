@@ -37,6 +37,8 @@ sudo systemctl daemon-reload
 sudo systemctl restart awr3
 sudo systemctl status awr3
 
+sudo systemctl stop awr3
+sudo systemctl start awr3
 
 sudo systemctl enable awr3
 sudo systemctl disable awr3
