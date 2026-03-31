@@ -37,7 +37,7 @@
                 <input type="text" name="wagonNumber" class="train-wagons-wagonNum-input"
                     th:value="${wagon.wagonNumber}" th:placeholder="#{weighing.number}">
                     <input type="checkbox" name="printOnly" >
-                <input type="button" value="EDIT" class="train-wagons-set-btn">
+                <input type="button" th:if="${!train.blocked}" value="EDIT" class="train-wagons-set-btn">
             </form>
         </div>
         
