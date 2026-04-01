@@ -1,0 +1,81 @@
+:root {
+    --blue-light: #cce7ff;
+    --blue-main: #007acc;
+    --yellow-main: #ffcc00;
+    --gray-dark: #333;
+    --gray-light: #f5f7fa;
+    --white: #fff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--gray-light);
+    color: var(--gray-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login_form {
+    background: var(--white);
+    padding: 2.5rem 3rem;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.login_form h2 {
+    margin-bottom: 1.5rem;
+    color: var(--gray-dark);
+}
+
+.message {
+    background: #f8d7da;
+    color: #721c24;
+    border-radius: 4px;
+    padding: 0.7rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.input_form {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border 0.2s ease;
+}
+
+.input_form:focus {
+    border-color: var(--blue-main);
+    outline: none;
+}
+
+.input_btn {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background: var(--blue-main);
+    color: var(--white);
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.input_btn:hover {
+    background: var(--blue-light);
+    color: var(--blue-main);
+}

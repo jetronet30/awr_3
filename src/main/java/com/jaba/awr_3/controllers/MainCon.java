@@ -58,4 +58,12 @@ public class MainCon {
 
         return "main";
     }
+
+
+
+     @GetMapping("/login")
+    public String get_login() {
+        return "login";
+    }
+
 }

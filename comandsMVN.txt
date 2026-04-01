@@ -13,3 +13,5 @@ mvn deploy
 mvn clean package -DskipTests
 
 mvn -DskipTests package
+
+mvn clean install
