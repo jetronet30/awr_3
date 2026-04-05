@@ -2,6 +2,7 @@ package com.jaba.awr_3.core.process;
 
 import com.fazecast.jSerialComm.SerialPort;
 import com.jaba.awr_3.core.connectors.ComService;
+import com.jaba.awr_3.core.globalvar.GlobalRight;
 import com.jaba.awr_3.core.parsers.Tsr4000Parser;
 
 import org.slf4j.Logger;
@@ -273,6 +274,11 @@ public class ProcesCom2 {
                         try {
                             String id = new String(new byte[] { packet[1], packet[2] }, StandardCharsets.US_ASCII);
                             sendEchoTSR4000(id);
+                            String CEnd240A = new String(packet, StandardCharsets.US_ASCII);
+                            if (CEnd240A.contains("CEnd240A")) {
+                                sendDataTSR4000(GlobalRight.getREOTD_2());
+                                log.info("CEnd240A: " + GlobalRight.getREOTD_2());
+                            }
                         } catch (Exception e) {
                             log.warn("Failed to extract or send echo for packet", e);
                         }

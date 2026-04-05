@@ -1,6 +1,5 @@
 package com.jaba.awr_3.core.process;
 
-
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.jaba.awr_3.core.connectors.TcpService;
+import com.jaba.awr_3.core.globalvar.GlobalRight;
 import com.jaba.awr_3.core.parsers.Tsr4000Parser;
 
 import java.io.IOException;
@@ -62,7 +62,7 @@ public class ProcesTcp3 {
     // ========================================================================
     @PostConstruct
     public void init() {
-        
+
         var tcpConfig = tcpService.getTcpByIndex(scaleIndex);
         if (tcpConfig == null) {
             log.error("TCP configuration not found for: {}", tcpName);
@@ -360,7 +360,7 @@ public class ProcesTcp3 {
                     int packetLen = i + 2;
                     byte[] packet = Arrays.copyOf(buffer, packetLen);
                     String text = new String(packet, StandardCharsets.UTF_8).trim();
-                    tsr4000Parser.parseSectors(text, scaleName, tcpName, scaleIndex,automatic, rightToUpdateTare);
+                    tsr4000Parser.parseSectors(text, scaleName, tcpName, scaleIndex, automatic, rightToUpdateTare);
                     printPacket(packet, instrument);
 
                     // ექო მხოლოდ STX პაკეტებზე
@@ -368,6 +368,11 @@ public class ProcesTcp3 {
                         try {
                             String id = new String(new byte[] { packet[1], packet[2] }, StandardCharsets.US_ASCII);
                             sendEchoTSR4000(id);
+                            String CEnd240A = new String(packet, StandardCharsets.US_ASCII);
+                            if (CEnd240A.contains("CEnd240A")) {
+                                sendDataTSR4000(GlobalRight.getREOTD_8());
+                                log.info("CEnd240A: " + GlobalRight.getREOTD_8());
+                            }
                         } catch (Exception e) {
                             log.warn("Failed to extract or send echo for packet", e);
                         }

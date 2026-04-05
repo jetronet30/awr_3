@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.jaba.awr_3.core.connectors.TcpService;
+import com.jaba.awr_3.core.globalvar.GlobalRight;
 import com.jaba.awr_3.core.parsers.Tsr4000Parser;
 
 import java.io.IOException;
@@ -368,6 +369,11 @@ public class ProcesTcp2 {
                         try {
                             String id = new String(new byte[] { packet[1], packet[2] }, StandardCharsets.US_ASCII);
                             sendEchoTSR4000(id);
+                            String CEnd240A = new String(packet, StandardCharsets.US_ASCII);
+                            if (CEnd240A.contains("CEnd240A")) {
+                                sendDataTSR4000(GlobalRight.getREOTD_7());
+                                log.info("CEnd240A: " + GlobalRight.getREOTD_7());
+                            }
                         } catch (Exception e) {
                             log.warn("Failed to extract or send echo for packet", e);
                         }
