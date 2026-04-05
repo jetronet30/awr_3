@@ -48,7 +48,7 @@ public class ScaleCon7 {
         m.addAttribute("magonNumLeght_7", UnitService.W_NUM_LEN);
         m.addAttribute("conId_7", tcpService.getTcpByIndex(7).getTcpName());
         if (!trainService.isWorkInProgress(tcpService.getTcpByIndex(7).getTcpName())) {
-            procesTcp2.sendDataTSR4000(GlobalRight.getSequenceIdHex_7() + "CSTART7C34" + GlobalRight.getSuffixHex_7());
+            procesTcp2.sendDataTSR4000(GlobalRight.getCSTART_7());
         }
         return "proces/scale7";
     }
@@ -69,7 +69,7 @@ public class ScaleCon7 {
         m.addAttribute("conId_7", tcpService.getTcpByIndex(7).getTcpName());
         ocrLis.sendAbort(7, trainService.getIdOpenTrain(tcpService.getTcpByIndex(7).getTcpName()));
         trainService.deleteTrainByConId(tcpService.getTcpByIndex(7).getTcpName());
-        procesTcp2.sendDataTSR4000(GlobalRight.getSequenceIdHex_7() + "CABORT933C" + GlobalRight.getSuffixHex_7());
+        procesTcp2.sendDataTSR4000(GlobalRight.getCABORT_7());
         return "proces/scale7";
     }
 

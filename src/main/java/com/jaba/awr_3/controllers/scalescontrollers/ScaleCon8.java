@@ -48,7 +48,7 @@ public class ScaleCon8 {
         m.addAttribute("magonNumLeght_8", UnitService.W_NUM_LEN);
         m.addAttribute("conId_8", tcpService.getTcpByIndex(8).getTcpName());
         if (!trainService.isWorkInProgress(tcpService.getTcpByIndex(8).getTcpName())) {
-            procesTcp3.sendDataTSR4000(GlobalRight.getSequenceIdHex_8() + "CSTART7C34" + GlobalRight.getSuffixHex_8());
+            procesTcp3.sendDataTSR4000(GlobalRight.getCSTART_8());
         }
         return "proces/scale8";
     }
@@ -69,7 +69,7 @@ public class ScaleCon8 {
         m.addAttribute("conId_8", tcpService.getTcpByIndex(8).getTcpName());
         ocrLis.sendAbort(8, trainService.getIdOpenTrain(tcpService.getTcpByIndex(8).getTcpName()));
         trainService.deleteTrainByConId(tcpService.getTcpByIndex(8).getTcpName());
-        procesTcp3.sendDataTSR4000(GlobalRight.getSequenceIdHex_8() + "CABORT933C" + GlobalRight.getSuffixHex_8());
+        procesTcp3.sendDataTSR4000(GlobalRight.getCABORT_8());
         return "proces/scale8";
     }
 

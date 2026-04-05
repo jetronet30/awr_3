@@ -297,6 +297,7 @@ public class TrainService {
             LOGGER.warn("No open train found for conId: {}", conId);
             return;
         }
+        train.getWagons().removeIf(w -> !w.isValid());
 
         train.setDirection(direction);
         train.setWeighingMethod(wighingMethod);

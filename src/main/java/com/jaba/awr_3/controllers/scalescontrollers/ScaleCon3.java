@@ -48,7 +48,7 @@ public class ScaleCon3 {
         m.addAttribute("magonNumLeght_3", UnitService.W_NUM_LEN);
         m.addAttribute("conId_3", comService.getPortByIndex(3).getComName());
         if (!trainService.isWorkInProgress(comService.getPortByIndex(3).getComName())) {
-            procesCom3.sendDataTSR4000(GlobalRight.getSequenceIdHex_3() + "CSTART7C34" + GlobalRight.getSuffixHex_3());
+            procesCom3.sendDataTSR4000(GlobalRight.getCSTART_3());
         }
         return "proces/scale3";
     }
@@ -69,7 +69,7 @@ public class ScaleCon3 {
         m.addAttribute("conId_3", comService.getPortByIndex(3).getComName());
         ocrLis.sendAbort(3, trainService.getIdOpenTrain(comService.getPortByIndex(3).getComName()));
         trainService.deleteTrainByConId(comService.getPortByIndex(3).getComName());
-        procesCom3.sendDataTSR4000(GlobalRight.getSequenceIdHex_3() + "CABORT933C" + GlobalRight.getSuffixHex_3());
+        procesCom3.sendDataTSR4000(GlobalRight.getCABORT_3());
         return "proces/scale3";
     }
 

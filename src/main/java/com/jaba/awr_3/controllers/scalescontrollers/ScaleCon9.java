@@ -48,7 +48,7 @@ public class ScaleCon9 {
         m.addAttribute("magonNumLeght_9", UnitService.W_NUM_LEN);
         m.addAttribute("conId_9", tcpService.getTcpByIndex(9).getTcpName());
         if (!trainService.isWorkInProgress(tcpService.getTcpByIndex(9).getTcpName())) {
-            procesTcp4.sendDataTSR4000(GlobalRight.getSequenceIdHex_9() + "CSTART7C34" + GlobalRight.getSuffixHex_9());
+            procesTcp4.sendDataTSR4000(GlobalRight.getCSTART_9());
         }
         return "proces/scale9";
     }
@@ -69,7 +69,7 @@ public class ScaleCon9 {
         m.addAttribute("conId_9", tcpService.getTcpByIndex(9).getTcpName());
         ocrLis.sendAbort(9, trainService.getIdOpenTrain(tcpService.getTcpByIndex(9).getTcpName()));
         trainService.deleteTrainByConId(tcpService.getTcpByIndex(9).getTcpName());
-        procesTcp4.sendDataTSR4000(GlobalRight.getSequenceIdHex_9() + "CABORT933C" + GlobalRight.getSuffixHex_9());
+        procesTcp4.sendDataTSR4000(GlobalRight.getCABORT_9());
         return "proces/scale9";
     }
 

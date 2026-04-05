@@ -29,23 +29,30 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/register", "/css/**", "/scripts/**", "/images/**", "/favicon.ico").permitAll()
-                .anyRequest().authenticated()
-            )
-            
-            .formLogin(form -> form
-                .loginPage("/login")
-                .defaultSuccessUrl("/", true)
-                .permitAll()
-            )
-            
-            .logout(logout -> logout
-                .logoutSuccessUrl("/login")
-                .permitAll()
-            );
+                .csrf(csrf -> csrf.disable())
+
+                // ←←← ეს ნაწილი დაუმატე
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.sameOrigin()) // X-Frame-Options: SAMEORIGIN
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives("frame-ancestors 'self'") // თანამედროვე დაცვა
+                        ))
+                // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/login", "/register", "/css/**", "/scripts/**", "/images/**", "/favicon.ico",
+                                "/archive/**")
+                        .permitAll()
+                        .anyRequest().authenticated())
+
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/", true)
+                        .permitAll())
+
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/login")
+                        .permitAll());
 
         return http.build();
     }

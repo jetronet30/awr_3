@@ -48,7 +48,7 @@ public class ScaleCon5 {
         m.addAttribute("magonNumLeght_5", UnitService.W_NUM_LEN);
         m.addAttribute("conId_5", tcpService.getTcpByIndex(5).getTcpName());
         if (!trainService.isWorkInProgress(tcpService.getTcpByIndex(5).getTcpName())) {
-            procesTcp0.sendDataTSR4000(GlobalRight.getSequenceIdHex_5() + "CSTART7C34" + GlobalRight.getSuffixHex_5());
+            procesTcp0.sendDataTSR4000(GlobalRight.getCSTART_5());
         }
         return "proces/scale5";
     }
@@ -70,7 +70,7 @@ public class ScaleCon5 {
         ocrLis.sendAbort(5, trainService.getIdOpenTrain(tcpService.getTcpByIndex(5).getTcpName()));
         System.out.println("abortWeighing_5          "+trainService.getIdOpenTrain(tcpService.getTcpByIndex(5).getTcpName()));
         trainService.deleteTrainByConId(tcpService.getTcpByIndex(5).getTcpName());
-        procesTcp0.sendDataTSR4000(GlobalRight.getSequenceIdHex_5() + "CABORT933C" + GlobalRight.getSuffixHex_5());
+        procesTcp0.sendDataTSR4000(GlobalRight.getCABORT_5());
         return "proces/scale5";
     }
 
