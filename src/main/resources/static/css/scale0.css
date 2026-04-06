@@ -54,6 +54,12 @@
     box-shadow: 0 0 15px rgba(0, 183, 255, 0.6);
 }
 
+#scale0-add-wagon-form{
+    display: flex;
+    align-items: center;   
+    gap: 10px;
+}
+
 #scale0-number-input,
 #scale0-product-input,
 #scale0-count-input {
@@ -80,6 +86,8 @@
     border-radius: 50px;
     background-color: red;
 }
+
+
 
 /* === მარცხენა სია === */
 #operation-data0-container {
