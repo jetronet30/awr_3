@@ -6,12 +6,15 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.springframework.stereotype.Service;
 
 import com.jaba.awr_3.controllers.emitter.EmitterServic;
+import com.jaba.awr_3.core.prodata.services.TrainService;
+import com.jaba.awr_3.seversettings.basic.BasicService;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class TunaylarParser {
+    private final TrainService trainService;
 
     private static final double WEIGHT_DEVIATION_LIMIT = 0.2;
     private static final double NEW_WAGON_TRANSITION_THRESHOLD = 0.5;
@@ -48,7 +51,7 @@ public class TunaylarParser {
             Transition transition = nextState(currentState, currentWeight, now, normalizedWeight);
 
             if (stateRef.compareAndSet(currentState, transition.newState())) {
-                emitTransition(conId, transition);
+                emitTransition(conId, transition, scaleName, scaleIndex, automatic, rightToUpdateTare);
                 return;
             }
         }
@@ -145,19 +148,41 @@ public class TunaylarParser {
         return new Transition(resetWindowState, false, null, false, false, 0);
     }
 
-    private void emitTransition(String conId, Transition transition) {
+    private void emitTransition(String conId, Transition transition, String scaleName, int scaleIndex,
+            boolean automatic, boolean rightToUpdateTare) {
         if (transition.sendStart()) {
-            emitterServic.sendToScale(conId, "START");
+            trainService.closeTrainAndOpenNewTrain(conId, scaleName, scaleIndex);
+            emitterServic.sendToScale(conId, "update-data-container");
+            emitterServic.sendToScale(conId, "update-data-works-start");
+            if (automatic) {
+                // Assuming ocrLis is available in this context, otherwise this needs to be
+                // refactored to include it
+            }
             System.out.println("ConId: " + conId + ", STARTING WEIGHING PROCESS");
         }
 
         if (transition.shouldEmitWeight()) {
+            trainService.addWagonToTrain(conId, "", transition.rowIndexToEmit(), transition.weightToEmit(),
+                    BasicService.getDateTime(),
+                    "0.0", 0, rightToUpdateTare);
+
             emitterServic.sendToScale(conId, transition.weightToEmit());
-            System.out.println("ConId: " + conId + ", ROW_INDEX: " + transition.rowIndexToEmit() + ", WEIGHT: " + transition.weightToEmit());
+            if (automatic) {
+                emitterServic.sendToScale(conId, "update-data-container");
+            }
+            System.out.println("ConId: " + conId + ", ROW_INDEX: " + transition.rowIndexToEmit() + ", WEIGHT: "
+                    + transition.weightToEmit());
         }
 
         if (transition.sendEnd()) {
-            emitterServic.sendToScale(conId, "END");
+            trainService.updateTrain(conId, "", "0.0", BasicService.getDateTime(), "0.0", "0.0", transition.rowIndexToEmit());
+            trainService.updateTrainAndWagons(conId, "", "static");
+            emitterServic.sendToScale(conId, "update-data-container");
+            emitterServic.sendToScale(conId, "update-data-works-stop");
+            if (automatic) {
+                // ocrLis.sendStop(scaleIndex, trainService.getIdOpenTrain(conId));
+            }
+
             System.out.println("ConId: " + conId + ", ENDING WEIGHING PROCESS");
         }
     }
