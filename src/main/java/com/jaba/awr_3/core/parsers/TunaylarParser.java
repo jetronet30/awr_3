@@ -176,7 +176,7 @@ public class TunaylarParser {
 
         if (transition.sendEnd()) {
             trainService.updateTrain(conId, "", "0.0", BasicService.getDateTime(), "0.0", "0.0", transition.rowIndexToEmit());
-            trainService.updateTrainAndWagons(conId, "", "static");
+            trainService.updateTrainAndWagons(conId, "NO", "static");
             emitterServic.sendToScale(conId, "update-data-container");
             emitterServic.sendToScale(conId, "update-data-works-stop");
             if (automatic) {
