@@ -514,8 +514,9 @@ public class TrainService {
 
         train.setMatched(
                 train.getWagons().stream()
-                        .allMatch(w -> w.getNeto() != null && w.getNeto().compareTo(BigDecimal.ZERO) > 0)
+                        .allMatch(w -> w.getTare() != null && w.getTare().compareTo(BigDecimal.ZERO) > 0)
                         || train.isTareOnly());
+
 
         train.setBlocked(
                 train.isAllwagonsNumbered());
