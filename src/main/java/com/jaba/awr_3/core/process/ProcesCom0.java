@@ -325,7 +325,7 @@ public class ProcesCom0 {
                             .replace("\n", "")
                             .trim();
 
-                    printPacket(packet, instrument);
+                    //printPacket(packet, instrument);
                     // აქ დაუძახე parser-ს, თუ გაქვს TunaylarParser
                     tunaylarParser.parseSectors(text, scaleName, portName, scaleIndex, automatic, rightToUpdateTare);
 

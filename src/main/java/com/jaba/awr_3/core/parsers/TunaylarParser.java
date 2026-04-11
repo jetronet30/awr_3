@@ -20,10 +20,10 @@ public class TunaylarParser {
 
     private static final double WEIGHT_DEVIATION_LIMIT = 0.2;
     private static final double NEW_WAGON_TRANSITION_THRESHOLD = 0.5;
-    private static final double START_WEIGHT_THRESHOLD = 10.0;
+    private static final double START_WEIGHT_THRESHOLD = 20.0;
     private static final long START_DURATION_MS = 2_000L;
-    private static final long STABLE_DURATION_MS = 20_000L;
-    private static final long STOP_DURATION_MS = 40_000L;
+    private static final long STABLE_DURATION_MS = 10_000L;
+    private static final long STOP_DURATION_MS = 10_000L;
     private static final long ABORT_DURATION_MS = 300_000L;
 
     private final EmitterServic emitterServic;
