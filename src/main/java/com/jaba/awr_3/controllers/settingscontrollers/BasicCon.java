@@ -38,7 +38,7 @@ public class BasicCon {
     }
 
     @PostMapping("/basic-save-and-reboot")
-    public String setNetworkAndReboot(Model m) {
+    public String basicSaveAndReboot() {
         ServerManager.reboot();
         return "settings/reboot";
     }

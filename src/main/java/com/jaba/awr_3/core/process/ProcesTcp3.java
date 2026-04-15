@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.jaba.awr_3.core.connectors.TcpService;
 import com.jaba.awr_3.core.globalvar.GlobalRight;
 import com.jaba.awr_3.core.parsers.Tsr4000Parser;
+import com.jaba.awr_3.core.parsers.TunaylarParser;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ProcesTcp3 {
 
     private final Tsr4000Parser tsr4000Parser;
+    private final TunaylarParser tunaylarParser;
     private final TcpService tcpService;
 
     // === TCP კონფიგურაცია (final, ინიციალიზაცია @PostConstruct-ში) ===
@@ -386,30 +388,54 @@ public class ProcesTcp3 {
         return false;
     }
 
-    // ========================================================================
+     // ========================================================================
     // === TUNAYLAR Parser (STX ... CR) ===
     // ========================================================================
     private boolean parseTunaylar() {
         synchronized (buffer) {
             int index = bufferIndex.get();
-            for (int i = 0; i < index; i++) {
-                if (buffer[i] == 0x02) { // STX
-                    for (int j = i + 20; j < index; j++) {
-                        if (buffer[j] == 0x0D) { // CR
-                            int packetLen = j - i + 1;
-                            if (packetLen >= 21) {
-                                byte[] packet = Arrays.copyOfRange(buffer, i, j + 1);
-                                printPacket(packet, instrument);
-                                shiftBufferLeft(packetLen);
-                                return true;
-                            }
+
+            for (int start = 0; start < index; start++) {
+                if (buffer[start] != 0x02) {
+                    continue;
+                }
+
+                for (int end = start + 1; end < index; end++) {
+                    if (buffer[end] == 0x03) { // ETX
+                        int consumeUntil = end + 1;
+
+                        // optional tail: LF / CR
+                        while (consumeUntil < index &&
+                                (buffer[consumeUntil] == 0x0A || buffer[consumeUntil] == 0x0D)) {
+                            consumeUntil++;
                         }
+
+                        byte[] packet = Arrays.copyOfRange(buffer, start, consumeUntil);
+                        String text = new String(packet, StandardCharsets.US_ASCII)
+                                .replace("\u0002", "")
+                                .replace("\u0003", "")
+                                .replace("\r", "")
+                                .replace("\n", "")
+                                .trim();
+
+                        //printPacket(packet, instrument);
+                         tunaylarParser.parseSectors(text, scaleName, tcpName, scaleIndex, automatic, rightToUpdateTare);
+
+                        shiftBufferLeft(consumeUntil);
+                        return true;
                     }
                 }
+
+                // თუ STX ვიპოვეთ, მაგრამ ETX ჯერ არაა მოსული, ველოდებით შემდეგ ბაიტებს
+                return false;
             }
+
+            // თუ STX საერთოდ არ არის, ბუფერი გასაწმენდია
+            resetBuffer();
+            return false;
         }
-        return false;
     }
+
 
     // ========================================================================
     // === ბუფერის გადაწევა მარცხნივ ===

@@ -1,0 +1,18 @@
+<div id="administrator-container">
+    <div id="administrator-action">
+        <form action="/administrator/reboot" method="post">
+            <input type="button" th:value="#{save.and.reboot}" id="administrator-reboot-btn">
+        </form>
+        <div id="administrator-indicator"></div>
+    </div>
+
+    <div th:each="user: ${users}" id="administrator-forms-container">
+        <form method="post" action="/updateTcpsettings" class="administrator-settings-from">
+
+            <input type="text" name="username" class="administrator-settings-selector" th:value="${user.username}"  > 
+            <input type="password" name="password" class="administrator-settings-selector" th:value="${user.password}"  > 
+            <input type="password" name="confirmPassword" class="administrator-settings-selector" th:value="${user.password}"  >
+            <input type="button" th:value="#{tcp.set.settings}" class="administrator-settings-btn">
+        </form>
+    </div>
+</div>

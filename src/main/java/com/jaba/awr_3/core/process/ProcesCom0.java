@@ -42,7 +42,6 @@ public class ProcesCom0 {
 
     private static final Logger log = LoggerFactory.getLogger(ProcesCom0.class);
     private static final int BUFFER_SIZE = 1024;
-    
 
     // === სერიული პორტი (volatile — reconnection-ისთვის) ===
     private volatile SerialPort serialPort;
@@ -60,7 +59,7 @@ public class ProcesCom0 {
     // ========================================================================
     @PostConstruct
     public void init() {
-         
+
         var portConfig = comService.getPortByIndex(scaleIndex);
         if (portConfig == null) {
             log.error("Port configuration not found for index: {}", scaleIndex);
@@ -276,7 +275,7 @@ public class ProcesCom0 {
                         try {
                             String id = new String(new byte[] { packet[1], packet[2] }, StandardCharsets.US_ASCII);
                             sendEchoTSR4000(id);
-                            String CEnd240A = new String (packet, StandardCharsets.US_ASCII);
+                            String CEnd240A = new String(packet, StandardCharsets.US_ASCII);
                             if (CEnd240A.contains("CEnd240A")) {
                                 sendDataTSR4000(GlobalRight.getREOTD_0());
                                 log.info("CEnd240A: " + GlobalRight.getREOTD_0());
@@ -298,52 +297,52 @@ public class ProcesCom0 {
     // === TUNAYLAR Parser (STX ... CR) ===
     // ========================================================================
     private boolean parseTunaylar() {
-    synchronized (buffer) {
-        int index = bufferIndex.get();
+        synchronized (buffer) {
+            int index = bufferIndex.get();
 
-        for (int start = 0; start < index; start++) {
-            if (buffer[start] != 0x02) {
-                continue;
-            }
-
-            for (int end = start + 1; end < index; end++) {
-                if (buffer[end] == 0x03) { // ETX
-                    int consumeUntil = end + 1;
-
-                    // თუ ბოლოში LF/CR მოდის, ისინიც გადავყლაპოთ
-                    while (consumeUntil < index &&
-                           (buffer[consumeUntil] == 0x0A || buffer[consumeUntil] == 0x0D)) {
-                        consumeUntil++;
-                    }
-
-                    byte[] packet = Arrays.copyOfRange(buffer, start, consumeUntil);
-
-                    String text = new String(packet, StandardCharsets.US_ASCII)
-                            .replace("\u0002", "")
-                            .replace("\u0003", "")
-                            .replace("\r", "")
-                            .replace("\n", "")
-                            .trim();
-
-                    //printPacket(packet, instrument);
-                    // აქ დაუძახე parser-ს, თუ გაქვს TunaylarParser
-                    tunaylarParser.parseSectors(text, scaleName, portName, scaleIndex, automatic, rightToUpdateTare);
-
-                    shiftBufferLeft(consumeUntil);
-                    return true;
+            for (int start = 0; start < index; start++) {
+                if (buffer[start] != 0x02) {
+                    continue;
                 }
+
+                for (int end = start + 1; end < index; end++) {
+                    if (buffer[end] == 0x03) { // ETX
+                        int consumeUntil = end + 1;
+
+                        // თუ ბოლოში LF/CR მოდის, ისინიც გადავყლაპოთ
+                        while (consumeUntil < index &&
+                                (buffer[consumeUntil] == 0x0A || buffer[consumeUntil] == 0x0D)) {
+                            consumeUntil++;
+                        }
+
+                        byte[] packet = Arrays.copyOfRange(buffer, start, consumeUntil);
+
+                        String text = new String(packet, StandardCharsets.US_ASCII)
+                                .replace("\u0002", "")
+                                .replace("\u0003", "")
+                                .replace("\r", "")
+                                .replace("\n", "")
+                                .trim();
+
+                        // printPacket(packet, instrument);
+                        // აქ დაუძახე parser-ს, თუ გაქვს TunaylarParser
+                        tunaylarParser.parseSectors(text, scaleName, portName, scaleIndex, automatic,
+                                rightToUpdateTare);
+
+                        shiftBufferLeft(consumeUntil);
+                        return true;
+                    }
+                }
+
+                // STX ნაპოვნია, მაგრამ ETX ჯერ არ მოსულა
+                return false;
             }
 
-            // STX ნაპოვნია, მაგრამ ETX ჯერ არ მოსულა
+            // თუ STX საერთოდ არ ჩანს, ბუფერი ნაგავია
+            resetBuffer();
             return false;
         }
-
-        // თუ STX საერთოდ არ ჩანს, ბუფერი ნაგავია
-        resetBuffer();
-        return false;
     }
-}
-
 
     // ========================================================================
     // === ბუფერის გადაწევა მარცხნივ (პაკეტის ამოშლა) ===

@@ -4,6 +4,7 @@ import com.fazecast.jSerialComm.SerialPort;
 import com.jaba.awr_3.core.connectors.ComService;
 import com.jaba.awr_3.core.globalvar.GlobalRight;
 import com.jaba.awr_3.core.parsers.Tsr4000Parser;
+import com.jaba.awr_3.core.parsers.TunaylarParser;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequiredArgsConstructor
 public class ProcesCom4 {
     private final Tsr4000Parser tsr4000Parser;
+    private final TunaylarParser tunaylarParser;
 
     // === ComService ინფორმაცია (final, ინექცია) ===
     private final ComService comService;
@@ -40,7 +42,6 @@ public class ProcesCom4 {
 
     private static final Logger log = LoggerFactory.getLogger(ProcesCom4.class);
     private static final int BUFFER_SIZE = 1024;
-    
 
     // === სერიული პორტი (volatile — reconnection-ისთვის) ===
     private volatile SerialPort serialPort;
@@ -58,7 +59,7 @@ public class ProcesCom4 {
     // ========================================================================
     @PostConstruct
     public void init() {
-         
+
         var portConfig = comService.getPortByIndex(scaleIndex);
         if (portConfig == null) {
             log.error("Port configuration not found for index: {}", scaleIndex);
@@ -298,23 +299,49 @@ public class ProcesCom4 {
     private boolean parseTunaylar() {
         synchronized (buffer) {
             int index = bufferIndex.get();
-            for (int i = 0; i < index; i++) {
-                if (buffer[i] == 0x02) { // STX
-                    for (int j = i + 20; j < index; j++) {
-                        if (buffer[j] == 0x0D) { // CR
-                            int packetLen = j - i + 1;
-                            if (packetLen >= 21) {
-                                byte[] packet = Arrays.copyOfRange(buffer, i, j + 1);
-                                printPacket(packet, instrument);
-                                shiftBufferLeft(packetLen);
-                                return true;
-                            }
+
+            for (int start = 0; start < index; start++) {
+                if (buffer[start] != 0x02) {
+                    continue;
+                }
+
+                for (int end = start + 1; end < index; end++) {
+                    if (buffer[end] == 0x03) { // ETX
+                        int consumeUntil = end + 1;
+
+                        // თუ ბოლოში LF/CR მოდის, ისინიც გადავყლაპოთ
+                        while (consumeUntil < index &&
+                                (buffer[consumeUntil] == 0x0A || buffer[consumeUntil] == 0x0D)) {
+                            consumeUntil++;
                         }
+
+                        byte[] packet = Arrays.copyOfRange(buffer, start, consumeUntil);
+
+                        String text = new String(packet, StandardCharsets.US_ASCII)
+                                .replace("\u0002", "")
+                                .replace("\u0003", "")
+                                .replace("\r", "")
+                                .replace("\n", "")
+                                .trim();
+
+                        // printPacket(packet, instrument);
+                        // აქ დაუძახე parser-ს, თუ გაქვს TunaylarParser
+                        tunaylarParser.parseSectors(text, scaleName, portName, scaleIndex, automatic,
+                                rightToUpdateTare);
+
+                        shiftBufferLeft(consumeUntil);
+                        return true;
                     }
                 }
+
+                // STX ნაპოვნია, მაგრამ ETX ჯერ არ მოსულა
+                return false;
             }
+
+            // თუ STX საერთოდ არ ჩანს, ბუფერი ნაგავია
+            resetBuffer();
+            return false;
         }
-        return false;
     }
 
     // ========================================================================

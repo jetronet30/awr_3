@@ -418,8 +418,8 @@ public class ProcesTcp0 {
                                 .replace("\n", "")
                                 .trim();
 
-                        //printPacket(packet, instrument);
-                         tunaylarParser.parseSectors(text, scaleName, tcpName, scaleIndex, automatic, rightToUpdateTare);
+                        // printPacket(packet, instrument);
+                        tunaylarParser.parseSectors(text, scaleName, tcpName, scaleIndex, automatic, rightToUpdateTare);
 
                         shiftBufferLeft(consumeUntil);
                         return true;
