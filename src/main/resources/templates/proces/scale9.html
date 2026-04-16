@@ -3,7 +3,6 @@
     <input type="text" id="conId_9" th:value="${conId_9}" readonly hidden>
     <div id="scale9-action">
         <div id="scale9-btn-container">
-            <input type="text" id="w-indic-9" readonly>
             <form action="/startWeighing_9" method="post">
                 <input type="button" th:value="#{weighing.start}" id="scale9-start-weighing-btn">
             </form>
@@ -13,7 +12,8 @@
             <form action="/abortWeighing_9" method="post">
                 <input type="button" th:value="#{weighing.abort}" id="scale9-abort-weighing-btn">
             </form>
-            <form action="/addwagonWeighing_9" method="post">
+            <form action="/addwagonWeighing_9" id="scale9-add-wagon-form" method="post">
+                <input type="text" id="w-indic-9" readonly>
                 <input type="number" id="scale9-count-input" name="count" placeholder="count">
                 <input type="text" id="scale9-product-input" name="product" th:placeholder="#{weighing.product}">
                 <input type="number" id="scale9-number-input" name="wagonNumber" th:placeholder="#{weighing.number}">

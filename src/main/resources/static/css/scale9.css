@@ -54,6 +54,12 @@
     box-shadow: 0 0 15px rgba(0, 183, 255, 0.6);
 }
 
+#scale9-add-wagon-form{
+    display: flex;
+    align-items: center;   
+    gap: 10px;
+}
+
 #scale9-number-input,
 #scale9-product-input,
 #scale9-count-input {
