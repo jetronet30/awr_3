@@ -277,7 +277,7 @@ public class ProcesCom0 {
                             sendEchoTSR4000(id);
                             String CEnd240A = new String(packet, StandardCharsets.US_ASCII);
                             if (CEnd240A.contains("CEnd240A")) {
-                                sendDataTSR4000(GlobalRight.getREOTD_0());
+                                sendDataTSR4000(GlobalRight.getREOTD_0());   // 4BREOTD1EB220
                                 log.info("CEnd240A: " + GlobalRight.getREOTD_0());
                             }
                         } catch (Exception e) {

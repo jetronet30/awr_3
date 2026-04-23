@@ -234,8 +234,6 @@ public class TunaylarParser {
         }
 
         if (transition.sendAbort()) {
-            trainService.updateTrain(conId, "", "0.0", BasicService.getDateTime(), "0.0", "0.0",
-                    transition.rowIndexToEmit());
             trainService.deleteTrainByConId(conId);
             emitterServic.sendToScale(conId, "ABORT");
             emitterServic.sendToScale(conId, "update-data-container");
