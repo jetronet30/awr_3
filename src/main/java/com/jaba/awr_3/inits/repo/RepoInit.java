@@ -12,14 +12,14 @@ public class RepoInit {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RepoInit.class);
 
-    public static final File MAIN_REPO = new File("./MAINREPO");
+    public static final File MAIN_REPO = new File("/var/lib/AWR_3/MAINREPO");
     public static final File SERVER_SETTINGS_REPO = new File(MAIN_REPO, "serversettings");
     public static final File BACKUP_REPO_TEMP = new File(MAIN_REPO, "backuptemp");
     public static final File BACKUP_REPO_MVC = new File(MAIN_REPO, "backupmvc");
     public static final File BACKUP_UPLOAD_REPO = new File(MAIN_REPO, "backupupload");
     public static final File UTYL_REPO = new File(MAIN_REPO, "utils");
     public static final File LOGO_REPO = new File(MAIN_REPO, "logos");
-    public static final File USR_SRC = new File("/usr/local/src");
+    //public static final File USR_SRC_ = new File("/usr/local/src");
     public static final File VIDEO_ARCHIVE = new File(MAIN_REPO,"videoarchive");
     public static final File STREAM_ALL_REPO = new File(MAIN_REPO, "streams");
     public static final File CAM_0_REPO = new File(STREAM_ALL_REPO, "cam0");
@@ -51,7 +51,7 @@ public class RepoInit {
         createDirectory(SERVER_SETTINGS_REPO);
         createDirectory(UTYL_REPO);
         createDirectory(LOGO_REPO);
-        createDirectory(USR_SRC);
+        //createDirectory(USR_SRC_);
         createDirectory(BACKUP_REPO_TEMP);
         createDirectory(BACKUP_REPO_MVC);
         createDirectory(BACKUP_UPLOAD_REPO);
