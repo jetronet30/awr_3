@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TrainMod {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "train_seq")
+    @SequenceGenerator(name = "train_seq", sequenceName = "train_seq", allocationSize = 1)
     private Long id;
     private Long sysId;
     private String processId;
@@ -53,6 +55,5 @@ public class TrainMod {
 
     @OneToMany(mappedBy = "train", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<WagonMod> wagons = new ArrayList<>();
-
 
 }
