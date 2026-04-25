@@ -76,7 +76,7 @@ public class Tsr4000Parser {
                     emitterServic.sendToScale(conId, "update-data-container");
                 }
             } else if (text.toLowerCase().contains("cstart")) {
-                trainService.closeTrainAndOpenNewTrain(conId, scaleName, scaleIndex);
+                trainService.closeTrainAndOpenNewTrain(conId, scaleName, scaleIndex, "TSR4000");
                 emitterServic.sendToScale(conId, "update-data-container");
                 emitterServic.sendToScale(conId, "update-data-works-start");
                 if (automatic) {

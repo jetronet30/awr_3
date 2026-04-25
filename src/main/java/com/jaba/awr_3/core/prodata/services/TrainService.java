@@ -39,7 +39,7 @@ public class TrainService {
     private final WtareService wtareService;
     private final PdfCreator pdfCreator;
 
-    private void addTrain(String conId, String scaleName, int scaleIndex) {
+    private void addTrain(String conId, String scaleName, int scaleIndex, String instrument) {
         TrainMod train = new TrainMod();
         train.setConId(conId);
         train.setWeighingStartDateTime(BasicService.getDateTime());
@@ -52,6 +52,7 @@ public class TrainService {
         train.setNormalSpeed(false);
         train.setAllwagonsNumbered(false);
         train.setBlocked(false);
+        train.setInstrument(instrument);
         trainJpa.save(train);
         LOGGER.info("New train created with conId: {}, scaleIndex: {}", conId, scaleIndex);
     }
@@ -200,7 +201,7 @@ public class TrainService {
             LOGGER.warn("No open train found for conId: {}", conId);
             return;
         }
-        if (!train.isDone()) {
+        if (!train.isDone() && train.getInstrument().equals("TSR4000")) {
             LOGGER.warn("Train is not done for conId: {}", conId);
             return;
         }
@@ -208,6 +209,9 @@ public class TrainService {
         updateValidationFlags(train);
         train.setOpen(false);
         train.setWeighingStopDateTime(BasicService.getDateTime());
+        if (train.getInstrument().equals("TUNAYLAR")) {
+            train.setDone(true);
+        }
         trainJpa.save(train);
         pdfCreator.createPdf(train);
         LOGGER.info("Train conId {} closed successfully", conId);
@@ -244,11 +248,11 @@ public class TrainService {
     }
 
     @Transactional
-    public void closeTrainAndOpenNewTrain(String conId, String scaleName, int scaleIndex) {
+    public void closeTrainAndOpenNewTrain(String conId, String scaleName, int scaleIndex, String instrument) {
         TrainMod train = trainJpa.findByOpenTrueAndConId(conId).orElse(null);
         if (train == null) {
             LOGGER.warn("No open train found for conId: {}", conId);
-            addTrain(conId, scaleName, scaleIndex);
+            addTrain(conId, scaleName, scaleIndex, instrument);
             return;
         }
         if (train.isDone()) {
@@ -260,7 +264,7 @@ public class TrainService {
         } else {
             trainJpa.delete(train);
         }
-        addTrain(conId, scaleName, scaleIndex);
+        addTrain(conId, scaleName, scaleIndex, instrument);
         LOGGER.info("Train conId {} closed successfully", conId);
     }
 

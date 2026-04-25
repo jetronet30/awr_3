@@ -24,7 +24,7 @@ public class TunaylarParser {
     private static final long START_DURATION_MS = 2_000L;
     private static final long STABLE_DURATION_MS = 10_000L;
     private static final long STOP_DURATION_MS = 10_000L;
-    private static final long ABORT_DURATION_MS = 300_000L;
+    private static final long ABORT_DURATION_MS = 300_000L; // 5 minutes
 
     private final EmitterServic emitterServic;
     private final ConcurrentHashMap<String, AtomicReference<ParserState>> states = new ConcurrentHashMap<>();
@@ -63,12 +63,14 @@ public class TunaylarParser {
         }
     }
 
-    private Transition nextState(ParserState state, double currentWeight, long now, String normalizedWeight, String conId) {
+    private Transition nextState(ParserState state, double currentWeight, long now, String normalizedWeight,
+            String conId) {
 
         if (!state.weighingStarted()) {
             if (currentWeight < START_WEIGHT_THRESHOLD) {
                 if (state.startCandidateActive()) {
-                    log.info("ConId: {}, start candidate cleared, weight dropped below threshold: {}", conId, currentWeight);
+                    log.info("ConId: {}, start candidate cleared, weight dropped below threshold: {}", conId,
+                            currentWeight);
                 }
                 return new Transition(
                         state.withStartCandidate(false, 0L),
@@ -116,7 +118,8 @@ public class TunaylarParser {
             }
 
             if ((now - state.lowWeightStartTime()) >= STOP_DURATION_MS) {
-                log.info("ConId: {}, weighing ended after low weight timeout, last row index: {}", conId, state.rowIndex());
+                log.info("ConId: {}, weighing ended after low weight timeout, last row index: {}", conId,
+                        state.rowIndex());
                 return new Transition(ParserState.initial(), false, null, false, true, false, state.rowIndex());
             }
 
@@ -206,7 +209,7 @@ public class TunaylarParser {
     private void emitTransition(String conId, Transition transition, String scaleName, int scaleIndex,
             boolean automatic, boolean rightToUpdateTare) {
         if (transition.sendStart()) {
-            trainService.closeTrainAndOpenNewTrain(conId, scaleName, scaleIndex);
+            trainService.closeTrainAndOpenNewTrain(conId, scaleName, scaleIndex, "Tunaylar");
             emitterServic.sendToScale(conId, "update-data-container");
             emitterServic.sendToScale(conId, "update-data-works-start");
             log.info("ConId: {}, STARTING WEIGHING PROCESS", conId);
@@ -216,6 +219,11 @@ public class TunaylarParser {
             trainService.addWagonToTrain(conId, "", transition.rowIndexToEmit(), transition.weightToEmit(),
                     BasicService.getDateTime(), "0.0", 0, rightToUpdateTare);
 
+            ////////////////////////////////////////////////////        
+            trainService.updateTrain(conId, "", "0.0", BasicService.getDateTime(), "0.0", "0.0",
+                    transition.rowIndexToEmit());
+            trainService.updateTrainAndWagons(conId, "NO", "static");
+            ////////////////////////////////////////////////////
             emitterServic.sendToScale(conId, transition.weightToEmit());
             if (automatic) {
                 emitterServic.sendToScale(conId, "update-data-container");
