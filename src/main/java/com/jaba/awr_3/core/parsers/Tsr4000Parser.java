@@ -85,14 +85,14 @@ public class Tsr4000Parser {
                 
             } else if (text.contains("Trn_Dir:")) {
                 String upper = text.toUpperCase();
-                if (upper.contains(" IN ") || upper.contains(":IN ") || upper.contains("(IN")) {
+                if (upper.contains("IN") || upper.contains(":IN ") || upper.contains("(IN")) {
                     trainService.updateTrainAndWagons(conId, "IN", "dinamic");
                     emitterServic.sendToScale(conId, "update-data-works-stop");
                     if (automatic) {
                         emitterServic.sendToScale(conId, "update-data-container");
 
                     }
-                } else if (upper.contains(" OUT ") || upper.contains(":OUT ") || upper.contains("(OUT")) {
+                } else if (upper.contains("OUT") || upper.contains(":OUT") || upper.contains("(OUT")) {
                     trainService.updateTrainAndWagons(conId, "OUT", "dinamic");
                     emitterServic.sendToScale(conId, "update-data-works-stop");
                     if (automatic) {
