@@ -12,6 +12,10 @@ ExecStart=/usr/bin/java -jar /usr/src/javaproj/awr_3/target/awr_3-1.jar
 StandardOutput=null
 StandardError=null
 
+# ან journal-ში გინდა თუ გჭირდება:
+# StandardOutput=journal
+# StandardError=journal
+
 Restart=always
 RestartSec=5
 
