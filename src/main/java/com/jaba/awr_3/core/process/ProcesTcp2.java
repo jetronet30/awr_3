@@ -373,7 +373,7 @@ public class ProcesTcp2 {
                             String CEnd240A = new String(packet, StandardCharsets.US_ASCII);
                             if (CEnd240A.contains("CEnd240A")) {
                                 sendDataTSR4000(GlobalRight.getREOTD_7());
-                                log.info("CEnd240A: " + GlobalRight.getREOTD_7());
+                                //log.info("CEnd240A: " + GlobalRight.getREOTD_7());
                             }
                         } catch (Exception e) {
                             log.warn("Failed to extract or send echo for packet", e);

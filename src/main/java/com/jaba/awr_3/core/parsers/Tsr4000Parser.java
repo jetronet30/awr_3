@@ -45,7 +45,7 @@ public class Tsr4000Parser {
                 if (automatic) {
                     ocrLis.sendStop(scaleIndex, trainService.getIdOpenTrain(conId));
                 }
-                
+
             } else if (first3.contains("V")) {
                 if (text.length() < 45) {
                     LOGGER.warn("V-type data incomplete: {}", text);
@@ -56,10 +56,16 @@ public class Tsr4000Parser {
                 String rowNum = text.substring(8, 11);
                 String weight = text.substring(11, 17);
                 String wDate = text.substring(17, 31);
-                String[] speedAxle = text.split("\\s+");
-                String speedAndAxle = speedAxle[speedAxle.length - 2];
-                System.out.println(
-                        getSpeed(speedAndAxle.substring(0, 6)) + "" + "Axle: " + getAxle(speedAndAxle.substring(6)));
+                String speedAndAxle = extractSpeedAndAxle(text);
+
+                if (speedAndAxle == null) {
+                    LOGGER.warn("V-type speed/axle block not found: {}", text);
+                    return;
+                }
+
+                String speed = speedAndAxle.substring(0, 6);
+                String axle = speedAndAxle.substring(15, 16);
+
                 /*
                  * System.out.println(getWeight(weight));`
                  * System.out.println(getDate(wDate));
@@ -68,8 +74,15 @@ public class Tsr4000Parser {
                  * System.out.println("row NUMBER:" + getRowNum(rowNum));
                  * System.out.println(automatic);
                  */
-                trainService.addWagonToTrain(conId, prosesId, getRowNum(rowNum), getWeight(weight), getDate(wDate),
-                        getSpeed(speedAndAxle.substring(0, 6)), getAxle(speedAndAxle.substring(6)), rightToUpdateTare);
+                trainService.addWagonToTrain(
+                        conId,
+                        prosesId,
+                        getRowNum(rowNum),
+                        getWeight(weight),
+                        getDate(wDate),
+                        getSpeed(speed),
+                        getAxle(axle),
+                        rightToUpdateTare);
 
                 emitterServic.sendToScale(conId, getWeight(weight));
                 if (automatic) {
@@ -82,18 +95,18 @@ public class Tsr4000Parser {
                 if (automatic) {
                     ocrLis.sendStart(scaleIndex, trainService.getIdOpenTrain(conId));
                 }
-                
+
             } else if (text.contains("Trn_Dir:")) {
                 String upper = text.toUpperCase();
-                if (upper.contains("IN") || upper.contains(":IN ") || upper.contains("(IN")) {
-                    trainService.updateTrainAndWagons(conId, "IN", "dinamic");
+
+                if (upper.matches(".*TRN_DIR:\\s*\\(?\\s*OUT\\)?[A-F0-9\\s]*.*")) {
+                    trainService.updateTrainAndWagons(conId, "OUT", "dinamic");
                     emitterServic.sendToScale(conId, "update-data-works-stop");
                     if (automatic) {
                         emitterServic.sendToScale(conId, "update-data-container");
-
                     }
-                } else if (upper.contains("OUT") || upper.contains(":OUT") || upper.contains("(OUT")) {
-                    trainService.updateTrainAndWagons(conId, "OUT", "dinamic");
+                } else if (upper.matches(".*TRN_DIR:\\s*\\(?\\s*IN\\)?[A-F0-9\\s]*.*")) {
+                    trainService.updateTrainAndWagons(conId, "IN", "dinamic");
                     emitterServic.sendToScale(conId, "update-data-works-stop");
                     if (automatic) {
                         emitterServic.sendToScale(conId, "update-data-container");
@@ -178,6 +191,31 @@ public class Tsr4000Parser {
             return 0;
         }
         return Integer.parseInt(axle);
+    }
+
+    private String extractSpeedAndAxle(String text) {
+        String[] parts = text.trim().split("\\s+");
+
+        for (int i = 0; i < parts.length; i++) {
+            String part = parts[i];
+
+            // New compact format: 01WO0011020000000004
+            if (part.matches("\\d{2}WO?\\d{16}")) {
+                return part.replaceFirst("^\\d{2}WO?", "");
+            }
+
+            // New spaced format: 01W 0001980000000004
+            if (part.matches("\\d{2}WO?") && i + 1 < parts.length && parts[i + 1].matches("\\d{16}")) {
+                return parts[i + 1];
+            }
+
+            // Old format: 0003910000000004
+            if (part.matches("\\d{16}")) {
+                return part;
+            }
+        }
+
+        return null;
     }
 
 }

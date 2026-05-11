@@ -278,7 +278,7 @@ public class ProcesCom4 {
                             String CEnd240A = new String(packet, StandardCharsets.US_ASCII);
                             if (CEnd240A.contains("CEnd240A")) {
                                 sendDataTSR4000(GlobalRight.getREOTD_4());
-                                log.info("CEnd240A: " + GlobalRight.getREOTD_4());
+                                //log.info("CEnd240A: " + GlobalRight.getREOTD_4());
                             }
                         } catch (Exception e) {
                             log.warn("Failed to extract or send echo for packet", e);

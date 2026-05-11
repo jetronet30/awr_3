@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PostgresInit {
 
-     private static final Logger logger = LoggerFactory.getLogger(PostgresInit.class);
+    private static final Logger logger = LoggerFactory.getLogger(PostgresInit.class);
 
     private static final String CHECK_PSQL_VERSION = "psql --version";
     private static final String UPDATE_APT = "apt update";
@@ -105,11 +105,15 @@ public class PostgresInit {
                         return false;
                     }
                     // მცირე დაყოვნება
-                    try { Thread.sleep(2000); } catch (InterruptedException ignored) {}
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException ignored) {
+                    }
                 }
             } catch (Exception e) {
                 logger.warn("{}: {}", errorMsg, e.getMessage());
-                if (i == maxRetries) return false;
+                if (i == maxRetries)
+                    return false;
             }
         }
         return false;
@@ -120,8 +124,10 @@ public class PostgresInit {
     }
 
     private static void initWithPsqlScript() {
-        String dbUser = System.getenv().getOrDefault("JETRONET_USER", DataService.getDataSettingsStatic().getDataUser());
-        String dbPass = System.getenv().getOrDefault("JETRONET_PASS", DataService.getDataSettingsStatic().getDataPassword());
+        String dbUser = System.getenv().getOrDefault("JETRONET_USER",
+                DataService.getDataSettingsStatic().getDataUser());
+        String dbPass = System.getenv().getOrDefault("JETRONET_PASS",
+                DataService.getDataSettingsStatic().getDataPassword());
         String dbName = System.getenv().getOrDefault("JETRONET_DB", DataService.getDataSettingsStatic().getDataName());
 
         File tempFile = null;
