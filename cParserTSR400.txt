@@ -24,30 +24,24 @@ public class Tsr4000Parser {
             LOGGER.warn("Data too short: {}", text);
             return;
         }
-
         try {
             String first3 = text.substring(0, Math.min(3, text.length())).toUpperCase();
-            String upper = text.toUpperCase();
-            String lower = text.toLowerCase();
-
             if (first3.contains("G")) {
                 if (text.length() < 45) {
                     LOGGER.warn("G-type data incomplete: {}", text);
                     return;
                 }
-
+                // String identficator = text.substring(0, 3);
                 String processId = text.substring(3, 8);
-                String fullWeight = text.substring(8, 16);
-                String weighingDate = text.substring(16, 30);
+                String fuulWeight = text.substring(8, 16);
+                String weghtingDate = text.substring(16, 30);
                 String maxSpeed = text.substring(30, 36);
                 String minSpeed = text.substring(36, 42);
                 String countsector7 = text.substring(42, 45);
-
-                trainService.updateTrain(conId, processId, getWeight(fullWeight), getDate(weighingDate),
+                // String lastsector8 = text.substring(45);
+                trainService.updateTrain(conId, processId, getWeight(fuulWeight), getDate(weghtingDate),
                         getSpeed(maxSpeed), getSpeed(minSpeed), getRowNum(countsector7));
-
                 emitterServic.sendToScale(conId, "update-data-container");
-
                 if (automatic) {
                     ocrLis.sendStop(scaleIndex, trainService.getIdOpenTrain(conId));
                 }
@@ -57,69 +51,72 @@ public class Tsr4000Parser {
                     LOGGER.warn("V-type data incomplete: {}", text);
                     return;
                 }
-
-                String processId = text.substring(3, 8);
+                // String identficator = text.substring(0, 3);
+                String prosesId = text.substring(3, 8);
                 String rowNum = text.substring(8, 11);
                 String weight = text.substring(11, 17);
-                String weighingDate = text.substring(17, 31);
+                String wDate = text.substring(17, 31);
                 String speedAndAxle = extractSpeedAndAxle(text);
 
-                if (speedAndAxle == null || speedAndAxle.length() < 16) {
-                    LOGGER.warn("V-type speed/axle block not found or incomplete: {}", text);
+                if (speedAndAxle == null) {
+                    LOGGER.warn("V-type speed/axle block not found: {}", text);
                     return;
                 }
 
                 String speed = speedAndAxle.substring(0, 6);
                 String axle = speedAndAxle.substring(15, 16);
-                String wagonWeight = getWeight(weight);
 
+                /*
+                 * System.out.println(getWeight(weight));`
+                 * System.out.println(getDate(wDate));
+                 * System.out.println(prosesId);
+                 * System.out.println(text.length());
+                 * System.out.println("row NUMBER:" + getRowNum(rowNum));
+                 * System.out.println(automatic);
+                 */
                 trainService.addWagonToTrain(
                         conId,
-                        processId,
+                        prosesId,
                         getRowNum(rowNum),
-                        wagonWeight,
-                        getDate(weighingDate),
+                        getWeight(weight),
+                        getDate(wDate),
                         getSpeed(speed),
                         getAxle(axle),
                         rightToUpdateTare);
 
-                emitterServic.sendToScale(conId, wagonWeight);
-
+                emitterServic.sendToScale(conId, getWeight(weight));
                 if (automatic) {
                     emitterServic.sendToScale(conId, "update-data-container");
                 }
-
-            } else if (lower.contains("cstart")) {
+            } else if (text.toLowerCase().contains("cstart")) {
                 trainService.closeTrainAndOpenNewTrain(conId, scaleName, scaleIndex, "TSR4000");
                 emitterServic.sendToScale(conId, "update-data-container");
                 emitterServic.sendToScale(conId, "update-data-works-start");
-
                 if (automatic) {
                     ocrLis.sendStart(scaleIndex, trainService.getIdOpenTrain(conId));
                 }
 
-            } else if (upper.contains("TRN_DIR:")) {
-                String direction = extractDirection(upper);
+            } else if (text.contains("Trn_Dir:")) {
+                String upper = text.toUpperCase();
 
-                if (direction == null) {
-                    LOGGER.warn("Train direction not found: {}", text);
-                    return;
+                if (upper.matches(".*TRN_DIR:\\s*\\(?\\s*OUT\\)?[A-F0-9\\s]*.*")) {
+                    trainService.updateTrainAndWagons(conId, "OUT", "dinamic");
+                    emitterServic.sendToScale(conId, "update-data-works-stop");
+                    if (automatic) {
+                        emitterServic.sendToScale(conId, "update-data-container");
+                    }
+                } else if (upper.matches(".*TRN_DIR:\\s*\\(?\\s*IN\\)?[A-F0-9\\s]*.*")) {
+                    trainService.updateTrainAndWagons(conId, "IN", "dinamic");
+                    emitterServic.sendToScale(conId, "update-data-works-stop");
+                    if (automatic) {
+                        emitterServic.sendToScale(conId, "update-data-container");
+                    }
                 }
-
-                trainService.updateTrainAndWagons(conId, direction, "dinamic");
-                emitterServic.sendToScale(conId, "update-data-works-stop");
-
-                if (automatic) {
-                    emitterServic.sendToScale(conId, "update-data-container");
-                }
-
-            } else if (lower.endsWith("6b")) {
+            } else if (text.toLowerCase().endsWith("6b")) {
                 emitterServic.sendToScale(conId, "update-con-indicator");
-
             } else {
                 LOGGER.warn("Unknown identifier: {}", first3);
             }
-
         } catch (StringIndexOutOfBoundsException e) {
             LOGGER.error("Error splitting sectors, incomplete data: {}", text, e);
         } catch (Exception e) {
@@ -127,16 +124,73 @@ public class Tsr4000Parser {
         }
     }
 
-    private String extractDirection(String upperText) {
-        if (upperText.matches(".*TRN_DIR:\\s*\\(?\\s*OUT\\)?.*")) {
-            return "OUT";
+    private String getWeight(String input) {
+        if (input == null || input.isEmpty()) {
+            return "0.0";
         }
-
-        if (upperText.matches(".*TRN_DIR:\\s*\\(?\\s*IN\\)?.*")) {
-            return "IN";
+        input = input.replaceFirst("^0+", "");
+        if (input.endsWith("0") && input.length() > 0) {
+            input = input.substring(0, input.length() - 1);
         }
+        double result = 0;
+        try {
+            result = Double.parseDouble(input) / 100.0;
+        } catch (NumberFormatException e) {
+            result = 0;
+        }
+        return String.valueOf(result);
+    }
 
-        return null;
+    private String getDate(String date) {
+        if (date == null || date.length() != 14) {
+            return date;
+        }
+        String year = date.substring(0, 4);
+        String month = date.substring(4, 6);
+        String day = date.substring(6, 8);
+        String hour = date.substring(8, 10);
+        String minute = date.substring(10, 12);
+        String second = date.substring(12, 14);
+        return String.format("%s/%s/%s %s:%s:%s", year, month, day, hour, minute, second);
+    }
+
+    private String getSpeed(String speed) {
+        if (speed == null || speed.isEmpty()) {
+            return "0,0";
+        }
+        speed = speed.replaceFirst("^0+", "");
+        if (speed.isEmpty()) {
+            return "0,0";
+        }
+        double result = 0;
+        try {
+            result = Double.parseDouble(speed) / 100.0;
+        } catch (NumberFormatException e) {
+            result = 0;
+        }
+        return String.valueOf(result);
+    }
+
+    private int getRowNum(String row) {
+        if (row == null || row.isEmpty()) {
+            return 0;
+        }
+        row = row.replaceFirst("^0+", "");
+        if (row.isEmpty()) {
+            return 0;
+        }
+        return Integer.parseInt(row);
+    }
+
+    private int getAxle(String axle) {
+        if (axle == null || axle.isEmpty()) {
+            return 0;
+        }
+        axle = axle.replaceFirst("^0+", "");
+        if (axle.isEmpty()) {
+            return 0;
+        }
+        return Integer.parseInt(axle);
     }
 
     private String extractSpeedAndAxle(String text) {
@@ -145,14 +199,17 @@ public class Tsr4000Parser {
         for (int i = 0; i < parts.length; i++) {
             String part = parts[i];
 
+            // New compact format: 01WO0011020000000004
             if (part.matches("\\d{2}WO?\\d{16}")) {
                 return part.replaceFirst("^\\d{2}WO?", "");
             }
 
+            // New spaced format: 01W 0001980000000004
             if (part.matches("\\d{2}WO?") && i + 1 < parts.length && parts[i + 1].matches("\\d{16}")) {
                 return parts[i + 1];
             }
 
+            // Old format: 0003910000000004
             if (part.matches("\\d{16}")) {
                 return part;
             }
@@ -161,98 +218,4 @@ public class Tsr4000Parser {
         return null;
     }
 
-    private String getWeight(String input) {
-        if (input == null || input.isEmpty()) {
-            return "0.0";
-        }
-
-        input = input.replaceFirst("^0+", "");
-
-        if (input.endsWith("0") && input.length() > 0) {
-            input = input.substring(0, input.length() - 1);
-        }
-
-        if (input.isEmpty()) {
-            return "0.0";
-        }
-
-        try {
-            return String.valueOf(Double.parseDouble(input) / 100.0);
-        } catch (NumberFormatException e) {
-            LOGGER.warn("Invalid weight value: {}", input);
-            return "0.0";
-        }
-    }
-
-    private String getDate(String date) {
-        if (date == null || date.length() != 14) {
-            return date;
-        }
-
-        String year = date.substring(0, 4);
-        String month = date.substring(4, 6);
-        String day = date.substring(6, 8);
-        String hour = date.substring(8, 10);
-        String minute = date.substring(10, 12);
-        String second = date.substring(12, 14);
-
-        return String.format("%s/%s/%s %s:%s:%s", year, month, day, hour, minute, second);
-    }
-
-    private String getSpeed(String speed) {
-        if (speed == null || speed.isEmpty()) {
-            return "0,0";
-        }
-
-        speed = speed.replaceFirst("^0+", "");
-
-        if (speed.isEmpty()) {
-            return "0,0";
-        }
-
-        try {
-            return String.valueOf(Double.parseDouble(speed) / 100.0);
-        } catch (NumberFormatException e) {
-            LOGGER.warn("Invalid speed value: {}", speed);
-            return "0,0";
-        }
-    }
-
-    private int getRowNum(String row) {
-        if (row == null || row.isEmpty()) {
-            return 0;
-        }
-
-        row = row.replaceFirst("^0+", "");
-
-        if (row.isEmpty()) {
-            return 0;
-        }
-
-        try {
-            return Integer.parseInt(row);
-        } catch (NumberFormatException e) {
-            LOGGER.warn("Invalid row value: {}", row);
-            return 0;
-        }
-    }
-
-    private int getAxle(String axle) {
-        if (axle == null || axle.isEmpty()) {
-            return 0;
-        }
-
-        axle = axle.replaceFirst("^0+", "");
-
-        if (axle.isEmpty()) {
-            return 0;
-        }
-
-        try {
-            return Integer.parseInt(axle);
-        } catch (NumberFormatException e) {
-            LOGGER.warn("Invalid axle value: {}", axle);
-            return 0;
-        }
-    }
 }
