@@ -20,7 +20,8 @@
             <label for="ipAddress" th:text="#{sever.address}"></label>
             <select class="basic-selector" name="ipAddress" id="ipAddress">
                 <option value="0.0.0.0" th:selected="${basic.listingAddress == '0.0.0.0'}">0.0.0.0</option>
-                <option th:each="ip : ${ips}" th:value="${ip}" th:text="${ip}" th:selected="${ip == basic.listingAddress}">
+                <option th:each="ip : ${ips}" th:value="${ip}" th:text="${ip}"
+                    th:selected="${ip == basic.listingAddress}">
                 </option>
             </select>
 
